@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class HomePageController extends Controller
 {
-    // ================= Hero Section (title, sub_title, button_text) =================
+    // ================= Hero Section (section_title, section_sub_title, section_description) =================
     public function getHeroSection()
     {
         $data = CMS::where('page', Page::HomePage->value)
@@ -27,7 +27,7 @@ class HomePageController extends Controller
         $validatedData = $request->validate([
             'title' => 'nullable|string|max:255',
             'sub_title' => 'nullable|string|max:255',
-            'button_text' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
         ]);
         try {
               CMS::updateOrCreate(
@@ -41,59 +41,150 @@ class HomePageController extends Controller
         }
     }
 
-    // ================= Meet Our Clergy Section (title, sub_title, button_text) =================
-    public function getMeetOurClergy()
+    // ================= Featured Research Opportunities (section_title, section_description) =================
+    public function getFeaturedResearchOpportunities()
     {
         $data = CMS::where('page', Page::HomePage->value)
-            ->where('section', Section::MeetOurClergySection->value)
+            ->where('section', Section::FeaturedResearchOpportunitiesSection->value)
             ->first();
-        return view('backend.layouts.cms.home_page.meet_our_clergy.create', compact('data'));
+
+        return view('backend.layouts.cms.home_page.featured_research_opportunities_section.create', compact('data'));
     }
 
-    public function updateMeetOurClergy(Request $request)
+    public function updateFeaturedResearchOpportunities(Request $request)
+    {
+        $validatedData = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        try {
+            CMS::updateOrCreate(
+                ['page' => Page::HomePage->value, 'section' => Section::FeaturedResearchOpportunitiesSection->value],
+                $validatedData
+            );
+
+            return redirect()->route('cms.home_page.featured_research_opportunities_section.create')
+                ->with('success', 'Featured research opportunities updated successfully');
+        } catch (Exception $e) {
+            Log::error("HomePageController::updateFeaturedResearchOpportunities " . $e->getMessage());
+            return redirect()->route('cms.home_page.featured_research_opportunities_section.create')
+                ->with('error', 'Featured research opportunities not updated');
+        }
+    }
+
+    // ================= Meta Academy (section_title, sub_title, description(editor), image) =================
+    public function getMetaAcademy()
+    {
+        $data = CMS::where('page', Page::HomePage->value)
+            ->where('section', Section::MetaAcademySection->value)
+            ->first();
+
+        return view('backend.layouts.cms.home_page.meta_academy_section.create', compact('data'));
+    }
+
+    public function updateMetaAcademy(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'nullable|string|max:255',
             'sub_title' => 'nullable|string|max:255',
             'button_text' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5240',
         ]);
+
         try {
+            $data = CMS::where('page', Page::HomePage->value)
+                ->where('section', Section::MetaAcademySection->value)
+                ->first();
+
+            if ($request->hasFile('image')) {
+                if ($data?->image) {
+                    Helper::fileDelete(public_path($data->image));
+                }
+                $validatedData['image'] = Helper::fileUpload(
+                    $request->file('image'),
+                    'meta_academy',
+                    time() . '_' . getFileName($request->file('image'))
+                );
+            }
+
             CMS::updateOrCreate(
-                ['page' => Page::HomePage->value, 'section' => Section::MeetOurClergySection->value],
+                ['page' => Page::HomePage->value, 'section' => Section::MetaAcademySection->value],
                 $validatedData
             );
-            return redirect()->route('cms.home_page.meet_our_clergy.create')->with('success', 'Meet Our Clergy Updated Successfully');
+
+            return redirect()->route('cms.home_page.meta_academy_section.create')
+                ->with('success', 'Meta academy updated successfully');
         } catch (Exception $e) {
-            Log::error("HomePageController::updateMeetOurClergy " . $e->getMessage());
-            return redirect()->route('cms.home_page.meet_our_clergy.create')->with('error', 'Meet Our Clergy Not Updated');
+            Log::error("HomePageController::updateMetaAcademy " . $e->getMessage());
+            return redirect()->route('cms.home_page.meta_academy_section.create')
+                ->with('error', 'Meta academy not updated');
         }
     }
 
-    // ================= Spiritual Journey Section (title, description, button_text) =================
-    public function getSpiritualJourney()
+    // ================= Research Journey (section_title, section_sub_title, section_description, button_text, button_text2, sub_description) =================
+    public function getResearchJourney()
     {
         $data = CMS::where('page', Page::HomePage->value)
-            ->where('section', Section::SpiritualJourneySection->value)
+            ->where('section', Section::ResearchJourneySection->value)
             ->first();
-        return view('backend.layouts.cms.home_page.spiritual_journey.create', compact('data'));
+
+        return view('backend.layouts.cms.home_page.research_journey_section.create', compact('data'));
     }
 
-    public function updateSpiritualJourney(Request $request)
+    public function updateResearchJourney(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'nullable|string|max:255',
+            'sub_title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'button_text' => 'nullable|string|max:255',
+            'button_text_2' => 'nullable|string|max:255',
+            'sub_description' => 'nullable|string',
         ]);
+
         try {
             CMS::updateOrCreate(
-                ['page' => Page::HomePage->value, 'section' => Section::SpiritualJourneySection->value],
+                ['page' => Page::HomePage->value, 'section' => Section::ResearchJourneySection->value],
                 $validatedData
             );
-            return redirect()->route('cms.home_page.spiritual_journey.create')->with('success', 'Spiritual Journey Updated Successfully');
+
+            return redirect()->route('cms.home_page.research_journey_section.create')
+                ->with('success', 'Research journey updated successfully');
         } catch (Exception $e) {
-            Log::error("HomePageController::updateSpiritualJourney " . $e->getMessage());
-            return redirect()->route('cms.home_page.spiritual_journey.create')->with('error', 'Spiritual Journey Not Updated');
+            Log::error("HomePageController::updateResearchJourney " . $e->getMessage());
+            return redirect()->route('cms.home_page.research_journey_section.create')
+                ->with('error', 'Research journey not updated');
+        }
+    }
+
+    // ================= FAQ Section (section title only) =================
+    public function getFaqSection()
+    {
+        $data = CMS::where('page', Page::HomePage->value)
+            ->where('section', Section::FaqSection->value)
+            ->first();
+
+        return view('backend.layouts.cms.home_page.faq.create', compact('data'));
+    }
+
+    public function updateFaqSection(Request $request)
+    {
+        $validatedData = $request->validate([
+            'title' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            CMS::updateOrCreate(
+                ['page' => Page::HomePage->value, 'section' => Section::FaqSection->value],
+                $validatedData
+            );
+
+            return redirect()->route('cms.home_page.faq_section.create')->with('success', 'FAQ section updated successfully');
+        } catch (Exception $e) {
+            Log::error("HomePageController::updateFaqSection " . $e->getMessage());
+            return redirect()->route('cms.home_page.faq_section.create')->with('error', 'FAQ section not updated');
         }
     }
 }

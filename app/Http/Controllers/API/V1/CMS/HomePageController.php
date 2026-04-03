@@ -73,7 +73,7 @@ class HomePageController extends Controller
             $data = CMS::where('page', Page::HomePage)
                 ->where('section', Section::HeroSection)
                 ->where('status', 'active')
-                ->select('id', 'title', 'sub_title', 'button_text')
+                ->select('id', 'title', 'sub_title', 'description')
                 ->first();
             if (!$data) {
                 return Helper::jsonResponse(true, 'No data found', 200, []);
@@ -113,37 +113,18 @@ class HomePageController extends Controller
         }
     }
 
-    // MeetOurClergy: title, sub_title, button_text
-    public function getMeetOurClergySection(): JsonResponse
-    {
-        try {
-            $data = CMS::where('page', Page::HomePage)
-                ->where('section', Section::MeetOurClergySection)
-                ->where('status', 'active')
-                ->select('id', 'title', 'sub_title', 'button_text')
-                ->first();
-            if (!$data) {
-                return Helper::jsonResponse(true, 'No data found', 200, []);
-            }
-            return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
-        } catch (Exception $e) {
-            Log::error("HomePageController::getMeetOurClergySection" . $e->getMessage());
-            return Helper::jsonErrorResponse('Something went wrong', 500);
-        }
-    }
-
-    // HowItWorks: content(title), items(image, title, description)
-    public function getHowItWorksSection(): JsonResponse
+    // Why Researchers Choose: content(title), items(image, title, description)
+    public function getWhyResearchersChooseSection(): JsonResponse
     {
         try {
             $section = CMS::where('page', Page::HomePage)
-                ->where('section', Section::HomeHowItWorksSection)
+                ->where('section', Section::WhyResearchersChooseSection)
                 ->where('status', 'active')
                 ->select('id', 'title')
                 ->first();
 
             $items = CMS::where('page', Page::HomePage)
-                ->where('section', Section::HomeHowItWorksSectionContent)
+                ->where('section', Section::WhyResearchersChooseSectionContent)
                 ->where('status', 'active')
                 ->select('id', 'image', 'title', 'description')
                 ->orderBy('id')
@@ -155,68 +136,120 @@ class HomePageController extends Controller
             ];
             return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
         } catch (Exception $e) {
-            Log::error("HomePageController::getHowItWorksSection" . $e->getMessage());
+            Log::error("HomePageController::getWhyResearchersChooseSection" . $e->getMessage());
             return Helper::jsonErrorResponse('Something went wrong', 500);
         }
     }
 
-    // Review: content(title, description), items(image, title, sub_title, description, number/stars)
+    // Featured Research Opportunities: title, description
+    public function getFeaturedResearchOpportunitiesSection(): JsonResponse
+    {
+        try {
+            $data = CMS::where('page', Page::HomePage)
+                ->where('section', Section::FeaturedResearchOpportunitiesSection)
+                ->where('status', 'active')
+                ->select('id', 'title', 'description')
+                ->first();
+
+            if (!$data) {
+                return Helper::jsonResponse(true, 'No data found', 200, []);
+            }
+
+            return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
+        } catch (Exception $e) {
+            Log::error("HomePageController::getFeaturedResearchOpportunitiesSection" . $e->getMessage());
+            return Helper::jsonErrorResponse('Something went wrong', 500);
+        }
+    }
+
+    // Meta Academy: title, sub_title, description(editor), image, button texts, sub_description
+    public function getMetaAcademySection(): JsonResponse
+    {
+        try {
+            $data = CMS::where('page', Page::HomePage)
+                ->where('section', Section::MetaAcademySection)
+                ->where('status', 'active')
+                ->select('id', 'title', 'sub_title', 'description', 'sub_description', 'image','button_text')
+                ->first();
+
+            if (!$data) {
+                return Helper::jsonResponse(true, 'No data found', 200, []);
+            }
+
+            return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
+        } catch (Exception $e) {
+            Log::error("HomePageController::getMetaAcademySection" . $e->getMessage());
+            return Helper::jsonErrorResponse('Something went wrong', 500);
+        }
+    }
+
+    // Research Journey: title, sub_title, description, button_text, button_text_2, sub_description
+    public function getResearchJourneySection(): JsonResponse
+    {
+        try {
+            $data = CMS::where('page', Page::HomePage)
+                ->where('section', Section::ResearchJourneySection)
+                ->where('status', 'active')
+                ->select('id', 'title', 'sub_title', 'description', 'button_text', 'button_text_2', 'sub_description')
+                ->first();
+
+            if (!$data) {
+                return Helper::jsonResponse(true, 'No data found', 200, []);
+            }
+
+            return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
+        } catch (Exception $e) {
+            Log::error("HomePageController::getResearchJourneySection" . $e->getMessage());
+            return Helper::jsonErrorResponse('Something went wrong', 500);
+        }
+    }
+
+    // FAQ: title only
+    public function getFaqSection(): JsonResponse
+    {
+        try {
+            $data = CMS::where('page', Page::HomePage)
+                ->where('section', Section::FaqSection)
+                ->where('status', 'active')
+                ->select('id', 'title')
+                ->first();
+
+            if (!$data) {
+                return Helper::jsonResponse(true, 'No data found', 200, []);
+            }
+            return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
+        } catch (Exception $e) {
+            Log::error("HomePageController::getFaqSection" . $e->getMessage());
+            return Helper::jsonErrorResponse('Something went wrong', 500);
+        }
+    }
+
+    // Review: content(title), items(image, description)
     public function getReviewSection(): JsonResponse
     {
         try {
             $section = CMS::where('page', Page::HomePage)
                 ->where('section', Section::ReviewSection)
                 ->where('status', 'active')
-                ->select('id', 'title', 'description')
+                ->select('id', 'title')
                 ->first();
 
             $items = CMS::where('page', Page::HomePage)
                 ->where('section', Section::ReviewSectionContent)
                 ->where('status', 'active')
-                ->select('id', 'image', 'title', 'sub_title', 'description', 'tags')
+                ->select('id', 'image', 'description')
                 ->orderBy('id')
-                ->get()
-                ->map(function ($item) {
-                    $tags = is_array($item->tags) ? $item->tags : (json_decode($item->tags, true) ?? []);
-                    return [
-                        'id' => $item->id,
-                        'image' => $item->image,
-                        'title' => $item->title,
-                        'sub_title' => $item->sub_title,
-                        'description' => $item->description,
-                        'stars' => $tags['stars'] ?? null,
-                    ];
-                });
+                ->get();
 
             $data = [
                 'content' => [
                     'title' => $section?->title ?? '',
-                    'description' => $section?->description ?? '',
                 ],
                 'items' => $items,
             ];
             return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
         } catch (Exception $e) {
             Log::error("HomePageController::getReviewSection" . $e->getMessage());
-            return Helper::jsonErrorResponse('Something went wrong', 500);
-        }
-    }
-
-    // Spiritual Journey: title, description, button_text
-    public function getSpiritualJourneySection(): JsonResponse
-    {
-        try {
-            $data = CMS::where('page', Page::HomePage)
-                ->where('section', Section::SpiritualJourneySection)
-                ->where('status', 'active')
-                ->select('id', 'title', 'description', 'button_text')
-                ->first();
-            if (!$data) {
-                return Helper::jsonResponse(true, 'No data found', 200, []);
-            }
-            return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
-        } catch (Exception $e) {
-            Log::error("HomePageController::getSpiritualJourneySection" . $e->getMessage());
             return Helper::jsonErrorResponse('Something went wrong', 500);
         }
     }

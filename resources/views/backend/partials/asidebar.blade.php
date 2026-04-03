@@ -190,27 +190,40 @@ $systemSetting = App\Models\SystemSetting::first();
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('cms.home_page.meet_our_clergy.create') }}"
-                            class="menu-link {{ request()->routeIs('cms.home_page.meet_our_clergy.*') ? 'active' : '' }}">
-                            Meet Our Clergy
+                        <a href="{{ route('cms.home_page.why_researchers_choose_section.index') }}"
+                            class="menu-link {{ request()->routeIs('cms.home_page.why_researchers_choose_section.*') ? 'active' : '' }}">
+                            Why Researchers Choose
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('cms.home_page.how_it_works_section.index') }}"
-                            class="menu-link {{ request()->routeIs('cms.home_page.how_it_works_section.*') ? 'active' : '' }}">
-                            How It Works
+                        <a href="{{ route('cms.home_page.featured_research_opportunities_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.home_page.featured_research_opportunities_section.*') ? 'active' : '' }}">
+                            Featured Research Opportunities
+                        </a>
+                    </li>
+                    
+                    <li class="menu-item">
+                        <a href="{{ route('cms.home_page.meta_academy_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.home_page.meta_academy_section.*') ? 'active' : '' }}">
+                            Meta Academy
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.home_page.research_journey_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.home_page.research_journey_section.*') ? 'active' : '' }}">
+                            Research Journey
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.home_page.faq_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.home_page.faq_section.*') ? 'active' : '' }}">
+                            FAQ Section
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('cms.home_page.review_section.index') }}"
                             class="menu-link {{ request()->routeIs('cms.home_page.review_section.*') ? 'active' : '' }}">
                             Review Section
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('cms.home_page.spiritual_journey.create') }}"
-                            class="menu-link {{ request()->routeIs('cms.home_page.spiritual_journey.*') ? 'active' : '' }}">
-                            Spiritual Journey
                         </a>
                     </li>
                 </ul>

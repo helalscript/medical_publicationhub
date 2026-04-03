@@ -41,7 +41,7 @@
 
                         <div class="mb-4">
                             <h4 class="fs-20 mb-1">CMS Review Container</h4>
-                            <p class="fs-15">Update Review Container and site details here.</p>
+                            <p class="fs-15">Update section title here.</p>
                         </div>
 
                         <form action="{{ route('cms.home_page.review_section.update_container') }}" method="POST"
@@ -61,19 +61,6 @@
                                         </div>
                                         @error('title')
                                             <div id="title-error" class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <!-- Description Field -->
-                                <div class="col-lg-12">
-                                    <div class="form-group mb-4">
-                                        <label class="label text-secondary">Description</label>
-                                        <div class="form-group position-relative">
-                                            <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="description"
-                                                placeholder="Enter description here">{{ old('description', $containerData->description ?? '') }}</textarea>
-                                        </div>
-                                        @error('description')
-                                            <div id="description-error" class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
@@ -117,9 +104,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Title</th>
-                                            <th scope="col">Sub Title</th>
-                                            <th scope="col">Stars</th>
+                                            <th scope="col">Description</th>
                                             <th scope="col">Image</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Action</th>
@@ -209,8 +194,8 @@
                         searchable: false
                     },
                     {
-                        data: 'title',
-                        name: 'title',
+                        data: 'description',
+                        name: 'description',
                         orderable: true,
                         searchable: true,
                         render: function(data, type, row) {
@@ -220,25 +205,6 @@
                                 return data || '';
                             }
                         }
-                    },
-                    {
-                        data: 'sub_title',
-                        name: 'sub_title',
-                        orderable: true,
-                        searchable: true,
-                        render: function(data, type, row) {
-                            if (data && data.length > 50) {
-                                return data.substring(0, 50) + '...';
-                            } else {
-                                return data || '';
-                            }
-                        }
-                    },
-                    {
-                        data: 'stars',
-                        name: 'stars',
-                        orderable: true,
-                        searchable: false,
                     },
                     {
                         data: 'image',

@@ -27,10 +27,6 @@ class HomePageReviewController extends Controller
                     }
                     return '<span class="text-muted small">No Image</span>';
                 })
-                ->addColumn('stars', function ($row) {
-                    $tags = is_array($row->tags) ? $row->tags : (json_decode($row->tags, true) ?? []);
-                    return $tags['stars'] ?? '-';
-                })
                 ->addColumn('status', function ($row) {
                     $s = '<div class="form-check form-switch"><input onclick="changeStatus(event,' . $row->id . ')" type="checkbox" class="form-check-input" style="border-radius: 25rem;width:40px" name="status"' . ($row->status == 'active' ? ' checked' : '') . '></div>';
                     return $s;
@@ -55,18 +51,13 @@ class HomePageReviewController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'sub_title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
-            'stars' => 'nullable|integer|min:1|max:5',
         ]);
         try {
             $validatedData['page'] = Page::HomePage->value;
             $validatedData['section'] = Section::ReviewSectionContent->value;
             $validatedData['status'] = 'active';
-            $validatedData['tags'] = isset($validatedData['stars']) ? json_encode(['stars' => $validatedData['stars']]) : null;
-            unset($validatedData['stars']);
             if ($request->hasFile('image')) {
                 $validatedData['image'] = Helper::fileUpload($request->file('image'), 'review_section', time() . '_' . getFileName($request->file('image')));
             }
@@ -81,27 +72,17 @@ class HomePageReviewController extends Controller
     public function edit(string $id)
     {
         $data = CMS::where('page', Page::HomePage->value)->where('section', Section::ReviewSectionContent->value)->findOrFail($id);
-        $data->stars = null;
-        if ($data->tags) {
-            $tags = is_array($data->tags) ? $data->tags : json_decode($data->tags, true);
-            $data->stars = $tags['stars'] ?? null;
-        }
         return view('backend.layouts.cms.home_page.review_section.edit', compact('data'));
     }
 
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'sub_title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
-            'stars' => 'nullable|integer|min:1|max:5',
         ]);
         try {
             $data = CMS::findOrFail($id);
-            $validatedData['tags'] = isset($validatedData['stars']) ? json_encode(['stars' => $validatedData['stars']]) : null;
-            unset($validatedData['stars']);
             if ($request->hasFile('image')) {
                 if ($data->image && file_exists(public_path($data->image))) Helper::fileDelete(public_path($data->image));
                 $validatedData['image'] = Helper::fileUpload($request->file('image'), 'review_section', time() . '_' . getFileName($request->file('image')));
@@ -136,7 +117,6 @@ class HomePageReviewController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
         ]);
         try {
             CMS::updateOrCreate(

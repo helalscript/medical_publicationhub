@@ -33,22 +33,6 @@
                                 @enderror
                             </div>
                         </div>
-                        <!-- Sub Title Field -->
-                        <div class="col-lg-12">
-                            <div class="form-group mb-4">
-                                <label class="label text-secondary">Title</label>
-                                <div class="form-group position-relative">
-                                    <input type="text"
-                                        class="form-control text-dark ps-5 h-55 @error('sub_title') is-invalid @enderror"
-                                        name="sub_title" value="{{ old('sub_title', $data->sub_title ?? '') }}"
-                                        placeholder="Enter Title here">
-                                </div>
-                                @error('sub_title')
-                                    <div id="sub_title-error" class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
                     </div>
 
                     <div class="row">

@@ -8,6 +8,14 @@ enum Section: string
     case HeroSection = 'hero_section';
     case CounterSection = 'counter_section';
     case CounterSectionContent = 'counter_section_content';
+    case WhyResearchersChooseSection = 'why_researchers_choose_section';
+    case WhyResearchersChooseSectionContent = 'why_researchers_choose_section_content';
+    case FeaturedResearchOpportunitiesSection = 'featured_research_opportunities_section';
+    case MetaAcademySection = 'meta_academy_section';
+    case ResearchJourneySection = 'research_journey_section';
+    case FaqSection = 'faq_section';
+
+    // legacy home page (not used in new homepage CMS)
     case MeetOurClergySection = 'meet_our_clergy_section';
     case HomeHowItWorksSection = 'home_how_it_works_section';
     case HomeHowItWorksSectionContent = 'home_how_it_works_section_content';

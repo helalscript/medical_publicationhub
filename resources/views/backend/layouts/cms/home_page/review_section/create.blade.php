@@ -45,41 +45,13 @@
             <div class="card-body p-4">
                 <div class="mb-4">
                     <h4 class="fs-20 mb-1">Add Review Item</h4>
-                    <p class="fs-15">Add new review item (title, sub title, description, image, stars).</p>
+                    <p class="fs-15">Add new review item (description, image).</p>
                 </div>
 
                 <form action="{{ route('cms.home_page.review_section.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('POST')
                     <div class="row">
-
-                        <div class="col-lg-12">
-                            <div class="form-group mb-4">
-                                <label class="label text-secondary">Title <span class="text-danger">*</span></label>
-                                <div class="form-group position-relative">
-                                    <input type="text"
-                                        class="form-control text-dark h-55 @error('title') is-invalid @enderror"
-                                        name="title" value="{{ old('title') }}" placeholder="Enter title here">
-                                </div>
-                                @error('title')
-                                    <div id="title-error" class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="col-lg-12">
-                            <div class="form-group mb-4">
-                                <label class="label text-secondary">Sub Title</label>
-                                <div class="form-group position-relative">
-                                    <input type="text"
-                                        class="form-control text-dark h-55 @error('sub_title') is-invalid @enderror"
-                                        name="sub_title" value="{{ old('sub_title') }}" placeholder="Enter sub title here">
-                                </div>
-                                @error('sub_title')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
 
                         <div class="col-lg-12">
                             <div class="form-group mb-4">
@@ -94,21 +66,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-6">
-                            <div class="form-group mb-4">
-                                <label class="label text-secondary">Stars (1-5) <span class="text-danger">*</span></label>
-                                <div class="form-group position-relative">
-                                    <input type="number" min="1" max="5" step="1"
-                                        class="form-control text-dark h-55 @error('stars') is-invalid @enderror"
-                                        name="stars" value="{{ old('stars', 5) }}" placeholder="Enter stars (1-5)">
-                                </div>
-                                @error('stars')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6">
+                        <div class="col-lg-12">
                             <div class="form-group mb-4">
                                 <label class="label text-secondary mb-1">Image <span class="text-danger">*</span></label>
                                 <input class="dropify form-control @error('image') is-invalid @enderror" type="file"

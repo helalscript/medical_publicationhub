@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\Web\Backend\CMS\HomePageController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageCounterController;
-use App\Http\Controllers\Web\Backend\CMS\HomePageHowItWorksController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageReviewController;
+use App\Http\Controllers\Web\Backend\CMS\HomePageWhyResearchersChooseController;
 use App\Http\Controllers\Web\Backend\CMS\OnboardingScreenController;
 use App\Http\Controllers\Web\Backend\CMS\QuestionPageController;
 use App\Http\Controllers\Web\Backend\CMS\HowItWorkPageController;
@@ -23,19 +23,27 @@ Route::prefix('cms/home-page')->name('cms.home_page.')->group(function () {
     Route::post('/counter-section/status/{id}', [HomePageCounterController::class, 'status'])->name('counter_section.status');
     Route::post('/counter-section/update-container', [HomePageCounterController::class, 'updateContainer'])->name('counter_section.update_container');
 
-    Route::get('/meet-our-clergy', [HomePageController::class, 'getMeetOurClergy'])->name('meet_our_clergy.create');
-    Route::post('/meet-our-clergy', [HomePageController::class, 'updateMeetOurClergy'])->name('meet_our_clergy.update');
+    Route::resource('why-researchers-choose-section', HomePageWhyResearchersChooseController::class)
+        ->parameters(['why-researchers-choose-section' => 'id'])
+        ->names('why_researchers_choose_section');
+    Route::post('/why-researchers-choose-section/status/{id}', [HomePageWhyResearchersChooseController::class, 'status'])->name('why_researchers_choose_section.status');
+    Route::post('/why-researchers-choose-section/update-container', [HomePageWhyResearchersChooseController::class, 'updateContainer'])->name('why_researchers_choose_section.update_container');
 
-    Route::resource('how-it-works-section', HomePageHowItWorksController::class)->parameters(['how-it-works-section' => 'id'])->names('how_it_works_section');
-    Route::post('/how-it-works-section/status/{id}', [HomePageHowItWorksController::class, 'status'])->name('how_it_works_section.status');
-    Route::post('/how-it-works-section/update-container', [HomePageHowItWorksController::class, 'updateContainer'])->name('how_it_works_section.update_container');
+    Route::get('/featured-research-opportunities-section', [HomePageController::class, 'getFeaturedResearchOpportunities'])->name('featured_research_opportunities_section.create');
+    Route::post('/featured-research-opportunities-section', [HomePageController::class, 'updateFeaturedResearchOpportunities'])->name('featured_research_opportunities_section.update');
 
     Route::resource('review-section', HomePageReviewController::class)->parameters(['review-section' => 'id'])->names('review_section');
     Route::post('/review-section/status/{id}', [HomePageReviewController::class, 'status'])->name('review_section.status');
     Route::post('/review-section/update-container', [HomePageReviewController::class, 'updateContainer'])->name('review_section.update_container');
 
-    Route::get('/spiritual-journey', [HomePageController::class, 'getSpiritualJourney'])->name('spiritual_journey.create');
-    Route::post('/spiritual-journey', [HomePageController::class, 'updateSpiritualJourney'])->name('spiritual_journey.update');
+    Route::get('/meta-academy-section', [HomePageController::class, 'getMetaAcademy'])->name('meta_academy_section.create');
+    Route::post('/meta-academy-section', [HomePageController::class, 'updateMetaAcademy'])->name('meta_academy_section.update');
+
+    Route::get('/research-journey-section', [HomePageController::class, 'getResearchJourney'])->name('research_journey_section.create');
+    Route::post('/research-journey-section', [HomePageController::class, 'updateResearchJourney'])->name('research_journey_section.update');
+
+    Route::get('/faq-section', [HomePageController::class, 'getFaqSection'])->name('faq_section.create');
+    Route::post('/faq-section', [HomePageController::class, 'updateFaqSection'])->name('faq_section.update');
 });
 
 

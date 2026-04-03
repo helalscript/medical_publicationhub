@@ -9,14 +9,14 @@
             <div class="card-body p-4">
                 <div class="mb-4">
                     <h4 class="fs-20 mb-1">Hero Section</h4>
-                    <p class="fs-15">Title, Sub Title, Button Text</p>
+                    <p class="fs-15">Section Title, Section Sub Title, Section Description</p>
                 </div>
                 <form action="{{ route('cms.home_page.hero_section.update') }}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group mb-4">
-                                <label class="label text-secondary">Title</label>
+                                <label class="label text-secondary">Section Title</label>
                                 <input type="text" class="form-control text-dark h-55 @error('title') is-invalid @enderror"
                                     name="title" value="{{ old('title', $data->title ?? '') }}" placeholder="Enter Title">
                                 @error('title')<div class="text-danger">{{ $message }}</div>@enderror
@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group mb-4">
-                                <label class="label text-secondary">Sub Title</label>
+                                <label class="label text-secondary">Section Sub Title</label>
                                 <input type="text" class="form-control text-dark h-55 @error('sub_title') is-invalid @enderror"
                                     name="sub_title" value="{{ old('sub_title', $data->sub_title ?? '') }}" placeholder="Enter Sub Title">
                                 @error('sub_title')<div class="text-danger">{{ $message }}</div>@enderror
@@ -32,10 +32,10 @@
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group mb-4">
-                                <label class="label text-secondary">Button Text</label>
-                                <input type="text" class="form-control text-dark h-55 @error('button_text') is-invalid @enderror"
-                                    name="button_text" value="{{ old('button_text', $data->button_text ?? '') }}" placeholder="Enter Button Text">
-                                @error('button_text')<div class="text-danger">{{ $message }}</div>@enderror
+                                <label class="label text-secondary">Section Description</label>
+                                <textarea name="description" class="form-control @error('description') is-invalid @enderror"
+                                    placeholder="Enter description here" rows="5">{{ old('description', $data->description ?? '') }}</textarea>
+                                @error('description')<div class="text-danger">{{ $message }}</div>@enderror
                             </div>
                         </div>
                     </div>

@@ -102,10 +102,12 @@ Route::get('dynamic-pages/single/{slug}', [HomePageController::class, 'showDayna
 Route::group(['prefix' => 'cms/home-page'], function () {
     Route::get('/hero-section', [HomePageController::class, 'getHeroSection']);
     Route::get('/counter-section', [HomePageController::class, 'getCounterSection']);
-    Route::get('/meet-our-clergy-section', [HomePageController::class, 'getMeetOurClergySection']);
-    Route::get('/how-it-works-section', [HomePageController::class, 'getHowItWorksSection']);
+    Route::get('/why-researchers-choose-section', [HomePageController::class, 'getWhyResearchersChooseSection']);
+    Route::get('/featured-research-opportunities-section', [HomePageController::class, 'getFeaturedResearchOpportunitiesSection']);
+    Route::get('/meta-academy-section', [HomePageController::class, 'getMetaAcademySection']);
     Route::get('/review-section', [HomePageController::class, 'getReviewSection']);
-    Route::get('/spiritual-journey-section', [HomePageController::class, 'getSpiritualJourneySection']);
+    Route::get('/research-journey-section', [HomePageController::class, 'getResearchJourneySection']);
+    Route::get('/faq-section', [HomePageController::class, 'getFaqSection']);
 });
 
 // route for find clergy page
