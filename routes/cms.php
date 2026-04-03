@@ -11,6 +11,9 @@ use App\Http\Controllers\Web\Backend\CMS\HowItWorkWorkProgressController;
 use App\Http\Controllers\Web\Backend\CMS\HowItWorkOurValuesController;
 use App\Http\Controllers\Web\Backend\CMS\FindClergyPageController;
 use App\Http\Controllers\Web\Backend\CMS\FaqPageController;
+use App\Http\Controllers\Web\Backend\CMS\ResearchPageController;
+use App\Http\Controllers\Web\Backend\CMS\ServicePageController;
+use App\Http\Controllers\Web\Backend\CMS\MetaAcademyPageController;
 use Illuminate\Support\Facades\Route;
 
 // ===================== CMS HOME PAGE =====================
@@ -21,7 +24,6 @@ Route::prefix('cms/home-page')->name('cms.home_page.')->group(function () {
 
     Route::resource('counter-section', HomePageCounterController::class)->parameters(['counter-section' => 'id'])->names('counter_section');
     Route::post('/counter-section/status/{id}', [HomePageCounterController::class, 'status'])->name('counter_section.status');
-    Route::post('/counter-section/update-container', [HomePageCounterController::class, 'updateContainer'])->name('counter_section.update_container');
 
     Route::resource('why-researchers-choose-section', HomePageWhyResearchersChooseController::class)
         ->parameters(['why-researchers-choose-section' => 'id'])
@@ -101,6 +103,32 @@ Route::prefix('cms/question-page')->name('cms.question_page.')->group(function (
 Route::prefix('cms/faq-page')->name('cms.faq_page.')->group(function () {
     Route::get('/hero-section', [FaqPageController::class, 'getHeroSection'])->name('hero_section.create');
     Route::post('/hero-section', [FaqPageController::class, 'updateHeroSection'])->name('hero_section.update');
+});
+
+// ===================== CMS Research Page =====================
+Route::prefix('cms/research-page')->name('cms.research_page.')->group(function () {
+    Route::get('/research-section', [ResearchPageController::class, 'getResearchSection'])->name('research_section.create');
+    Route::post('/research-section', [ResearchPageController::class, 'updateResearchSection'])->name('research_section.update');
+});
+
+// ===================== CMS Service Page =====================
+Route::prefix('cms/service-page')->name('cms.service_page.')->group(function () {
+    Route::get('/service-section', [ServicePageController::class, 'getServiceSection'])->name('service_section.create');
+    Route::post('/service-section', [ServicePageController::class, 'updateServiceSection'])->name('service_section.update');
+});
+
+// ===================== CMS Meta Academy Page =====================
+Route::prefix('cms/meta-academy-page')->name('cms.meta_academy_page.')->group(function () {
+    Route::get('/hero-section', [MetaAcademyPageController::class, 'getHeroSection'])->name('hero_section.create');
+    Route::post('/hero-section', [MetaAcademyPageController::class, 'updateHeroSection'])->name('hero_section.update');
+
+    Route::get('/counter-section', [MetaAcademyPageController::class, 'counterIndex'])->name('counter_section.index');
+    Route::get('/counter-section/create', [MetaAcademyPageController::class, 'counterCreate'])->name('counter_section.create');
+    Route::post('/counter-section', [MetaAcademyPageController::class, 'counterStore'])->name('counter_section.store');
+    Route::get('/counter-section/{id}/edit', [MetaAcademyPageController::class, 'counterEdit'])->name('counter_section.edit');
+    Route::put('/counter-section/{id}', [MetaAcademyPageController::class, 'counterUpdate'])->name('counter_section.update');
+    Route::delete('/counter-section/{id}', [MetaAcademyPageController::class, 'counterDestroy'])->name('counter_section.destroy');
+    Route::post('/counter-section/status/{id}', [MetaAcademyPageController::class, 'counterStatus'])->name('counter_section.status');
 });
 
 

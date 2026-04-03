@@ -8,6 +8,8 @@ enum Page: string
     case HomePage = 'home_page';
     case AboutPage = 'about_page';
     case ResourcesPage = 'resources_page';
+    case ResearchPage = 'research_page';
+    case ServicePage = 'service_page';
     // case ContactUsPage = 'contact_us_page';
     case AuthPage = 'auth_page';
 
@@ -20,6 +22,7 @@ enum Page: string
     case FindClergyPage = 'find_clergy_page';
 
     case FaqPage = 'faq_page';
+    case MetaAcademyPage = 'meta_academy_page';
 
 }
 

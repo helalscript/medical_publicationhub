@@ -15,7 +15,6 @@ class HomePageCounterController extends Controller
 {
     public function index(Request $request)
     {
-        $containerData = CMS::where('page', Page::HomePage)->where('section', Section::CounterSection)->first();
         if ($request->ajax()) {
             $data = CMS::where('page', Page::HomePage)->where('section', Section::CounterSectionContent)->orderBy('id')->latest();
             return DataTables::of($data)
@@ -33,7 +32,7 @@ class HomePageCounterController extends Controller
                 ->rawColumns(['status', 'action'])
                 ->make(true);
         }
-        return view('backend.layouts.cms.home_page.counter_section.index', compact('containerData'));
+        return view('backend.layouts.cms.home_page.counter_section.index');
     }
 
     public function create()
@@ -96,20 +95,5 @@ class HomePageCounterController extends Controller
         $data->status = $data->status == 'active' ? 'inactive' : 'active';
         $data->save();
         return response()->json(['success' => true, 'message' => 'Status changed successfully.']);
-    }
-
-    public function updateContainer(Request $request)
-    {
-        $validatedData = $request->validate(['title' => 'nullable|string|max:255']);
-        try {
-            CMS::updateOrCreate(
-                ['page' => Page::HomePage->value, 'section' => Section::CounterSection->value],
-                $validatedData
-            );
-            return redirect()->route('cms.home_page.counter_section.index')->with('success', 'Container updated successfully');
-        } catch (Exception $e) {
-            Log::error("HomePageCounterController::updateContainer " . $e->getMessage());
-            return redirect()->route('cms.home_page.counter_section.index')->with('error', 'Container update failed');
-        }
     }
 }

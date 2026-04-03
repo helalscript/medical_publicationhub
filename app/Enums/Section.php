@@ -76,6 +76,17 @@ enum Section: string
 
     // ===== FAQ Page Sections =====
     case FaqPageHeroSection = 'faq_page_hero_section';
+    case FaqPageQuestionSection = 'faq_page_question_section';
+
+    // ===== Research Page Sections =====
+    case ResearchSection = 'research_section';
+
+    // ===== Service Page Sections =====
+    case ServiceSection = 'service_section';
+
+    // ===== Meta Academy Page Sections =====
+    case MetaAcademyPageHeroSection = 'meta_academy_page_hero_section';
+    case MetaAcademyPageCounterSectionContent = 'meta_academy_page_counter_section_content';
 
 }
 

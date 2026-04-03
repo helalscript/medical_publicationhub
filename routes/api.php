@@ -118,6 +118,9 @@ Route::group(['prefix' => 'cms/find-clergy-page'], function () {
 // route for faq page
 Route::group(['prefix' => 'cms/faq-page'], function () {
     Route::get('/hero-section', [APIFaqPageController::class, 'getHeroSection']);
+    Route::post('/hero-section', [APIFaqPageController::class, 'updateHeroSection']);
+    Route::get('/question-section', [APIFaqPageController::class, 'getQuestionSection']);
+    Route::post('/question-section', [APIFaqPageController::class, 'updateQuestionSection']);
 });
  
 // route for how it work page

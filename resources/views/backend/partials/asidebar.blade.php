@@ -283,6 +283,60 @@ $systemSetting = App\Models\SystemSetting::first();
                 </ul>
             </li>
 
+            <!-- CMS Research Page Menu Item -->
+            <li class="menu-item {{ request()->routeIs('cms.research_page.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <span class="material-symbols-outlined menu-icon">science</span>
+                    <span class="title">Research Page</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('cms.research_page.research_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.research_page.research_section.*') ? 'active' : '' }}">
+                            Research Section
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- CMS Service Page Menu Item -->
+            <li class="menu-item {{ request()->routeIs('cms.service_page.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <span class="material-symbols-outlined menu-icon">handyman</span>
+                    <span class="title">Service Page</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('cms.service_page.service_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.service_page.service_section.*') ? 'active' : '' }}">
+                            Service Section
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- CMS Meta Academy Page Menu Item -->
+            <li class="menu-item {{ request()->routeIs('cms.meta_academy_page.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <span class="material-symbols-outlined menu-icon">school</span>
+                    <span class="title">Meta Academy Page</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('cms.meta_academy_page.hero_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.meta_academy_page.hero_section.*') ? 'active' : '' }}">
+                            Hero Section
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.meta_academy_page.counter_section.index') }}"
+                            class="menu-link {{ request()->routeIs('cms.meta_academy_page.counter_section.*') ? 'active' : '' }}">
+                            Counter Section
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
 
             {{-- <!-- CMS Contact Us Page Menu Item -->
             <li class="menu-item {{ request()->routeIs('cms.contact_us_page.*') ? 'open' : '' }}">
