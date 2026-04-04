@@ -2,7 +2,12 @@
 @section('title', 'Partnership - Core Research')
 
 @push('styles')
-    <style>[type=checkbox]:checked,[type=radio]:checked{background-size:40%!important}</style>
+    <style>
+        [type=checkbox]:checked,[type=radio]:checked{background-size:40%!important}
+        .core-research-quill-wrap .ql-toolbar.ql-snow{border-radius:8px 8px 0 0;border-color:#dee2e6}
+        .core-research-quill-wrap .ql-container.ql-snow{border-radius:0 0 8px 8px;border-color:#dee2e6}
+        .core-research-quill-wrap .ql-editor{max-height:240px;overflow-y:auto;min-height:160px}
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css">
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
@@ -22,68 +27,89 @@
 
         <div class="row justify-content-center">
             <div class="col-xl-5 col-xxl-5 col-lg-6">
-        <div class="card bg-white border-0 rounded-3 mb-4">
-            <div class="card-body p-4">
-                <h4 class="fs-20 mb-3">Section (title, subtitle, image & description)</h4>
-                <form action="{{ route('cms.partnership_page.core_research_section.update_container') }}" method="POST" enctype="multipart/form-data" id="coreResearchContainerForm">
-                    @csrf
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label class="label text-secondary">Title</label>
-                            <input type="text" name="title" class="form-control h-55" value="{{ old('title', $containerData->title ?? '') }}">
+                <div class="card bg-white border-0 rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <h4 class="fs-20 mb-1">Core Research — Section</h4>
+                            <p class="fs-15 mb-0 text-secondary">Title, subtitle, image and description for this block.</p>
                         </div>
-                        <div class="col-12 mb-3">
-                            <label class="label text-secondary">Sub title</label>
-                            <input type="text" name="sub_title" class="form-control h-55" value="{{ old('sub_title', $containerData->sub_title ?? '') }}">
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label class="label text-secondary">Image</label>
-                            <input type="file" name="image" class="dropify" data-default-file="{{ !empty($containerData?->image) ? asset($containerData->image) : '' }}">
-                        </div>
-                        <div class="col-12 mb-3">
-                            <label class="label text-secondary">Description</label>
-                            <div id="editor_container" style="min-height:220px;"></div>
-                            <input type="hidden" name="description" id="description_container">
-                        </div>
+                        <form action="{{ route('cms.partnership_page.core_research_section.update_container') }}" method="POST" enctype="multipart/form-data" id="coreResearchContainerForm">
+                            @csrf
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group mb-4">
+                                        <label class="label text-secondary">Title</label>
+                                        <input type="text" name="title" class="form-control h-55" value="{{ old('title', $containerData->title ?? '') }}">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group mb-4">
+                                        <label class="label text-secondary">Sub title</label>
+                                        <input type="text" name="sub_title" class="form-control h-55" value="{{ old('sub_title', $containerData->sub_title ?? '') }}">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group mb-4">
+                                        <label class="label text-secondary">Image</label>
+                                        <input type="file" name="image" class="dropify" data-default-file="{{ !empty($containerData?->image) ? asset($containerData->image) : '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group mb-2">
+                                        <label class="label text-secondary">Description</label>
+                                        <div class="core-research-quill-wrap">
+                                            <div id="editor_container"></div>
+                                        </div>
+                                        <input type="hidden" name="description" id="description_container">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex flex-wrap gap-3 pt-2 mt-2 border-top">
+                                        <button type="submit" class="btn btn-primary py-2 px-4 fw-medium fs-16">
+                                            <i class="ri-check-line text-white fw-medium"></i> Save section
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save section</button>
-                </form>
-            </div>
-        </div>
+                </div>
             </div>
 
             <div class="col-xl-7 col-xxl-7 col-lg-6">
-        <div class="card bg-white border-0 rounded-3 mb-4">
-            <div class="card-body p-0">
-                <div class="d-flex justify-content-between flex-wrap gap-2 p-4">
-                    <input type="text" class="form-control" placeholder="Search" id="customSearchBox" style="max-width:280px">
-                    <a href="{{ route('cms.partnership_page.core_research_section.create') }}" class="btn btn-outline-primary">Add item</a>
+                <div class="card bg-white border-0 rounded-3 mb-4">
+                    <div class="card-body p-0">
+                        <div class="d-flex justify-content-between flex-wrap gap-2 p-4">
+                            <input type="text" class="form-control" placeholder="Search" id="customSearchBox" style="max-width:280px">
+                            <a href="{{ route('cms.partnership_page.core_research_section.create') }}" class="btn btn-outline-primary">Add item</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle" id="basic_tables">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-center p-3">
+                            <nav>
+                                <ul class="pagination mb-0">
+                                    <li class="page-item"><a class="page-link" href="#" id="prevPage"><i class="material-symbols-outlined">keyboard_arrow_left</i></a></li>
+                                    <li class="row" id="customPagination"></li>
+                                    <li class="page-item"><a class="page-link" href="#" id="nextPage"><i class="material-symbols-outlined">keyboard_arrow_right</i></a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table align-middle" id="basic_tables">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="d-flex justify-content-center p-3">
-                    <nav>
-                        <ul class="pagination mb-0">
-                            <li class="page-item"><a class="page-link" href="#" id="prevPage"><i class="material-symbols-outlined">keyboard_arrow_left</i></a></li>
-                            <li class="row" id="customPagination"></li>
-                            <li class="page-item"><a class="page-link" href="#" id="nextPage"><i class="material-symbols-outlined">keyboard_arrow_right</i></a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
             </div>
         </div>
     </div>
@@ -93,7 +119,7 @@
     <script src="https://jeremyfagis.github.io/dropify/dist/js/dropify.min.js"></script>
     <script>$('.dropify').dropify();</script>
     <script>
-        var quillContainer = new Quill('#editor_container', { theme: 'snow', modules: { toolbar: [[{header:[1,2,3,false]}],['bold','italic'],['link']] } });
+        var quillContainer = new Quill('#editor_container', { theme: 'snow', modules: { toolbar: [[{header:[1,2,3,false]}],['bold','italic'],['link']] }, placeholder: '' });
         quillContainer.root.innerHTML = {!! json_encode(old('description', $containerData->description ?? '')) !!};
         document.getElementById('coreResearchContainerForm').addEventListener('submit', function() {
             document.getElementById('description_container').value = quillContainer.root.innerHTML;
