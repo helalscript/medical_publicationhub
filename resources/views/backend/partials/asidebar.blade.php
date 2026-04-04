@@ -66,13 +66,13 @@ $systemSetting = App\Models\SystemSetting::first();
             
 
             
-            <li class="menu-item open">
+            {{-- <li class="menu-item open">
                 <a href="{{ route('admin.newsletters.index') }}"
                     class="menu-link {{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }}">
                     <span class="material-symbols-outlined menu-icon">mail</span>
                     <span class="title">Newsletter</span>
                 </a>
-            </li>
+            </li> --}}
             {{-- <li class="menu-item open">
                 <a href="{{ route('blogs.index') }}"
                     class="menu-link {{ request()->routeIs('blogs.*') ? 'active' : '' }}">
@@ -228,41 +228,6 @@ $systemSetting = App\Models\SystemSetting::first();
                     </li>
                 </ul>
             </li>
-
-
-            <!-- CMS How It Work Page Menu Item -->
-            <li class="menu-item {{ request()->routeIs('cms.how_it_work_page.*') ? 'open' : '' }}">
-                <a href="javascript:void(0);" class="menu-link menu-toggle active">
-                    <span class="material-symbols-outlined menu-icon">psychology</span>
-                    <span class="title">How It Work Page</span>
-                </a>
-                <ul class="menu-sub">
-                    <li class="menu-item">
-                        <a href="{{ route('cms.how_it_work_page.hero_section.create') }}"
-                            class="menu-link {{ request()->routeIs('cms.how_it_work_page.hero_section.*') ? 'active' : '' }}">
-                            Hero Section
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('cms.how_it_work_page.work_progress_section.index') }}"
-                            class="menu-link {{ request()->routeIs('cms.how_it_work_page.work_progress_section.*') ? 'active' : '' }}">
-                            Work Progress Section
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('cms.how_it_work_page.our_values_section.index') }}"
-                            class="menu-link {{ request()->routeIs('cms.how_it_work_page.our_values_section.*') ? 'active' : '' }}">
-                            Our Values Section
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('cms.how_it_work_page.spiritual_journey.create') }}"
-                            class="menu-link {{ request()->routeIs('cms.how_it_work_page.spiritual_journey.*') ? 'active' : '' }}">
-                            Spiritual Journey
-                        </a>
-                    </li>
-                </ul>
-            </li>
            
 
 
@@ -333,6 +298,68 @@ $systemSetting = App\Models\SystemSetting::first();
                             class="menu-link {{ request()->routeIs('cms.meta_academy_page.counter_section.*') ? 'active' : '' }}">
                             Counter Section
                         </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- CMS Partnership Page Menu Item -->
+            <li class="menu-item {{ request()->routeIs('cms.partnership_page.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <span class="material-symbols-outlined menu-icon">handshake</span>
+                    <span class="title">Partnership Page</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.hero_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.hero_section.*') ? 'active' : '' }}">Hero</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.our_mission_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.our_mission_section.*') ? 'active' : '' }}">Our Mission</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.about_us_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.about_us_section.*') ? 'active' : '' }}">About Us</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.partnership_value_section.index') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.partnership_value_section.*') ? 'active' : '' }}">Partnership Value</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.core_research_section.index') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.core_research_section.*') ? 'active' : '' }}">Core Research</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.systematic_review_section.index') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.systematic_review_section.*') ? 'active' : '' }}">Systematic Review</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.manuscript_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.manuscript_section.*') ? 'active' : '' }}">Manuscript</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.partnership_model_section.index') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.partnership_model_section.*') ? 'active' : '' }}">Partnership Model</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.reviewer_comment_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.reviewer_comment_section.*') ? 'active' : '' }}">Reviewer Comment</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.journal_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.journal_section.*') ? 'active' : '' }}">Journal</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.research_opportunitie_section.index') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.research_opportunitie_section.*') ? 'active' : '' }}">Research Opportunities</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.why_partner_section.create') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.why_partner_section.*') ? 'active' : '' }}">Why Partner</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('cms.partnership_page.partner_model_section.index') }}"
+                            class="menu-link {{ request()->routeIs('cms.partnership_page.partner_model_section.*') ? 'active' : '' }}">Partner Model</a>
                     </li>
                 </ul>
             </li>

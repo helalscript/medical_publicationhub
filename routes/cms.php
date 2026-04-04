@@ -4,16 +4,11 @@ use App\Http\Controllers\Web\Backend\CMS\HomePageController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageCounterController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageReviewController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageWhyResearchersChooseController;
-use App\Http\Controllers\Web\Backend\CMS\OnboardingScreenController;
-use App\Http\Controllers\Web\Backend\CMS\QuestionPageController;
-use App\Http\Controllers\Web\Backend\CMS\HowItWorkPageController;
-use App\Http\Controllers\Web\Backend\CMS\HowItWorkWorkProgressController;
-use App\Http\Controllers\Web\Backend\CMS\HowItWorkOurValuesController;
-use App\Http\Controllers\Web\Backend\CMS\FindClergyPageController;
 use App\Http\Controllers\Web\Backend\CMS\FaqPageController;
 use App\Http\Controllers\Web\Backend\CMS\ResearchPageController;
 use App\Http\Controllers\Web\Backend\CMS\ServicePageController;
 use App\Http\Controllers\Web\Backend\CMS\MetaAcademyPageController;
+use App\Http\Controllers\Web\Backend\CMS\PartnershipPageController;
 use Illuminate\Support\Facades\Route;
 
 // ===================== CMS HOME PAGE =====================
@@ -49,56 +44,6 @@ Route::prefix('cms/home-page')->name('cms.home_page.')->group(function () {
 });
 
 
-
-
-// ===================== CMS How It Work Page =====================
-Route::prefix('cms/how-it-work-page')->name('cms.how_it_work_page.')->group(function () {
-    Route::get('/hero-section', [HowItWorkPageController::class, 'getHeroSection'])->name('hero_section.create');
-    Route::post('/hero-section', [HowItWorkPageController::class, 'updateHeroSection'])->name('hero_section.update');
-
-    Route::resource('work-progress-section', HowItWorkWorkProgressController::class)->parameters(['work-progress-section' => 'id'])->names('work_progress_section');
-    Route::post('/work-progress-section/status/{id}', [HowItWorkWorkProgressController::class, 'status'])->name('work_progress_section.status');
-    Route::post('/work-progress-section/update-container', [HowItWorkWorkProgressController::class, 'updateContainer'])->name('work_progress_section.update_container');
-
-    Route::resource('our-values-section', HowItWorkOurValuesController::class)->parameters(['our-values-section' => 'id'])->names('our_values_section');
-    Route::post('/our-values-section/status/{id}', [HowItWorkOurValuesController::class, 'status'])->name('our_values_section.status');
-    Route::post('/our-values-section/update-container', [HowItWorkOurValuesController::class, 'updateContainer'])->name('our_values_section.update_container');
-
-    Route::get('/spiritual-journey', [HowItWorkPageController::class, 'getSpiritualJourney'])->name('spiritual_journey.create');
-    Route::post('/spiritual-journey', [HowItWorkPageController::class, 'updateSpiritualJourney'])->name('spiritual_journey.update');
-});
-
-// ===================== CMS Find Clergy Page =====================
-Route::prefix('cms/find-clergy-page')->name('cms.find_clergy_page.')->group(function () {
-    Route::get('/hero-section', [FindClergyPageController::class, 'getHeroSection'])->name('hero_section.create');
-    Route::post('/hero-section', [FindClergyPageController::class, 'updateHeroSection'])->name('hero_section.update');
-});
-
-// ===================== CMS Onboarding Screen =====================
-Route::prefix('cms/onboarding-screen')->name('cms.onboarding_screen.')->group(function () {
-    Route::resource('/screens', OnboardingScreenController::class)->names('screens');
-    Route::post('/screens/status/{id}', [OnboardingScreenController::class, 'status'])->name('screens.status');
-});
-
-// ===================== CMS Question Page =====================
-Route::prefix('cms/question-page')->name('cms.question_page.')->group(function () {
-    Route::get('clergy', [QuestionPageController::class, 'index'])->name('clergy.index');
-    Route::get('clergy/create', [QuestionPageController::class, 'create'])->name('clergy.create');
-    Route::post('clergy', [QuestionPageController::class, 'store'])->name('clergy.store');
-    Route::get('clergy/{id}/edit', [QuestionPageController::class, 'edit'])->name('clergy.edit');
-    Route::put('clergy/{id}', [QuestionPageController::class, 'update'])->name('clergy.update');
-    Route::delete('clergy/{id}', [QuestionPageController::class, 'destroy'])->name('clergy.destroy');
-    Route::post('clergy/status/{id}', [QuestionPageController::class, 'status'])->name('clergy.status');
-
-    Route::get('seeker', [QuestionPageController::class, 'index'])->name('seeker.index');
-    Route::get('seeker/create', [QuestionPageController::class, 'create'])->name('seeker.create');
-    Route::post('seeker', [QuestionPageController::class, 'store'])->name('seeker.store');
-    Route::get('seeker/{id}/edit', [QuestionPageController::class, 'edit'])->name('seeker.edit');
-    Route::put('seeker/{id}', [QuestionPageController::class, 'update'])->name('seeker.update');
-    Route::delete('seeker/{id}', [QuestionPageController::class, 'destroy'])->name('seeker.destroy');
-    Route::post('seeker/status/{id}', [QuestionPageController::class, 'status'])->name('seeker.status');
-});
-
 // ===================== CMS FAQ Page =====================
 Route::prefix('cms/faq-page')->name('cms.faq_page.')->group(function () {
     Route::get('/hero-section', [FaqPageController::class, 'getHeroSection'])->name('hero_section.create');
@@ -129,6 +74,84 @@ Route::prefix('cms/meta-academy-page')->name('cms.meta_academy_page.')->group(fu
     Route::put('/counter-section/{id}', [MetaAcademyPageController::class, 'counterUpdate'])->name('counter_section.update');
     Route::delete('/counter-section/{id}', [MetaAcademyPageController::class, 'counterDestroy'])->name('counter_section.destroy');
     Route::post('/counter-section/status/{id}', [MetaAcademyPageController::class, 'counterStatus'])->name('counter_section.status');
+});
+
+// ===================== CMS Partnership Page =====================
+Route::prefix('cms/partnership-page')->name('cms.partnership_page.')->group(function () {
+    Route::get('/hero-section', [PartnershipPageController::class, 'getHeroSection'])->name('hero_section.create');
+    Route::post('/hero-section', [PartnershipPageController::class, 'updateHeroSection'])->name('hero_section.update');
+
+    Route::get('/our-mission-section', [PartnershipPageController::class, 'getOurMissionSection'])->name('our_mission_section.create');
+    Route::post('/our-mission-section', [PartnershipPageController::class, 'updateOurMissionSection'])->name('our_mission_section.update');
+
+    Route::get('/about-us-section', [PartnershipPageController::class, 'getAboutUsSection'])->name('about_us_section.create');
+    Route::post('/about-us-section', [PartnershipPageController::class, 'updateAboutUsSection'])->name('about_us_section.update');
+
+    Route::get('/partnership-value-section', [PartnershipPageController::class, 'partnershipValueIndex'])->name('partnership_value_section.index');
+    Route::get('/partnership-value-section/create', [PartnershipPageController::class, 'partnershipValueCreate'])->name('partnership_value_section.create');
+    Route::post('/partnership-value-section', [PartnershipPageController::class, 'partnershipValueStore'])->name('partnership_value_section.store');
+    Route::get('/partnership-value-section/{id}/edit', [PartnershipPageController::class, 'partnershipValueEdit'])->name('partnership_value_section.edit');
+    Route::put('/partnership-value-section/{id}', [PartnershipPageController::class, 'partnershipValueUpdate'])->name('partnership_value_section.update');
+    Route::delete('/partnership-value-section/{id}', [PartnershipPageController::class, 'partnershipValueDestroy'])->name('partnership_value_section.destroy');
+    Route::post('/partnership-value-section/status/{id}', [PartnershipPageController::class, 'partnershipValueStatus'])->name('partnership_value_section.status');
+    Route::post('/partnership-value-section/update-container', [PartnershipPageController::class, 'updatePartnershipValueContainer'])->name('partnership_value_section.update_container');
+
+    Route::get('/core-research-section', [PartnershipPageController::class, 'coreResearchIndex'])->name('core_research_section.index');
+    Route::get('/core-research-section/create', [PartnershipPageController::class, 'coreResearchCreate'])->name('core_research_section.create');
+    Route::post('/core-research-section', [PartnershipPageController::class, 'coreResearchStore'])->name('core_research_section.store');
+    Route::get('/core-research-section/{id}/edit', [PartnershipPageController::class, 'coreResearchEdit'])->name('core_research_section.edit');
+    Route::put('/core-research-section/{id}', [PartnershipPageController::class, 'coreResearchUpdate'])->name('core_research_section.update');
+    Route::delete('/core-research-section/{id}', [PartnershipPageController::class, 'coreResearchDestroy'])->name('core_research_section.destroy');
+    Route::post('/core-research-section/status/{id}', [PartnershipPageController::class, 'coreResearchStatus'])->name('core_research_section.status');
+    Route::post('/core-research-section/update-container', [PartnershipPageController::class, 'updateCoreResearchContainer'])->name('core_research_section.update_container');
+
+    Route::get('/systematic-review-section', [PartnershipPageController::class, 'systematicReviewIndex'])->name('systematic_review_section.index');
+    Route::get('/systematic-review-section/create', [PartnershipPageController::class, 'systematicReviewCreate'])->name('systematic_review_section.create');
+    Route::post('/systematic-review-section', [PartnershipPageController::class, 'systematicReviewStore'])->name('systematic_review_section.store');
+    Route::get('/systematic-review-section/{id}/edit', [PartnershipPageController::class, 'systematicReviewEdit'])->name('systematic_review_section.edit');
+    Route::put('/systematic-review-section/{id}', [PartnershipPageController::class, 'systematicReviewUpdate'])->name('systematic_review_section.update');
+    Route::delete('/systematic-review-section/{id}', [PartnershipPageController::class, 'systematicReviewDestroy'])->name('systematic_review_section.destroy');
+    Route::post('/systematic-review-section/status/{id}', [PartnershipPageController::class, 'systematicReviewStatus'])->name('systematic_review_section.status');
+    Route::post('/systematic-review-section/update-container', [PartnershipPageController::class, 'updateSystematicReviewContainer'])->name('systematic_review_section.update_container');
+
+    Route::get('/manuscript-section', [PartnershipPageController::class, 'getManuscriptSection'])->name('manuscript_section.create');
+    Route::post('/manuscript-section', [PartnershipPageController::class, 'updateManuscriptSection'])->name('manuscript_section.update');
+
+    Route::get('/partnership-model-section', [PartnershipPageController::class, 'partnershipModelIndex'])->name('partnership_model_section.index');
+    Route::get('/partnership-model-section/create', [PartnershipPageController::class, 'partnershipModelCreate'])->name('partnership_model_section.create');
+    Route::post('/partnership-model-section', [PartnershipPageController::class, 'partnershipModelStore'])->name('partnership_model_section.store');
+    Route::get('/partnership-model-section/{id}/edit', [PartnershipPageController::class, 'partnershipModelEdit'])->name('partnership_model_section.edit');
+    Route::put('/partnership-model-section/{id}', [PartnershipPageController::class, 'partnershipModelUpdate'])->name('partnership_model_section.update');
+    Route::delete('/partnership-model-section/{id}', [PartnershipPageController::class, 'partnershipModelDestroy'])->name('partnership_model_section.destroy');
+    Route::post('/partnership-model-section/status/{id}', [PartnershipPageController::class, 'partnershipModelStatus'])->name('partnership_model_section.status');
+    Route::post('/partnership-model-section/update-container', [PartnershipPageController::class, 'updatePartnershipModelContainer'])->name('partnership_model_section.update_container');
+
+    Route::get('/reviewer-comment-section', [PartnershipPageController::class, 'getReviewerCommentSection'])->name('reviewer_comment_section.create');
+    Route::post('/reviewer-comment-section', [PartnershipPageController::class, 'updateReviewerCommentSection'])->name('reviewer_comment_section.update');
+
+    Route::get('/journal-section', [PartnershipPageController::class, 'getJournalSection'])->name('journal_section.create');
+    Route::post('/journal-section', [PartnershipPageController::class, 'updateJournalSection'])->name('journal_section.update');
+
+    Route::get('/research-opportunitie-section', [PartnershipPageController::class, 'researchOpportunitieIndex'])->name('research_opportunitie_section.index');
+    Route::get('/research-opportunitie-section/create', [PartnershipPageController::class, 'researchOpportunitieCreate'])->name('research_opportunitie_section.create');
+    Route::post('/research-opportunitie-section', [PartnershipPageController::class, 'researchOpportunitieStore'])->name('research_opportunitie_section.store');
+    Route::get('/research-opportunitie-section/{id}/edit', [PartnershipPageController::class, 'researchOpportunitieEdit'])->name('research_opportunitie_section.edit');
+    Route::put('/research-opportunitie-section/{id}', [PartnershipPageController::class, 'researchOpportunitieUpdate'])->name('research_opportunitie_section.update');
+    Route::delete('/research-opportunitie-section/{id}', [PartnershipPageController::class, 'researchOpportunitieDestroy'])->name('research_opportunitie_section.destroy');
+    Route::post('/research-opportunitie-section/status/{id}', [PartnershipPageController::class, 'researchOpportunitieStatus'])->name('research_opportunitie_section.status');
+    Route::post('/research-opportunitie-section/update-container', [PartnershipPageController::class, 'updateResearchOpportunitieContainer'])->name('research_opportunitie_section.update_container');
+
+    Route::get('/why-partner-section', [PartnershipPageController::class, 'getWhyPartnerSection'])->name('why_partner_section.create');
+    Route::post('/why-partner-section', [PartnershipPageController::class, 'updateWhyPartnerSection'])->name('why_partner_section.update');
+
+    Route::get('/partner-model-section', [PartnershipPageController::class, 'partnerModelIndex'])->name('partner_model_section.index');
+    Route::get('/partner-model-section/create', [PartnershipPageController::class, 'partnerModelCreate'])->name('partner_model_section.create');
+    Route::post('/partner-model-section', [PartnershipPageController::class, 'partnerModelStore'])->name('partner_model_section.store');
+    Route::get('/partner-model-section/{id}/edit', [PartnershipPageController::class, 'partnerModelEdit'])->name('partner_model_section.edit');
+    Route::put('/partner-model-section/{id}', [PartnershipPageController::class, 'partnerModelUpdate'])->name('partner_model_section.update');
+    Route::delete('/partner-model-section/{id}', [PartnershipPageController::class, 'partnerModelDestroy'])->name('partner_model_section.destroy');
+    Route::post('/partner-model-section/status/{id}', [PartnershipPageController::class, 'partnerModelStatus'])->name('partner_model_section.status');
+    Route::post('/partner-model-section/update-container', [PartnershipPageController::class, 'updatePartnerModelContainer'])->name('partner_model_section.update_container');
 });
 
 

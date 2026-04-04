@@ -24,6 +24,8 @@ enum Page: string
     case FaqPage = 'faq_page';
     case MetaAcademyPage = 'meta_academy_page';
 
+    case PartnershipPage = 'partnership_page';
+
 }
 
 

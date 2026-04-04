@@ -7,13 +7,9 @@ use App\Http\Controllers\API\Auth\ResetPasswordController;
 use App\Http\Controllers\API\Auth\SocialLoginController;
 use App\Http\Controllers\API\Auth\UserController;
 use App\Http\Controllers\API\V1\CMS\HomePageController;
-use App\Http\Controllers\API\V1\CMS\HowItWorkPageController as APIHowItWorkPageController;
 use App\Http\Controllers\API\V1\CMS\FindClergyPageController as APIFindClergyPageController;
-use App\Http\Controllers\API\V1\CMS\OnboardingController;
 use App\Http\Controllers\API\V1\CMS\FaqPageController as APIFaqPageController;
-use App\Http\Controllers\API\V1\QuestionController;
 use App\Http\Controllers\API\V1\DashboardController;
-use App\Http\Controllers\API\V1\Chat\ChatController;
 use App\Http\Controllers\API\V1\User\Faqs\UserFaqController;
 use App\Http\Controllers\API\V1\User\NewsletterController;
 use App\Http\Controllers\API\V1\User\NotificationController;
@@ -58,18 +54,6 @@ Route::group(['middleware' => ['auth:api', 'check_is_user']], function ($router)
 
 
 
-// Chat system
-Route::group(['middleware' => ['auth:api']], function ($router) {
-    Route::prefix('chats')->group(function () use ($router) {
-        Route::get('/', [ChatController::class, 'rooms']);
-        Route::get('/{room}', [ChatController::class, 'show']);
-        Route::get('/messages/{room}', [ChatController::class, 'messages']);
-        Route::post('/send-messages/{room}', [ChatController::class, 'sendMessage']);
-        Route::post('/presence/{room}', [ChatController::class, 'presence']);
-        Route::post('/block/{room}', [ChatController::class, 'block']);
-    });
-});
-
 // FAQ for users (public)
 Route::get('/faqs', [UserFaqController::class, 'index']);
 Route::get('/faqs-categories', [UserFaqController::class, 'categories']);
@@ -87,12 +71,7 @@ Route::post('/contact-support-message/sent', [UserContactSupportController::clas
 // --------- cms part --------------
 // Route::get('/social-link', [HomePageController::class, 'getSocialLinks']);
 Route::get('/system-info', [HomePageController::class, 'getSystemInfo']);
-// onboarding screens
-Route::get('/onboarding-screens', [OnboardingController::class, 'getOnboardingScreens']);
 
-// Question Page
-Route::get('/questions/{type}', [QuestionController::class, 'getQuestions'])->where('type', 'clergy|seeker');
-Route::post('/questions/user-answer', [QuestionController::class, 'saveUserAnswer'])->middleware('auth:api');
 
 // dynamic page
 Route::get('dynamic-pages', [HomePageController::class, 'getDynamicPages']);
@@ -123,13 +102,5 @@ Route::group(['prefix' => 'cms/faq-page'], function () {
     Route::post('/question-section', [APIFaqPageController::class, 'updateQuestionSection']);
 });
  
-// route for how it work page
-Route::group(['prefix' => 'cms/how-it-work-page'], function () {
-    Route::get('/hero-section', [APIHowItWorkPageController::class, 'getHeroSection']);
-    Route::get('/work-progress-section', [APIHowItWorkPageController::class, 'getWorkProgressSection']);
-    Route::get('/our-values-section', [APIHowItWorkPageController::class, 'getOurValuesSection']);
-    Route::get('/spiritual-journey-section', [APIHowItWorkPageController::class, 'getSpiritualJourneySection']);
-});
-
 
 

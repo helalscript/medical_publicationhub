@@ -88,6 +88,27 @@ enum Section: string
     case MetaAcademyPageHeroSection = 'meta_academy_page_hero_section';
     case MetaAcademyPageCounterSectionContent = 'meta_academy_page_counter_section_content';
 
+    // ===== Partnership Page Sections =====
+    case PartnershipPageHeroSection = 'partnership_page_hero_section';
+    case PartnershipPageOurMissionSection = 'partnership_page_our_mission_section';
+    case PartnershipPageAboutUsSection = 'partnership_page_about_us_section';
+    case PartnershipPagePartnershipValueSection = 'partnership_page_partnership_value_section';
+    case PartnershipPagePartnershipValueSectionContent = 'partnership_page_partnership_value_section_content';
+    case PartnershipPageCoreResearchSection = 'partnership_page_core_research_section';
+    case PartnershipPageCoreResearchSectionContent = 'partnership_page_core_research_section_content';
+    case PartnershipPageSystematicReviewSection = 'partnership_page_systematic_review_section';
+    case PartnershipPageSystematicReviewSectionContent = 'partnership_page_systematic_review_section_content';
+    case PartnershipPageManuscriptSection = 'partnership_page_manuscript_section';
+    case PartnershipPagePartnershipModelSection = 'partnership_page_partnership_model_section';
+    case PartnershipPagePartnershipModelSectionContent = 'partnership_page_partnership_model_section_content';
+    case PartnershipPageReviewerCommentSection = 'partnership_page_reviewer_comment_section';
+    case PartnershipPageJournalSection = 'partnership_page_journal_section';
+    case PartnershipPageResearchOpportunitieSection = 'partnership_page_research_opportunitie_section';
+    case PartnershipPageResearchOpportunitieSectionContent = 'partnership_page_research_opportunitie_section_content';
+    case PartnershipPageWhyPartnerSection = 'partnership_page_why_partner_section';
+    case PartnershipPagePartnerModelSection = 'partnership_page_partner_model_section';
+    case PartnershipPagePartnerModelSectionContent = 'partnership_page_partner_model_section_content';
+
 }
 
 
