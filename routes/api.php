@@ -7,8 +7,11 @@ use App\Http\Controllers\API\Auth\ResetPasswordController;
 use App\Http\Controllers\API\Auth\SocialLoginController;
 use App\Http\Controllers\API\Auth\UserController;
 use App\Http\Controllers\API\V1\CMS\HomePageController;
-use App\Http\Controllers\API\V1\CMS\FindClergyPageController as APIFindClergyPageController;
 use App\Http\Controllers\API\V1\CMS\FaqPageController as APIFaqPageController;
+use App\Http\Controllers\API\V1\CMS\MetaAcademyPageController as APIMetaAcademyPageController;
+use App\Http\Controllers\API\V1\CMS\ResearchPageController as APIResearchPageController;
+use App\Http\Controllers\API\V1\CMS\ServicePageController as APIServicePageController;
+use App\Http\Controllers\API\V1\CMS\PartnershipPageController as APIPartnershipPageController;
 use App\Http\Controllers\API\V1\DashboardController;
 use App\Http\Controllers\API\V1\User\Faqs\UserFaqController;
 use App\Http\Controllers\API\V1\User\NewsletterController;
@@ -89,10 +92,6 @@ Route::group(['prefix' => 'cms/home-page'], function () {
     Route::get('/faq-section', [HomePageController::class, 'getFaqSection']);
 });
 
-// route for find clergy page
-Route::group(['prefix' => 'cms/find-clergy-page'], function () {
-    Route::get('/hero-section', [APIFindClergyPageController::class, 'getHeroSection']);
-});
 
 // route for faq page
 Route::group(['prefix' => 'cms/faq-page'], function () {
@@ -101,6 +100,38 @@ Route::group(['prefix' => 'cms/faq-page'], function () {
     Route::get('/question-section', [APIFaqPageController::class, 'getQuestionSection']);
     Route::post('/question-section', [APIFaqPageController::class, 'updateQuestionSection']);
 });
- 
+
+// route for meta academy page
+Route::group(['prefix' => 'cms/meta-academy-page'], function () {
+    Route::get('/hero-section', [APIMetaAcademyPageController::class, 'getHeroSection']);
+    Route::get('/counter-section', [APIMetaAcademyPageController::class, 'getCounterSection']);
+});
+
+// route for research page
+Route::group(['prefix' => 'cms/research-page'], function () {
+    Route::get('/research-section', [APIResearchPageController::class, 'getResearchSection']);
+});
+
+// route for service page
+Route::group(['prefix' => 'cms/service-page'], function () {
+    Route::get('/service-section', [APIServicePageController::class, 'getServiceSection']);
+});
+
+// route for partnership page
+Route::group(['prefix' => 'cms/partnership-page'], function () {
+    Route::get('/hero-section', [APIPartnershipPageController::class, 'getHeroSection']);
+    Route::get('/our-mission-section', [APIPartnershipPageController::class, 'getOurMissionSection']);
+    Route::get('/about-us-section', [APIPartnershipPageController::class, 'getAboutUsSection']);
+    Route::get('/partnership-value-section', [APIPartnershipPageController::class, 'getPartnershipValueSection']);
+    Route::get('/core-research-section', [APIPartnershipPageController::class, 'getCoreResearchSection']);
+    Route::get('/systematic-review-section', [APIPartnershipPageController::class, 'getSystematicReviewSection']);
+    Route::get('/manuscript-section', [APIPartnershipPageController::class, 'getManuscriptSection']);
+    Route::get('/partnership-model-section', [APIPartnershipPageController::class, 'getPartnershipModelSection']);
+    Route::get('/reviewer-comment-section', [APIPartnershipPageController::class, 'getReviewerCommentSection']);
+    Route::get('/journal-section', [APIPartnershipPageController::class, 'getJournalSection']);
+    Route::get('/research-opportunitie-section', [APIPartnershipPageController::class, 'getResearchOpportunitieSection']);
+    Route::get('/why-partner-section', [APIPartnershipPageController::class, 'getWhyPartnerSection']);
+    Route::get('/partner-model-section', [APIPartnershipPageController::class, 'getPartnerModelSection']);
+});
 
 

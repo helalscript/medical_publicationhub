@@ -11,23 +11,25 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
-class FindClergyPageController extends Controller
+class ServicePageController extends Controller
 {
-    // Hero: title, description
-    public function getHeroSection(): JsonResponse
+    public function getServiceSection(): JsonResponse
     {
         try {
-            $data = CMS::where('page', Page::FindClergyPage)
-                ->where('section', Section::FindClergyHeroSection)
+            $data = CMS::where('page', Page::ServicePage->value)
+                ->where('section', Section::ServiceSection->value)
                 ->where('status', 'active')
-                ->select('id', 'title', 'description')
+                ->select('id', 'title', 'sub_title', 'description')
                 ->first();
-            if (!$data) {
+
+            if (! $data) {
                 return Helper::jsonResponse(true, 'No data found', 200, []);
             }
+
             return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
         } catch (Exception $e) {
-            Log::error("FindClergyPageController::getHeroSection " . $e->getMessage());
+            Log::error('API\ServicePageController::getServiceSection '.$e->getMessage());
+
             return Helper::jsonErrorResponse('Something went wrong', 500);
         }
     }
