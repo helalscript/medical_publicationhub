@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('faqs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->string('question');
             $table->longText('answer');
             $table->enum('status', ['active', 'inactive'])->default('active');
