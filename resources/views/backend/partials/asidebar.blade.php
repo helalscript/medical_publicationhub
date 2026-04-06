@@ -29,6 +29,13 @@ $systemSetting = App\Models\SystemSetting::first();
                     <span class="title">Dashboard</span>
                 </a>
             </li>
+            <li class="menu-item open">
+                <a href="{{ route('admin.research_ideas.index') }}"
+                    class="menu-link {{ request()->routeIs('admin.research_ideas.*') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined menu-icon">biotech</span>
+                    <span class="title">Research Ideas</span>
+                </a>
+            </li>
 
             <li class="menu-title small text-uppercase">
                 <span class="menu-title-text">APPS</span>
@@ -42,15 +49,9 @@ $systemSetting = App\Models\SystemSetting::first();
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
-                        <a href="{{ route('user_management.clergy.index') }}"
-                            class="menu-link {{ request()->routeIs('user_management.clergy.*') ? 'active' : '' }}">
-                            Clergy
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('user_management.seeker.index') }}"
-                            class="menu-link {{ request()->routeIs('user_management.seeker.*') ? 'active' : '' }}">
-                            Seeker
+                        <a href="{{ route('user_management.mentor.index') }}"
+                            class="menu-link {{ request()->routeIs('user_management.mentor.*') ? 'active' : '' }}">
+                            Mentor
                         </a>
                     </li>
                 </ul>

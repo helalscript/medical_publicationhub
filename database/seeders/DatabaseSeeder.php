@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\City;
 use App\Models\Clergy;
+use App\Models\Mentor;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,11 +30,16 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'role' => 'coordinator',
         ]);
-        User::factory()->create([
+        $mentorUser = User::factory()->create([
             'name' => 'Mentor',
             'email' => 'mentor@mentor.com',
             'password' => Hash::make('12345678'),
             'role' => 'mentor',
+        ]);
+        Mentor::create([
+            'user_id' => $mentorUser->id,
+            'name' => 'Mentor',
+            'status' => 'active',
         ]);
         User::factory()->create([
             'name' => 'Researcher',

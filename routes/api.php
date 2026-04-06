@@ -17,6 +17,7 @@ use App\Http\Controllers\API\V1\User\Faqs\UserFaqController;
 use App\Http\Controllers\API\V1\User\NewsletterController;
 use App\Http\Controllers\API\V1\User\NotificationController;
 use App\Http\Controllers\API\V1\User\UserContactSupportController;
+use App\Http\Controllers\API\V1\Mentor\ResearchIdeaController as MentorResearchIdeaApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'guest:api'], function ($router) {
@@ -53,6 +54,15 @@ Route::group(['middleware' => ['auth:api', 'check_is_user']], function ($router)
     Route::post('/my-notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
     Route::delete('/my-notifications-delete/{id}', [NotificationController::class, 'delete']);
     Route::delete('/my-notifications-delete-all', [NotificationController::class, 'deleteAll']);
+});
+
+// Mentor — research ideas (JWT + mentor role)
+Route::group(['prefix' => 'mentor', 'middleware' => ['auth:api', 'check_is_mentor']], function ($router) {
+    Route::get('/research-ideas', [MentorResearchIdeaApiController::class, 'index']);
+    Route::post('/research-ideas', [MentorResearchIdeaApiController::class, 'store']);
+    Route::get('/research-ideas/{id}', [MentorResearchIdeaApiController::class, 'show']);
+    Route::put('/research-ideas/{id}', [MentorResearchIdeaApiController::class, 'update']);
+    Route::post('/research-ideas/{id}/submission-proof', [MentorResearchIdeaApiController::class, 'submitSubmissionProof']);
 });
 
 

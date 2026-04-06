@@ -23,6 +23,7 @@ use App\Http\Controllers\Web\Backend\ProfileController;
 use App\Http\Controllers\Web\Backend\SystemSettingController;
 use App\Http\Controllers\Web\Backend\UserController;
 use App\Http\Controllers\Web\Backend\UserManagementController;
+use App\Http\Controllers\Web\Backend\ResearchIdeaAdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function () {
@@ -58,26 +59,23 @@ Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function (
 
     // Routes for managing app users (Clergy & Seeker)
     Route::prefix('user-management')->name('user_management.')->group(function () {
-        // Clergy
-        Route::get('/clergy', [UserManagementController::class, 'clergyIndex'])->name('clergy.index');
-        Route::get('/clergy/create', [UserManagementController::class, 'clergyCreate'])->name('clergy.create');
-        Route::post('/clergy', [UserManagementController::class, 'clergyStore'])->name('clergy.store');
-        Route::get('/clergy/{id}', [UserManagementController::class, 'clergyShow'])->name('clergy.show');
-        Route::get('/clergy/{id}/edit', [UserManagementController::class, 'clergyEdit'])->name('clergy.edit');
-        Route::put('/clergy/{id}', [UserManagementController::class, 'clergyUpdate'])->name('clergy.update');
-        Route::delete('/clergy/{id}', [UserManagementController::class, 'clergyDestroy'])->name('clergy.destroy');
-        Route::post('/clergy/status/{id}', [UserManagementController::class, 'clergyStatus'])->name('clergy.status');
 
-        // Seeker
-        Route::get('/seeker', [UserManagementController::class, 'seekerIndex'])->name('seeker.index');
-        Route::get('/seeker/create', [UserManagementController::class, 'seekerCreate'])->name('seeker.create');
-        Route::post('/seeker', [UserManagementController::class, 'seekerStore'])->name('seeker.store');
-        Route::get('/seeker/{id}', [UserManagementController::class, 'seekerShow'])->name('seeker.show');
-        Route::get('/seeker/{id}/edit', [UserManagementController::class, 'seekerEdit'])->name('seeker.edit');
-        Route::put('/seeker/{id}', [UserManagementController::class, 'seekerUpdate'])->name('seeker.update');
-        Route::delete('/seeker/{id}', [UserManagementController::class, 'seekerDestroy'])->name('seeker.destroy');
-        Route::post('/seeker/status/{id}', [UserManagementController::class, 'seekerStatus'])->name('seeker.status');
+        // Mentor
+        Route::get('/mentor', [UserManagementController::class, 'mentorIndex'])->name('mentor.index');
+        Route::get('/mentor/create', [UserManagementController::class, 'mentorCreate'])->name('mentor.create');
+        Route::post('/mentor', [UserManagementController::class, 'mentorStore'])->name('mentor.store');
+        Route::get('/mentor/{id}', [UserManagementController::class, 'mentorShow'])->name('mentor.show');
+        Route::get('/mentor/{id}/edit', [UserManagementController::class, 'mentorEdit'])->name('mentor.edit');
+        Route::put('/mentor/{id}', [UserManagementController::class, 'mentorUpdate'])->name('mentor.update');
+        Route::delete('/mentor/{id}', [UserManagementController::class, 'mentorDestroy'])->name('mentor.destroy');
+        Route::post('/mentor/status/{id}', [UserManagementController::class, 'mentorStatus'])->name('mentor.status');
     });
+
+    // Research ideas (admin review & dates)
+    Route::get('/research-ideas', [ResearchIdeaAdminController::class, 'index'])->name('admin.research_ideas.index');
+    Route::get('/research-ideas/{id}', [ResearchIdeaAdminController::class, 'show'])->name('admin.research_ideas.show');
+    Route::get('/research-ideas/{id}/edit', [ResearchIdeaAdminController::class, 'edit'])->name('admin.research_ideas.edit');
+    Route::put('/research-ideas/{id}', [ResearchIdeaAdminController::class, 'update'])->name('admin.research_ideas.update');
 
     // Route for FaqController
     Route::resource('/faqs', FaqController::class)->names('faqs');
