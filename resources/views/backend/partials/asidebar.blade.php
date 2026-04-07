@@ -36,6 +36,32 @@ $systemSetting = App\Models\SystemSetting::first();
                     <span class="title">Research Ideas</span>
                 </a>
             </li>
+            <li class="menu-item {{ request()->routeIs('admin.opportunities.*', 'admin.opportunity_applications.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <span class="material-symbols-outlined menu-icon">work</span>
+                    <span class="title">Opportunities</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('admin.opportunities.index') }}"
+                            class="menu-link {{ request()->routeIs('admin.opportunities.*') ? 'active' : '' }}">
+                            Opportunity List
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('admin.opportunity_applications.index') }}"
+                            class="menu-link {{ request()->routeIs('admin.opportunity_applications.*') ? 'active' : '' }}">
+                            Applications
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('admin.opportunity_chats.index') }}"
+                            class="menu-link {{ request()->routeIs('admin.opportunity_chats.*') ? 'active' : '' }}">
+                            Chats
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             <li class="menu-title small text-uppercase">
                 <span class="menu-title-text">APPS</span>

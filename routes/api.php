@@ -18,6 +18,11 @@ use App\Http\Controllers\API\V1\User\NewsletterController;
 use App\Http\Controllers\API\V1\User\NotificationController;
 use App\Http\Controllers\API\V1\User\UserContactSupportController;
 use App\Http\Controllers\API\V1\Mentor\ResearchIdeaController as MentorResearchIdeaApiController;
+use App\Http\Controllers\API\V1\OpportunityController as OpportunityApiController;
+use App\Http\Controllers\API\V1\OpportunityApplicationController as OpportunityApplicationApiController;
+use App\Http\Controllers\API\V1\FavouriteController as FavouriteApiController;
+use App\Http\Controllers\API\V1\Mentor\ChatController as MentorChatApiController;
+use App\Http\Controllers\API\V1\Researcher\ChatController as ResearcherChatApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'guest:api'], function ($router) {
@@ -56,6 +61,22 @@ Route::group(['middleware' => ['auth:api', 'check_is_user']], function ($router)
     Route::delete('/my-notifications-delete-all', [NotificationController::class, 'deleteAll']);
 });
 
+// Opportunities & applications (JWT user)
+Route::group(['middleware' => ['auth:api']], function ($router) {
+    // applications
+    Route::get('/opportunity-applications', [OpportunityApplicationApiController::class, 'index']);
+    Route::post('/opportunity-applications', [OpportunityApplicationApiController::class, 'store']);
+    Route::get('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'show']);
+    Route::put('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'update']);
+    Route::delete('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'destroy']);
+
+    // favourites (opportunities)
+    Route::get('/favourites', [FavouriteApiController::class, 'index']);
+    Route::post('/favourites', [FavouriteApiController::class, 'store']);
+    Route::get('/favourites/{id}', [FavouriteApiController::class, 'show']);
+    Route::delete('/favourites/{id}', [FavouriteApiController::class, 'destroy']);
+});
+
 // Mentor — research ideas (JWT + mentor role)
 Route::group(['prefix' => 'mentor', 'middleware' => ['auth:api', 'check_is_mentor']], function ($router) {
     Route::get('/research-ideas', [MentorResearchIdeaApiController::class, 'index']);
@@ -63,9 +84,23 @@ Route::group(['prefix' => 'mentor', 'middleware' => ['auth:api', 'check_is_mento
     Route::get('/research-ideas/{id}', [MentorResearchIdeaApiController::class, 'show']);
     Route::put('/research-ideas/{id}', [MentorResearchIdeaApiController::class, 'update']);
     Route::post('/research-ideas/{id}/submission-proof', [MentorResearchIdeaApiController::class, 'submitSubmissionProof']);
+
+    // Chats
+    Route::get('/chats', [MentorChatApiController::class, 'index']);
+    Route::get('/chats/{id}', [MentorChatApiController::class, 'show']);
+    Route::post('/chats/{id}/messages', [MentorChatApiController::class, 'sendMessage']);
 });
 
+// Researcher chats
+Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_researcher']], function ($router) {
+    Route::get('/chats', [ResearcherChatApiController::class, 'index']);
+    Route::get('/chats/{id}', [ResearcherChatApiController::class, 'show']);
+    Route::post('/chats/{id}/messages', [ResearcherChatApiController::class, 'sendMessage']);
+});
 
+    // opportunities (public)
+Route::get('/opportunities', [OpportunityApiController::class, 'index']);
+Route::get('/opportunities/{id}', [OpportunityApiController::class, 'show']);
 
 // FAQ for users (public)
 Route::get('/faqs', [UserFaqController::class, 'index']);

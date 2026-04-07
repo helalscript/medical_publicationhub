@@ -24,6 +24,9 @@ use App\Http\Controllers\Web\Backend\SystemSettingController;
 use App\Http\Controllers\Web\Backend\UserController;
 use App\Http\Controllers\Web\Backend\UserManagementController;
 use App\Http\Controllers\Web\Backend\ResearchIdeaAdminController;
+use App\Http\Controllers\Web\Backend\OpportunityController;
+use App\Http\Controllers\Web\Backend\OpportunityApplicationAdminController;
+use App\Http\Controllers\Web\Backend\OpportunityChatController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function () {
@@ -77,6 +80,22 @@ Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function (
     Route::get('/research-ideas/{id}/edit', [ResearchIdeaAdminController::class, 'edit'])->name('admin.research_ideas.edit');
     Route::put('/research-ideas/{id}', [ResearchIdeaAdminController::class, 'update'])->name('admin.research_ideas.update');
 
+    // Opportunities
+    Route::resource('/opportunities', OpportunityController::class)->names('admin.opportunities');
+    Route::post('/opportunities/status/{id}', [OpportunityController::class, 'status'])->name('admin.opportunities.status');
+
+    // Opportunity applications
+    Route::get('/opportunity-applications', [OpportunityApplicationAdminController::class, 'index'])->name('admin.opportunity_applications.index');
+    Route::get('/opportunity-applications/{id}', [OpportunityApplicationAdminController::class, 'show'])->name('admin.opportunity_applications.show');
+    Route::get('/opportunity-applications/{id}/edit', [OpportunityApplicationAdminController::class, 'edit'])->name('admin.opportunity_applications.edit');
+    Route::put('/opportunity-applications/{id}', [OpportunityApplicationAdminController::class, 'update'])->name('admin.opportunity_applications.update');
+    Route::delete('/opportunity-applications/{id}', [OpportunityApplicationAdminController::class, 'destroy'])->name('admin.opportunity_applications.destroy');
+
+    // Opportunity chats (admin)
+    Route::get('/opportunity-chats', [OpportunityChatController::class, 'index'])->name('admin.opportunity_chats.index');
+    Route::get('/opportunity-chats/{id}', [OpportunityChatController::class, 'show'])->name('admin.opportunity_chats.show');
+    Route::post('/opportunity-chats/{id}/messages', [OpportunityChatController::class, 'sendMessage'])->name('admin.opportunity_chats.messages.store');
+
     // Route for FaqController
     Route::resource('/faqs', FaqController::class)->names('faqs');
     Route::post('/faqs/status/{id}', [FaqController::class, 'status'])->name('faqs.status');
@@ -104,22 +123,8 @@ Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function (
     Route::get('/contact-us-message/{id}', [ContactMessageController::class, 'show'])->name('admin_contact_us.show');
     Route::delete('/contact-us-message/{id}', [ContactMessageController::class, 'destroy'])->name('admin_contact_us.destroy');
 
-    // Prayer requests (admin)
-    Route::get('/prayer-requests', [PrayerRequestController::class, 'index'])->name('admin.prayer_requests.index');
-    Route::get('/prayer-requests/{id}', [PrayerRequestController::class, 'show'])->name('admin.prayer_requests.show');
-    Route::post('/prayer-requests/{id}/assign-clergy', [PrayerRequestController::class, 'assignClergy'])->name('admin.prayer_requests.assign_clergy');
-    Route::delete('/prayer-requests/{id}', [PrayerRequestController::class, 'destroy'])->name('admin.prayer_requests.destroy');
 
-    // Live session requests (admin)
-    Route::get('/live-session-requests', [LiveSessionRequestController::class, 'index'])->name('admin.live_session_requests.index');
-    Route::get('/live-session-requests/{id}', [LiveSessionRequestController::class, 'show'])->name('admin.live_session_requests.show');
-    Route::post('/live-session-requests/{id}/assign-clergy', [LiveSessionRequestController::class, 'assignClergy'])->name('admin.live_session_requests.assign_clergy');
-    Route::post('/live-session-requests/{id}/mark-completed', [LiveSessionRequestController::class, 'markCompleted'])->name('admin.live_session_requests.mark_completed');
-    Route::delete('/live-session-requests/{id}', [LiveSessionRequestController::class, 'destroy'])->name('admin.live_session_requests.destroy');
 
-    // Chats (in-app chat rooms)
-    Route::get('/chats', [ChatController::class, 'index'])->name('admin.chats.index');
-    Route::get('/chats/{room}', [ChatController::class, 'show'])->name('admin.chats.show');
 
     // Newsletter subscriptions
     Route::get('/newsletters', [NewsletterController::class, 'index'])->name('admin.newsletters.index');
