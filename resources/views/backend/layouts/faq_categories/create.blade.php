@@ -22,7 +22,7 @@
                                     class="form-control @error('name') is-invalid @enderror"
                                     name="name"
                                     value="{{ old('name') }}"
-                                    placeholder="General / For Seekers / For Clergy">
+                                    placeholder="FAQ Category Name">
                                 @error('name')
                                     <div class="text-danger mt-1">{{ $message }}</div>
                                 @enderror

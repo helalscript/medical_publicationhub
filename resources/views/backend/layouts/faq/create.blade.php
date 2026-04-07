@@ -72,7 +72,7 @@
                                     class="form-select @error('faq_category_id') is-invalid @enderror">
                                     <option value="">-- Select Category --</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('faq_category_id') == $category->id ? 'selected' : '' }}>
+                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                             {{ $category->name ? $category->name : $category->type }}
                                         </option>
                                     @endforeach
