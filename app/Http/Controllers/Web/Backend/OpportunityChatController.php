@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Backend;
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
+use App\Models\ChatUser;
 use App\Models\Message;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,14 +18,14 @@ class OpportunityChatController extends Controller
     {
         if ($request->ajax()) {
             $query = Chat::query()
-                ->with(['chatable.opportunity', 'users.user'])
-                ->where('chatable_type', \App\Models\OpportunityApplication::class)
+                ->with(['chatable.mentor.user', 'users.user'])
+                ->where('chatable_type', \App\Models\Opportunity::class)
                 ->latest('id');
 
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('opportunity', function ($row) {
-                    return e($row->chatable?->opportunity?->title ?? '-');
+                    return e($row->chatable?->title ?? '-');
                 })
                 ->addColumn('participants', function ($row) {
                     $names = $row->users->map(fn ($cu) => $cu->user?->name ?: $cu->user?->email)->filter()->values();
@@ -48,7 +49,7 @@ class OpportunityChatController extends Controller
 
     public function show(string $id)
     {
-        $chat = Chat::with(['chatable.opportunity', 'users.user'])->findOrFail($id);
+        $chat = Chat::with(['chatable.mentor.user', 'users.user'])->findOrFail($id);
         $messages = Message::with('user')
             ->where('chat_id', $chat->id)
             ->latest('id')
@@ -65,6 +66,11 @@ class OpportunityChatController extends Controller
 
         try {
             $chat = Chat::findOrFail($id);
+            // ensure admin is participant (mapped to super_admin role)
+            ChatUser::firstOrCreate(
+                ['chat_id' => $chat->id, 'user_id' => (int) $request->user()->id],
+                ['role' => 'super_admin', 'status' => 'active']
+            );
             $msg = Message::create([
                 'chat_id' => $chat->id,
                 'user_id' => $request->user()->id,

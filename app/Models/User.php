@@ -128,5 +128,25 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(ResearchIdea::class, 'user_id');
     }
 
+    public function opportunityApplications(): HasMany
+    {
+        return $this->hasMany(OpportunityApplication::class);
+    }
+
+    public function favourites(): HasMany
+    {
+        return $this->hasMany(Favourite::class);
+    }
+
+    public function chatUsers(): HasMany
+    {
+        return $this->hasMany(ChatUser::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
 }
 

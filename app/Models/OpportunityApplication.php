@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class OpportunityApplication extends Model
 {
@@ -46,9 +45,5 @@ class OpportunityApplication extends Model
         return $this->belongsTo(Opportunity::class);
     }
 
-    public function chat(): MorphOne
-    {
-        return $this->morphOne(Chat::class, 'chatable');
-    }
 }
 

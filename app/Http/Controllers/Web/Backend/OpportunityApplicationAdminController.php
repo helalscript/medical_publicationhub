@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Chat;
+use App\Models\ChatUser;
 use App\Models\OpportunityApplication;
 use Exception;
 use Illuminate\Http\Request;
@@ -61,8 +63,37 @@ class OpportunityApplicationAdminController extends Controller
         ]);
 
         try {
-            $app = OpportunityApplication::findOrFail($id);
+            $app = OpportunityApplication::with(['opportunity.mentor', 'user'])->findOrFail($id);
             $app->update($validated);
+
+            // If accepted: add applicant into opportunity group chat
+            if ($app->status === 'accept') {
+                $op = $app->opportunity;
+                if ($op) {
+                    $chat = Chat::firstOrCreate([
+                        'chatable_id' => $op->id,
+                        'chatable_type' => \App\Models\Opportunity::class,
+                    ], [
+                        'type' => 'group',
+                        'status' => 'active',
+                    ]);
+
+                    // ensure mentor is in chat
+                    $mentorUserId = $op->mentor?->user_id;
+                    if (! empty($mentorUserId)) {
+                        ChatUser::firstOrCreate(
+                            ['chat_id' => $chat->id, 'user_id' => (int) $mentorUserId],
+                            ['role' => 'mentor', 'status' => 'active']
+                        );
+                    }
+
+                    // add researcher (applicant)
+                    ChatUser::updateOrCreate(
+                        ['chat_id' => $chat->id, 'user_id' => (int) $app->user_id],
+                        ['role' => 'researcher', 'status' => 'active']
+                    );
+                }
+            }
 
             return redirect()->route('admin.opportunity_applications.index')->with('success', 'Application updated successfully.');
         } catch (Exception $e) {

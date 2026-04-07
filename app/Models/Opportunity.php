@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Opportunity extends Model
@@ -64,6 +65,11 @@ class Opportunity extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(OpportunityApplication::class);
+    }
+
+    public function chat(): MorphOne
+    {
+        return $this->morphOne(Chat::class, 'chatable');
     }
 
     public function favourites(): MorphMany

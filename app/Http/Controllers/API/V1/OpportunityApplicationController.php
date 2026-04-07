@@ -4,9 +4,6 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Models\Chat;
-use App\Models\ChatUser;
-use App\Models\Message;
 use App\Models\Opportunity;
 use App\Models\OpportunityApplication;
 use Exception;
@@ -79,7 +76,7 @@ class OpportunityApplicationController extends Controller
                 throw new RuntimeException('You must accept the terms.');
             }
 
-            $op = Opportunity::with('mentor')->where('status', 'active')->findOrFail($validated['opportunity_id']);
+            $op = Opportunity::with(['mentor', 'chat'])->where('status', 'active')->findOrFail($validated['opportunity_id']);
             if ($op->dead_line && now()->toDateString() > $op->dead_line->toDateString()) {
                 throw new RuntimeException('Deadline has passed for this opportunity.');
             }
@@ -115,37 +112,22 @@ class OpportunityApplicationController extends Controller
                 'status' => 'pending',
             ]);
 
-            // Create chat for this application (mentor <-> researcher)
+            // Ensure an opportunity-level chat exists (group), but DO NOT add applicant yet.
+            // Applicant will be added when admin accepts the application.
             $mentorUserId = $op->mentor?->user_id;
-            if (! empty($mentorUserId)) {
-                $chat = Chat::firstOrCreate([
-                    'chatable_id' => $application->id,
-                    'chatable_type' => OpportunityApplication::class,
-                ], [
-                    'type' => 'single',
+            if (! empty($mentorUserId) && ! $op->chat) {
+                $chat = \App\Models\Chat::create([
+                    'chatable_id' => $op->id,
+                    'chatable_type' => Opportunity::class,
+                    'type' => 'group',
                     'status' => 'active',
                 ]);
-
-                ChatUser::firstOrCreate([
+                \App\Models\ChatUser::firstOrCreate([
                     'chat_id' => $chat->id,
                     'user_id' => (int) $mentorUserId,
                 ], [
                     'role' => 'mentor',
                     'status' => 'active',
-                ]);
-
-                ChatUser::firstOrCreate([
-                    'chat_id' => $chat->id,
-                    'user_id' => (int) $request->user()->id,
-                ], [
-                    'role' => 'researcher',
-                    'status' => 'active',
-                ]);
-
-                Message::create([
-                    'chat_id' => $chat->id,
-                    'user_id' => (int) $request->user()->id,
-                    'message' => 'Hello Mentor, I have submitted my application. Thank you.',
                 ]);
             }
 
