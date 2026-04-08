@@ -52,7 +52,22 @@
 @section('content')
     <div class="main-content-container overflow-hidden">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-            <h3 class="mb-0">Opportunity</h3>
+            <div>
+                <h3 class="mb-1">Opportunity</h3>
+                <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                    <ol class="breadcrumb align-items-center mb-0 lh-1">
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.dashboard') }}" class="fw-medium text-decoration-none">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.opportunities.index') }}" class="fw-medium text-decoration-none">Opportunities</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <span class="fw-medium">Details</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
             <div>
                 <a href="{{ route('admin.opportunities.edit', $data->id) }}" class="btn btn-primary">Edit</a>
                 <a href="{{ route('admin.opportunities.index') }}" class="btn btn-outline-secondary">Back</a>

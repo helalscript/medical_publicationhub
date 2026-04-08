@@ -12,7 +12,25 @@
 @section('content')
     <div class="main-content-container overflow-hidden">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-            <h3 class="mb-0">Edit Publication</h3>
+            <div>
+                <h3 class="mb-1">Edit Publication</h3>
+                <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                    <ol class="breadcrumb align-items-center mb-0 lh-1">
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.dashboard') }}" class="fw-medium text-decoration-none">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.publications.index') }}" class="fw-medium text-decoration-none">Publications</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.publications.show', $data->id) }}" class="fw-medium text-decoration-none">Details</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <span class="fw-medium">Edit</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
             <a href="{{ route('admin.publications.index') }}" class="btn btn-outline-secondary">Back</a>
         </div>
 

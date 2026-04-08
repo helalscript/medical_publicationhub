@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Mentor;
 use App\Models\Message;
 use App\Models\Opportunity;
+use App\Models\Payment;
 use App\Models\Publication;
 use App\Models\Service;
 use App\Models\User;
@@ -18,102 +19,157 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
-        $totalUsers = User::query()->count();
-        $totalMentors = Mentor::query()->count();
-        $totalResearchers = User::query()->where('role', 'researcher')->count();
-        $totalCoordinators = User::query()->where('role', 'coordinator')->count();
+        $user = auth()->user();
 
-        $totalCourses = Course::query()->count();
-        $activeCourses = Course::query()->where('status', 'active')->count();
+        $canUsers = $user?->can('users.index') || $user?->can('user_management.mentor.index') || $user?->can('user_management.researcher.index') || $user?->can('user_management.coordinator.index');
+        $canCourses = $user?->can('admin.courses.index') || $user?->can('admin.modules.index') || $user?->can('admin.lessons.index');
+        $canOpportunities = $user?->can('admin.opportunities.index') || $user?->can('admin.opportunity_applications.index');
+        $canContent = $user?->can('admin.services.index') || $user?->can('admin.publications.index');
+        $canPayments = $user?->can('admin.payments.index');
+        $canChats = $user?->can('admin.opportunity_chats.index');
 
-        $totalOpportunities = Opportunity::query()->count();
-        $activeOpportunities = Opportunity::query()->where('status', 'active')->count();
+        $totalUsers = $canUsers ? User::query()->count() : null;
+        $totalMentors = $canUsers ? Mentor::query()->count() : null;
+        $totalResearchers = $canUsers ? User::query()->where('role', 'researcher')->count() : null;
+        $totalCoordinators = $canUsers ? User::query()->where('role', 'coordinator')->count() : null;
 
-        $totalServices = Service::query()->count();
-        $totalPublications = Publication::query()->count();
+        $totalCourses = $canCourses ? Course::query()->count() : null;
+        $activeCourses = $canCourses ? Course::query()->where('status', 'active')->count() : null;
+        $inactiveCourses = $canCourses ? Course::query()->where('status', 'inactive')->count() : null;
 
-        $totalChats = Chat::query()->count();
-        $activeChats = Chat::query()->where('status', 'active')->count();
-        $inactiveChats = Chat::query()->where('status', 'inactive')->count();
-        $groupChats = Chat::query()->where('type', 'group')->count();
-        $singleChats = Chat::query()->where('type', 'single')->count();
+        $totalOpportunities = $canOpportunities ? Opportunity::query()->count() : null;
+        $activeOpportunities = $canOpportunities ? Opportunity::query()->where('status', 'active')->count() : null;
+        $inactiveOpportunities = $canOpportunities ? Opportunity::query()->where('status', 'inactive')->count() : null;
 
-        $totalMessages = Message::query()->count();
-        $messagesLast7 = Message::query()
-            ->where('created_at', '>=', Carbon::now()->subDays(7))
-            ->count();
+        $totalServices = $user?->can('admin.services.index') ? Service::query()->count() : null;
+        $totalPublications = $user?->can('admin.publications.index') ? Publication::query()->count() : null;
 
-        $metricStart = Carbon::today()->subDays(6);
-        $messageCounts = Message::query()
-            ->select(DB::raw('DATE(created_at) as day'), DB::raw('COUNT(*) as total'))
-            ->where('created_at', '>=', $metricStart->copy()->startOfDay())
-            ->groupBy(DB::raw('DATE(created_at)'))
-            ->pluck('total', 'day')
-            ->toArray();
+        $totalPayments = $canPayments ? Payment::query()->count() : null;
+        $paymentStatusCounts = $canPayments
+            ? Payment::query()
+                ->select('status', DB::raw('COUNT(*) as total'))
+                ->groupBy('status')
+                ->pluck('total', 'status')
+                ->toArray()
+            : [];
 
-        $metricLabels = [];
-        $metricSeries = [];
-        for ($i = 0; $i < 7; $i++) {
-            $d = $metricStart->copy()->addDays($i);
-            $key = $d->toDateString();
-            $metricLabels[] = $d->format('D');
-            $metricSeries[] = (int) ($messageCounts[$key] ?? 0);
-        }
+        $totalChats = $canChats ? Chat::query()->count() : null;
+        $activeChats = $canChats ? Chat::query()->where('status', 'active')->count() : null;
+        $inactiveChats = $canChats ? Chat::query()->where('status', 'inactive')->count() : null;
+        $groupChats = $canChats ? Chat::query()->where('type', 'group')->count() : null;
+        $singleChats = $canChats ? Chat::query()->where('type', 'single')->count() : null;
 
-        $metrics = [
-            'messages_last_7_days' => [
+        $totalMessages = $canChats ? Message::query()->count() : null;
+        $messagesLast7 = $canChats
+            ? Message::query()->where('created_at', '>=', Carbon::now()->subDays(7))->count()
+            : null;
+
+        $metrics = [];
+        $chatPie = null;
+        $chatTypePie = null;
+
+        if ($canChats) {
+            $metricStart = Carbon::today()->subDays(6);
+            $messageCounts = Message::query()
+                ->select(DB::raw('DATE(created_at) as day'), DB::raw('COUNT(*) as total'))
+                ->where('created_at', '>=', $metricStart->copy()->startOfDay())
+                ->groupBy(DB::raw('DATE(created_at)'))
+                ->pluck('total', 'day')
+                ->toArray();
+
+            $metricLabels = [];
+            $metricSeries = [];
+            for ($i = 0; $i < 7; $i++) {
+                $d = $metricStart->copy()->addDays($i);
+                $key = $d->toDateString();
+                $metricLabels[] = $d->format('D');
+                $metricSeries[] = (int) ($messageCounts[$key] ?? 0);
+            }
+
+            $metrics['messages_last_7_days'] = [
                 'labels' => $metricLabels,
                 'series' => $metricSeries,
-            ],
-        ];
+            ];
 
-        $chatPie = [
-            'labels' => ['Active', 'Inactive'],
-            'series' => [
-                (int) $activeChats,
-                (int) $inactiveChats,
-            ],
-        ];
+            $chatPie = [
+                'labels' => ['Active', 'Inactive'],
+                'series' => [(int) $activeChats, (int) $inactiveChats],
+            ];
+        }
 
-        $chatTypePie = [
-            'labels' => ['Group', 'Single'],
-            'series' => [
-                (int) $groupChats,
-                (int) $singleChats,
-            ],
-        ];
+        $statusBars = [];
+        if ($canCourses) {
+            $statusBars['courses'] = [
+                'labels' => ['Active', 'Inactive'],
+                'series' => [(int) $activeCourses, (int) $inactiveCourses],
+            ];
+        }
+        if ($canOpportunities) {
+            $statusBars['opportunities'] = [
+                'labels' => ['Active', 'Inactive'],
+                'series' => [(int) $activeOpportunities, (int) $inactiveOpportunities],
+            ];
+        }
+        if ($canPayments) {
+            $order = ['pending', 'paid', 'failed', 'cancelled', 'refunded'];
+            $labels = [];
+            $series = [];
+            foreach ($order as $st) {
+                $labels[] = ucfirst($st);
+                $series[] = (int) ($paymentStatusCounts[$st] ?? 0);
+            }
+            $statusBars['payments'] = [
+                'labels' => $labels,
+                'series' => $series,
+            ];
+        }
 
-        $cards = [
-            'users' => [
+        $cards = [];
+        if ($canUsers) {
+            $cards['users'] = [
                 'total' => $totalUsers,
                 'mentors' => $totalMentors,
                 'researchers' => $totalResearchers,
                 'coordinators' => $totalCoordinators,
-            ],
-            'courses' => [
+            ];
+        }
+        if ($canCourses) {
+            $cards['courses'] = [
                 'total' => $totalCourses,
                 'active' => $activeCourses,
-            ],
-            'opportunities' => [
+            ];
+        }
+        if ($canOpportunities) {
+            $cards['opportunities'] = [
                 'total' => $totalOpportunities,
                 'active' => $activeOpportunities,
-            ],
-            'content' => [
+            ];
+        }
+        if ($canContent) {
+            $cards['content'] = [
                 'services' => $totalServices,
                 'publications' => $totalPublications,
-            ],
-            'chats' => [
+            ];
+        }
+        if ($canPayments) {
+            $cards['payments'] = [
+                'total' => $totalPayments,
+            ];
+        }
+        if ($canChats) {
+            $cards['chats'] = [
                 'total' => $totalChats,
                 'messages' => $totalMessages,
                 'messages_last_7_days' => $messagesLast7,
-            ],
-        ];
+            ];
+        }
 
         return view('backend.layouts.dashboard.index', compact(
             'cards',
             'chatPie',
             'chatTypePie',
-            'metrics'
+            'metrics',
+            'statusBars'
         ));
     }
 }

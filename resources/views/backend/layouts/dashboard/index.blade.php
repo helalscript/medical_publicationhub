@@ -55,9 +55,22 @@
                 grid: { borderColor: '#eef2f7' }
             };
 
+            const statusBars = @json($statusBars ?? []);
+
+            const makeBarOptions = (title, labels, series) => ({
+                chart: { type: 'bar', height: 260, toolbar: { show: false } },
+                plotOptions: { bar: { borderRadius: 8, columnWidth: '55%' } },
+                dataLabels: { enabled: false },
+                colors: ['#0EA5E9'],
+                series: [{ name: title, data: series || [] }],
+                xaxis: { categories: labels || [] },
+                grid: { borderColor: '#eef2f7' }
+            });
+
             const statusEl = document.querySelector('#chat_status_pie');
             const typeEl = document.querySelector('#chat_type_pie');
             const messagesEl = document.querySelector('#messages_7_line');
+            const statusBarsEl = document.querySelector('#status_bars');
 
             if (statusEl && (chatStatusOptions.series || []).length) {
                 const chartStatus = new ApexCharts(statusEl, chatStatusOptions);
@@ -70,6 +83,34 @@
             if (messagesEl && (messages7Options.series?.[0]?.data || []).length) {
                 const chartMessages = new ApexCharts(messagesEl, messages7Options);
                 chartMessages.render();
+            }
+
+            if (statusBarsEl) {
+                const blocks = [];
+                if (statusBars.courses?.labels?.length) blocks.push({ key: 'courses', title: 'Courses' });
+                if (statusBars.opportunities?.labels?.length) blocks.push({ key: 'opportunities', title: 'Opportunities' });
+                if (statusBars.payments?.labels?.length) blocks.push({ key: 'payments', title: 'Payments' });
+
+                if (blocks.length) {
+                    statusBarsEl.innerHTML = blocks.map(b => `
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card border-0 rounded-3 bg-white h-100">
+                                <div class="custom-padding-30">
+                                    <span class="d-block mb-1 text-muted">${b.title} overview</span>
+                                    <div id="bar_${b.key}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    blocks.forEach(b => {
+                        const el = document.querySelector(`#bar_${b.key}`);
+                        if (!el) return;
+                        const cfg = statusBars[b.key];
+                        const chart = new ApexCharts(el, makeBarOptions(b.title, cfg.labels, cfg.series));
+                        chart.render();
+                    });
+                }
             }
         })();
     </script>
@@ -94,105 +135,129 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card border-0 rounded-3 bg-white h-100">
-                    <div class="custom-padding-30">
-                        <span class="d-block mb-1 text-muted">Users</span>
-                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['users']['total'] ?? 0 }}</h3>
-                        <div class="d-flex flex-wrap gap-2 small text-muted">
-                            <span>Mentor: {{ $cards['users']['mentors'] ?? 0 }}</span>
-                            <span>Researcher: {{ $cards['users']['researchers'] ?? 0 }}</span>
-                            <span>Coordinator: {{ $cards['users']['coordinators'] ?? 0 }}</span>
+            @if(isset($cards['users']))
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card border-0 rounded-3 bg-white h-100">
+                        <div class="custom-padding-30">
+                            <span class="d-block mb-1 text-muted">Users</span>
+                            <h3 class="fw-medium fs-20 mb-1">{{ $cards['users']['total'] ?? 0 }}</h3>
+                            <div class="d-flex flex-wrap gap-2 small text-muted">
+                                <span>Mentor: {{ $cards['users']['mentors'] ?? 0 }}</span>
+                                <span>Researcher: {{ $cards['users']['researchers'] ?? 0 }}</span>
+                                <span>Coordinator: {{ $cards['users']['coordinators'] ?? 0 }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card border-0 rounded-3 bg-white h-100">
-                    <div class="custom-padding-30">
-                        <span class="d-block mb-1 text-muted">Courses</span>
-                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['courses']['total'] ?? 0 }}</h3>
-                        <div class="small text-muted">Active: {{ $cards['courses']['active'] ?? 0 }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card border-0 rounded-3 bg-white h-100">
-                    <div class="custom-padding-30">
-                        <span class="d-block mb-1 text-muted">Opportunities</span>
-                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['opportunities']['total'] ?? 0 }}</h3>
-                        <div class="small text-muted">Active: {{ $cards['opportunities']['active'] ?? 0 }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card border-0 rounded-3 bg-white h-100">
-                    <div class="custom-padding-30">
-                        <span class="d-block mb-1 text-muted">Services &amp; Publications</span>
-                        <h3 class="fw-medium fs-20 mb-1">
-                            {{ ($cards['content']['services'] ?? 0) + ($cards['content']['publications'] ?? 0) }}
-                        </h3>
-                        <div class="small text-muted">
-                            Services: {{ $cards['content']['services'] ?? 0 }},
-                            Publications: {{ $cards['content']['publications'] ?? 0 }}
+            @if(isset($cards['courses']))
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card border-0 rounded-3 bg-white h-100">
+                        <div class="custom-padding-30">
+                            <span class="d-block mb-1 text-muted">Courses</span>
+                            <h3 class="fw-medium fs-20 mb-1">{{ $cards['courses']['total'] ?? 0 }}</h3>
+                            <div class="small text-muted">Active: {{ $cards['courses']['active'] ?? 0 }}</div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
+
+            @if(isset($cards['opportunities']))
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card border-0 rounded-3 bg-white h-100">
+                        <div class="custom-padding-30">
+                            <span class="d-block mb-1 text-muted">Opportunities</span>
+                            <h3 class="fw-medium fs-20 mb-1">{{ $cards['opportunities']['total'] ?? 0 }}</h3>
+                            <div class="small text-muted">Active: {{ $cards['opportunities']['active'] ?? 0 }}</div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if(isset($cards['content']))
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card border-0 rounded-3 bg-white h-100">
+                        <div class="custom-padding-30">
+                            <span class="d-block mb-1 text-muted">Services &amp; Publications</span>
+                            <h3 class="fw-medium fs-20 mb-1">
+                                {{ ($cards['content']['services'] ?? 0) + ($cards['content']['publications'] ?? 0) }}
+                            </h3>
+                            <div class="small text-muted">
+                                Services: {{ $cards['content']['services'] ?? 0 }},
+                                Publications: {{ $cards['content']['publications'] ?? 0 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if(isset($cards['payments']))
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card border-0 rounded-3 bg-white h-100">
+                        <div class="custom-padding-30">
+                            <span class="d-block mb-1 text-muted">Payments</span>
+                            <h3 class="fw-medium fs-20 mb-1">{{ $cards['payments']['total'] ?? 0 }}</h3>
+                            <div class="small text-muted">Total payments records</div>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card border-0 rounded-3 bg-white h-100">
-                    <div class="custom-padding-30">
-                        <span class="d-block mb-1 text-muted">Chats overview</span>
-                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['chats']['total'] ?? 0 }} chats</h3>
-                        <div class="small text-muted mb-2">
-                            Messages: {{ $cards['chats']['messages'] ?? 0 }},
-                            last 7 days: {{ $cards['chats']['messages_last_7_days'] ?? 0 }}
+            @if(isset($cards['chats']))
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card border-0 rounded-3 bg-white h-100">
+                        <div class="custom-padding-30">
+                            <span class="d-block mb-1 text-muted">Chats overview</span>
+                            <h3 class="fw-medium fs-20 mb-1">{{ $cards['chats']['total'] ?? 0 }} chats</h3>
+                            <div class="small text-muted mb-2">
+                                Messages: {{ $cards['chats']['messages'] ?? 0 }},
+                                last 7 days: {{ $cards['chats']['messages_last_7_days'] ?? 0 }}
+                            </div>
+                            <div id="chat_status_pie"></div>
                         </div>
-                        <div id="chat_status_pie"></div>
                     </div>
                 </div>
-            </div>
+            @endif
 
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card border-0 rounded-3 bg-white h-100">
-                    <div class="custom-padding-30">
-                        <span class="d-block mb-1 text-muted">Chat type</span>
-                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['chats']['total'] ?? 0 }} total</h3>
-                        <div id="chat_type_pie"></div>
+            @if(isset($cards['chats']))
+                <div class="col-lg-4 col-md-12 mb-4">
+                    <div class="card border-0 rounded-3 bg-white h-100">
+                        <div class="custom-padding-30">
+                            <span class="d-block mb-1 text-muted">Messages (last 7 days)</span>
+                            <h3 class="fw-medium fs-20 mb-1">{{ $cards['chats']['messages_last_7_days'] ?? 0 }}</h3>
+                            <div id="messages_7_line"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-lg-4 col-md-12 mb-4">
-                <div class="card border-0 rounded-3 bg-white h-100">
-                    <div class="custom-padding-30">
-                        <span class="d-block mb-1 text-muted">Messages (last 7 days)</span>
-                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['chats']['messages_last_7_days'] ?? 0 }}</h3>
-                        <div id="messages_7_line"></div>
-                    </div>
-                </div>
-            </div>
+            @endif
 
             <div class="col-lg-4 col-md-12 mb-4">
                 <div class="card border-0 rounded-3 bg-white h-100">
                     <div class="custom-padding-30">
                         <span class="d-block mb-1 text-muted">Quick links</span>
                         <div class="d-flex flex-column gap-2 mt-2">
-                            <a href="{{ route('admin.opportunities.index') }}" class="btn btn-sm btn-outline-primary text-start">View Opportunities</a>
-                            <a href="{{ route('admin.courses.index') }}" class="btn btn-sm btn-outline-primary text-start">View Courses</a>
-                            <a href="{{ route('admin.opportunity_chats.index') }}" class="btn btn-sm btn-outline-primary text-start">View Opportunity Chats</a>
-                            <a href="{{ route('admin.partnership_requests.index') }}" class="btn btn-sm btn-outline-primary text-start">Partnership Requests</a>
+                            @can('admin.opportunities.index')
+                                <a href="{{ route('admin.opportunities.index') }}" class="btn btn-sm btn-outline-primary text-start">View Opportunities</a>
+                            @endcan
+                            @can('admin.courses.index')
+                                <a href="{{ route('admin.courses.index') }}" class="btn btn-sm btn-outline-primary text-start">View Courses</a>
+                            @endcan
+                            @can('admin.opportunity_chats.index')
+                                <a href="{{ route('admin.opportunity_chats.index') }}" class="btn btn-sm btn-outline-primary text-start">View Opportunity Chats</a>
+                            @endcan
+                            @can('admin.partnership_requests.index')
+                                <a href="{{ route('admin.partnership_requests.index') }}" class="btn btn-sm btn-outline-primary text-start">Partnership Requests</a>
+                            @endcan
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="row" id="status_bars"></div>
 
         <div class="row">
             {{-- <div class="col-lg-4 col-md-6">
