@@ -9,6 +9,7 @@
  */
 
 use App\Http\Controllers\Web\Backend\BlogController;
+use App\Http\Controllers\Web\Backend\DashboardController;
 use App\Http\Controllers\Web\Backend\CMS\FaqController;
 use App\Http\Controllers\Web\Backend\CMS\FaqCategoryController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageSocialLinkContainerController;
@@ -39,10 +40,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function () {
 
-    // Routes for managing guests
-    Route::get('/', function () {
-        return view('backend.layouts.dashboard.index');
-    })->name('admin.dashboard');
+    // Dashboard (overview cards + chat charts)
+    Route::get('/', DashboardController::class)->name('admin.dashboard');
 
     Route::get('settings-profile', [ProfileController::class, 'index'])->name('profile_settings.index');
     Route::post('settings-profile', [ProfileController::class, 'update'])->name('profile_settings.update');

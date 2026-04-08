@@ -17,6 +17,7 @@ use App\Http\Controllers\API\V1\CourseController as CourseApiController;
 use App\Http\Controllers\API\V1\CoursePurchaseController as CoursePurchaseApiController;
 use App\Http\Controllers\API\V1\DashboardController;
 use App\Http\Controllers\API\V1\FavouriteController as FavouriteApiController;
+use App\Http\Controllers\API\V1\Mentor\DashboardController as MentorDashboardApiController;
 use App\Http\Controllers\API\V1\Mentor\ChatController as MentorChatApiController;
 use App\Http\Controllers\API\V1\Mentor\ResearchIdeaController as MentorResearchIdeaApiController;
 use App\Http\Controllers\API\V1\MyCourseController as MyCourseApiController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\API\V1\OpportunityController as OpportunityApiControlle
 use App\Http\Controllers\API\V1\PartnershipRequestController as PartnershipRequestApiController;
 use App\Http\Controllers\API\V1\PublicationController as PublicationApiController;
 use App\Http\Controllers\API\V1\Researcher\ChatController as ResearcherChatApiController;
+use App\Http\Controllers\API\V1\Researcher\DashboardController as ResearcherDashboardApiController;
 use App\Http\Controllers\API\V1\ServiceController as ServiceApiController;
 use App\Http\Controllers\API\V1\User\Faqs\UserFaqController;
 use App\Http\Controllers\API\V1\User\NewsletterController;
@@ -75,6 +77,9 @@ Route::group(['middleware' => ['auth:api', 'check_is_user']], function ($router)
 
 // Mentor — research ideas (JWT + mentor role)
 Route::group(['prefix' => 'mentor', 'middleware' => ['auth:api', 'check_is_mentor']], function ($router) {
+    // Dashboard overview
+    Route::get('/dashboard/overview', [MentorDashboardApiController::class, 'overview']);
+
     Route::get('/research-ideas', [MentorResearchIdeaApiController::class, 'index']);
     Route::post('/research-ideas', [MentorResearchIdeaApiController::class, 'store']);
     Route::get('/research-ideas/{id}', [MentorResearchIdeaApiController::class, 'show']);
@@ -89,6 +94,9 @@ Route::group(['prefix' => 'mentor', 'middleware' => ['auth:api', 'check_is_mento
 
 // Opportunities & applications (JWT user) and Researcher chats
 Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_researcher']], function ($router) {
+    // Dashboard overview
+    Route::get('/dashboard/overview', [ResearcherDashboardApiController::class, 'overview']);
+
     // applications
     Route::get('/opportunity-applications', [OpportunityApplicationApiController::class, 'index']);
     Route::post('/opportunity-applications', [OpportunityApplicationApiController::class, 'store']);

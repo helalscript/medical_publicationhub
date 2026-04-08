@@ -4,7 +4,79 @@
     Dashboard
 @endsection
 
+@push('scripts')
+    <script>
+        (function () {
+            if (typeof ApexCharts === 'undefined') {
+                return;
+            }
+
+            const chatStatusOptions = {
+                chart: {
+                    type: 'pie',
+                    height: 260
+                },
+                labels: @json($chatPie['labels'] ?? []),
+                series: @json($chatPie['series'] ?? []),
+                colors: ['#22C55E', '#94A3B8'],
+                legend: {
+                    position: 'bottom'
+                }
+            };
+
+            const chatTypeOptions = {
+                chart: {
+                    type: 'pie',
+                    height: 260
+                },
+                labels: @json($chatTypePie['labels'] ?? []),
+                series: @json($chatTypePie['series'] ?? []),
+                colors: ['#3B82F6', '#A855F7'],
+                legend: {
+                    position: 'bottom'
+                }
+            };
+
+            const messages7Options = {
+                chart: {
+                    type: 'line',
+                    height: 260,
+                    toolbar: { show: false }
+                },
+                stroke: { curve: 'smooth', width: 3 },
+                colors: ['#0EA5E9'],
+                series: [{
+                    name: 'Messages',
+                    data: @json($metrics['messages_last_7_days']['series'] ?? [])
+                }],
+                xaxis: {
+                    categories: @json($metrics['messages_last_7_days']['labels'] ?? [])
+                },
+                grid: { borderColor: '#eef2f7' }
+            };
+
+            const statusEl = document.querySelector('#chat_status_pie');
+            const typeEl = document.querySelector('#chat_type_pie');
+            const messagesEl = document.querySelector('#messages_7_line');
+
+            if (statusEl && (chatStatusOptions.series || []).length) {
+                const chartStatus = new ApexCharts(statusEl, chatStatusOptions);
+                chartStatus.render();
+            }
+            if (typeEl && (chatTypeOptions.series || []).length) {
+                const chartType = new ApexCharts(typeEl, chatTypeOptions);
+                chartType.render();
+            }
+            if (messagesEl && (messages7Options.series?.[0]?.data || []).length) {
+                const chartMessages = new ApexCharts(messagesEl, messages7Options);
+                chartMessages.render();
+            }
+        })();
+    </script>
+@endpush
+
 @push('styles')
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 @endpush
 
 @section('content')
@@ -12,27 +84,116 @@
         <div class="row">
             <div class="col-md-7">
                 <div class="mb-4">
-                    <h3 class="fs-20 fw-semibold mb-1">Welcome Back, <span class="text-primary">{{ Auth::user()->name ?? 'Mr. John Doe' }}!</span>
+                    <h3 class="fs-20 fw-semibold mb-1">
+                        Welcome Back,
+                        <span class="text-primary">{{ Auth::user()->name ?? 'Admin' }}!</span>
                     </h3>
-                    <p style="line-height: 1.4;">Monitor and manage coaches stucture, categories and more
-                        in one place.</p>
+                    <p style="line-height: 1.4;">Overview of mentors, researchers, courses, opportunities and chats.</p>
                 </div>
             </div>
-            {{-- <div class="col-md-5">
-                <div class="d-flex flex-wrap gap-2 justify-content-md-end mb-4">
-                    <a href="pricing-plan.html" class="btn d-flex align-items-center gap-1"
-                        style="background-color: #F3E8FF; color: #7C24CC; padding: 3.5px 11px;">
-                        <i class="ri-vip-crown-line fs-18 lh-1" style="color: #7C24CC;"></i>
-                        <span>Plan Upgrade</span>
-                    </a>
-                    <button class="btn d-flex align-items-center gap-1"
-                        style="background-color: #FFE8D4; color: #C52B09; padding: 3.5px 11px;">
-                        <i class="ri-file-download-line fs-18 lh-1 position-relative top-1" style="color: #C52B09;"></i>
-                        <span>Export Reports</span>
-                    </button>
-                </div>
-            </div> --}}
         </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card border-0 rounded-3 bg-white h-100">
+                    <div class="custom-padding-30">
+                        <span class="d-block mb-1 text-muted">Users</span>
+                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['users']['total'] ?? 0 }}</h3>
+                        <div class="d-flex flex-wrap gap-2 small text-muted">
+                            <span>Mentor: {{ $cards['users']['mentors'] ?? 0 }}</span>
+                            <span>Researcher: {{ $cards['users']['researchers'] ?? 0 }}</span>
+                            <span>Coordinator: {{ $cards['users']['coordinators'] ?? 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card border-0 rounded-3 bg-white h-100">
+                    <div class="custom-padding-30">
+                        <span class="d-block mb-1 text-muted">Courses</span>
+                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['courses']['total'] ?? 0 }}</h3>
+                        <div class="small text-muted">Active: {{ $cards['courses']['active'] ?? 0 }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card border-0 rounded-3 bg-white h-100">
+                    <div class="custom-padding-30">
+                        <span class="d-block mb-1 text-muted">Opportunities</span>
+                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['opportunities']['total'] ?? 0 }}</h3>
+                        <div class="small text-muted">Active: {{ $cards['opportunities']['active'] ?? 0 }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card border-0 rounded-3 bg-white h-100">
+                    <div class="custom-padding-30">
+                        <span class="d-block mb-1 text-muted">Services &amp; Publications</span>
+                        <h3 class="fw-medium fs-20 mb-1">
+                            {{ ($cards['content']['services'] ?? 0) + ($cards['content']['publications'] ?? 0) }}
+                        </h3>
+                        <div class="small text-muted">
+                            Services: {{ $cards['content']['services'] ?? 0 }},
+                            Publications: {{ $cards['content']['publications'] ?? 0 }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card border-0 rounded-3 bg-white h-100">
+                    <div class="custom-padding-30">
+                        <span class="d-block mb-1 text-muted">Chats overview</span>
+                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['chats']['total'] ?? 0 }} chats</h3>
+                        <div class="small text-muted mb-2">
+                            Messages: {{ $cards['chats']['messages'] ?? 0 }},
+                            last 7 days: {{ $cards['chats']['messages_last_7_days'] ?? 0 }}
+                        </div>
+                        <div id="chat_status_pie"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card border-0 rounded-3 bg-white h-100">
+                    <div class="custom-padding-30">
+                        <span class="d-block mb-1 text-muted">Chat type</span>
+                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['chats']['total'] ?? 0 }} total</h3>
+                        <div id="chat_type_pie"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12 mb-4">
+                <div class="card border-0 rounded-3 bg-white h-100">
+                    <div class="custom-padding-30">
+                        <span class="d-block mb-1 text-muted">Messages (last 7 days)</span>
+                        <h3 class="fw-medium fs-20 mb-1">{{ $cards['chats']['messages_last_7_days'] ?? 0 }}</h3>
+                        <div id="messages_7_line"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12 mb-4">
+                <div class="card border-0 rounded-3 bg-white h-100">
+                    <div class="custom-padding-30">
+                        <span class="d-block mb-1 text-muted">Quick links</span>
+                        <div class="d-flex flex-column gap-2 mt-2">
+                            <a href="{{ route('admin.opportunities.index') }}" class="btn btn-sm btn-outline-primary text-start">View Opportunities</a>
+                            <a href="{{ route('admin.courses.index') }}" class="btn btn-sm btn-outline-primary text-start">View Courses</a>
+                            <a href="{{ route('admin.opportunity_chats.index') }}" class="btn btn-sm btn-outline-primary text-start">View Opportunity Chats</a>
+                            <a href="{{ route('admin.partnership_requests.index') }}" class="btn btn-sm btn-outline-primary text-start">Partnership Requests</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             {{-- <div class="col-lg-4 col-md-6">
                 <div class="card border-0 rounded-3 bg-white mb-4">
