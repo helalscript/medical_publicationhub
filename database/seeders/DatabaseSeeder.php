@@ -54,5 +54,9 @@ class DatabaseSeeder extends Seeder
         $this->call(OpportunitySeeder::class);
         $this->call(ServiceSeeder::class);
         $this->call(PublicationSeeder::class);
+        $this->call(PartnershipRequestSeeder::class);
+        $this->call(MentorResearcherDemoSeeder::class);
+        $this->call(OpportunityApplicationChatSeeder::class);
+        $this->call(ContactUsSeeder::class);
     }
 }
