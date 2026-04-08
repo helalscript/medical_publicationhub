@@ -49,20 +49,22 @@
 
                 <hr class="my-4">
 
-                <form action="{{ route('admin.payments.status', $data->id) }}" method="POST" class="row g-2 align-items-end">
-                    @csrf
-                    <div class="col-md-4">
-                        <label class="form-label">Update status</label>
-                        <select name="status" class="form-select">
-                            @foreach(['pending','paid','failed','cancelled','refunded'] as $s)
-                                <option value="{{ $s }}" @selected(old('status', $data->status) === $s)>{{ ucfirst($s) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </div>
-                </form>
+                @can('admin.payments.status')
+                    <form action="{{ route('admin.payments.status', $data->id) }}" method="POST" class="row g-2 align-items-end">
+                        @csrf
+                        <div class="col-md-4">
+                            <label class="form-label">Update status</label>
+                            <select name="status" class="form-select">
+                                @foreach(['pending','paid','failed','cancelled','refunded'] as $s)
+                                    <option value="{{ $s }}" @selected(old('status', $data->status) === $s)>{{ ucfirst($s) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                @endcan
             </div>
         </div>
     </div>

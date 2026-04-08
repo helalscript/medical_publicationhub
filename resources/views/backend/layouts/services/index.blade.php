@@ -14,7 +14,6 @@
     <div class="main-content-container overflow-hidden">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
             <h3 class="mb-0">Services</h3>
-            <a href="{{ route('admin.services.create') }}" class="btn btn-outline-primary">Add New</a>
         </div>
 
         <div class="card bg-white border-0 rounded-3 mb-4">

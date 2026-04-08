@@ -25,18 +25,37 @@ class PublicationController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($row) {
-                    $s = '<div class="form-check form-switch">';
-                    $s .= '<input onclick="changeStatus(event,'.$row->id.')" type="checkbox" class="form-check-input" style="border-radius: 25rem;width:40px" name="status"'.($row->status == 'active' ? ' checked' : '').'>';
-                    $s .= '</div>';
+                    $user = auth()->user();
+                    if (! $user || ! $user->can('admin.publications.status')) {
+                        $c = $row->status === 'active' ? 'success' : 'secondary';
+                        $t = $row->status === 'active' ? 'Active' : 'Inactive';
 
-                    return $s;
+                        return '<span class="badge bg-'.$c.'">'.$t.'</span>';
+                    }
+
+                    return '<div class="form-check form-switch">'
+                        .'<input onclick="changeStatus(event,'.$row->id.')" type="checkbox" class="form-check-input" style="border-radius: 25rem;width:40px" name="status"'.($row->status == 'active' ? ' checked' : '').'>'
+                        .'</div>';
                 })
                 ->addColumn('action', function ($row) {
-                    return '<div class="action-wrapper">
-                        <a type="button" href="'.route('admin.publications.show', $row->id).'" class="ps-0 border-0 bg-transparent lh-1"><i class="material-symbols-outlined fs-16 text-primary">visibility</i></a>
-                        <a type="button" href="'.route('admin.publications.edit', $row->id).'" class="ps-0 border-0 bg-transparent lh-1"><i class="material-symbols-outlined fs-16 text-body">edit</i></a>
-                        <button class="ps-0 border-0 bg-transparent lh-1" onclick="deleteRecord(event,'.$row->id.')"><i class="material-symbols-outlined fs-16 text-danger">delete</i></button>
-                    </div>';
+                    $user = auth()->user();
+                    $buttons = [];
+
+                    if ($user && $user->can('admin.publications.show')) {
+                        $buttons[] = '<a type="button" href="'.route('admin.publications.show', $row->id).'" class="ps-0 border-0 bg-transparent lh-1" title="View"><i class="material-symbols-outlined fs-16 text-primary">visibility</i></a>';
+                    }
+                    if ($user && $user->can('admin.publications.edit')) {
+                        $buttons[] = '<a type="button" href="'.route('admin.publications.edit', $row->id).'" class="ps-0 border-0 bg-transparent lh-1" title="Edit"><i class="material-symbols-outlined fs-16 text-body">edit</i></a>';
+                    }
+                    if ($user && $user->can('admin.publications.destroy')) {
+                        $buttons[] = '<button class="ps-0 border-0 bg-transparent lh-1" onclick="deleteRecord(event,'.$row->id.')" title="Delete"><i class="material-symbols-outlined fs-16 text-danger">delete</i></button>';
+                    }
+
+                    if (count($buttons) === 0) {
+                        return '-';
+                    }
+
+                    return '<div class="action-wrapper">'.implode('', $buttons).'</div>';
                 })
                 ->rawColumns(['status', 'action'])
                 ->make(true);

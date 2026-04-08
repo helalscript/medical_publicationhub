@@ -14,7 +14,6 @@
     <div class="main-content-container overflow-hidden">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
             <h3 class="mb-0">Publications</h3>
-            <a href="{{ route('admin.publications.create') }}" class="btn btn-outline-primary">Add New</a>
         </div>
 
         <div class="row justify-content-center">

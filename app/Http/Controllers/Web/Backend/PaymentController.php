@@ -40,9 +40,14 @@ class PaymentController extends Controller
                     return '<span class="badge bg-'.$c.'">'.e($row->status).'</span>';
                 })
                 ->addColumn('action', function ($row) {
-                    return '<div class="action-wrapper">
-                        <a type="button" href="'.route('admin.payments.show', $row->id).'" class="ps-0 border-0 bg-transparent lh-1"><i class="material-symbols-outlined fs-16 text-primary">visibility</i></a>
-                    </div>';
+                    $user = auth()->user();
+                    if (! $user || ! $user->can('admin.payments.show')) {
+                        return '-';
+                    }
+
+                    return '<div class="action-wrapper">'
+                        .'<a type="button" href="'.route('admin.payments.show', $row->id).'" class="ps-0 border-0 bg-transparent lh-1" title="View"><i class="material-symbols-outlined fs-16 text-primary">visibility</i></a>'
+                        .'</div>';
                 })
                 ->rawColumns(['payable_type_short', 'status_badge', 'action'])
                 ->make(true);
