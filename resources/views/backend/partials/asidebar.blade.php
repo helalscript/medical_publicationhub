@@ -36,6 +36,22 @@ $systemSetting = App\Models\SystemSetting::first();
                     <span class="title">Research Ideas</span>
                 </a>
             </li>
+
+            <li class="menu-item open">
+                <a href="{{ route('admin.publications.index') }}"
+                    class="menu-link {{ request()->routeIs('admin.publications.*') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined menu-icon">library_books</span>
+                    <span class="title">Publications</span>
+                </a>
+            </li>
+
+            <li class="menu-item open">
+                <a href="{{ route('admin.partnership_requests.index') }}"
+                    class="menu-link {{ request()->routeIs('admin.partnership_requests.*') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined menu-icon">handshake</span>
+                    <span class="title">Partnership Requests</span>
+                </a>
+            </li>
             <li class="menu-item {{ request()->routeIs('admin.opportunities.*', 'admin.opportunity_applications.*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle active">
                     <span class="material-symbols-outlined menu-icon">work</span>
@@ -58,6 +74,45 @@ $systemSetting = App\Models\SystemSetting::first();
                         <a href="{{ route('admin.opportunity_chats.index') }}"
                             class="menu-link {{ request()->routeIs('admin.opportunity_chats.*') ? 'active' : '' }}">
                             Chats
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="menu-item {{ request()->routeIs('admin.courses.*', 'admin.modules.*', 'admin.lessons.*', 'admin.course_access.*', 'admin.payments.*') ? 'open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <span class="material-symbols-outlined menu-icon">school</span>
+                    <span class="title">Courses</span>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item">
+                        <a href="{{ route('admin.courses.index') }}"
+                           class="menu-link {{ request()->routeIs('admin.courses.*') ? 'active' : '' }}">
+                            Course List
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('admin.modules.index') }}"
+                           class="menu-link {{ request()->routeIs('admin.modules.*') ? 'active' : '' }}">
+                            Modules
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('admin.lessons.index') }}"
+                           class="menu-link {{ request()->routeIs('admin.lessons.*') ? 'active' : '' }}">
+                            Lessons
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('admin.course_access.index') }}"
+                           class="menu-link {{ request()->routeIs('admin.course_access.*') ? 'active' : '' }}">
+                            Course Access
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('admin.payments.index') }}"
+                           class="menu-link {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
+                            Payments
                         </a>
                     </li>
                 </ul>
