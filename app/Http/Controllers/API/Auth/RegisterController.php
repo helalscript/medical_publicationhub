@@ -4,11 +4,7 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Helpers\Helper;
 use App\Mail\OtpMail;
-use App\Models\Clergy;
-use App\Models\Contractor;
-use App\Models\License;
-use App\Notifications\UserRegistrationNotification;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Mentor;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Exception;
@@ -35,7 +31,7 @@ class RegisterController extends Controller
             'phone' => 'nullable|numeric|max_digits:20|unique:users,phone,NULL,id,deleted_at,NULL',
             'email' => 'required|string|email|max:150|unique:users,email,NULL,id,deleted_at,NULL',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|in:clergy,seeker',
+            'role' => 'required|in:mentor,researcher',
         ]);
 
         try {
@@ -81,14 +77,17 @@ class RegisterController extends Controller
                 ]);
             }
 
-            // Create additional clergy profile only after we have $user->id
-            if ($request->input('role') === 'clergy') {
-                Clergy::create([
+            // Create additional mentor profile only after we have $user->id
+            if ($request->input('role') === 'mentor') {
+                Mentor::create([
                     'user_id' => $user->id,
-                    'religion' => $request->input('religion'),
-                    'bio' => $request->input('bio'),
-                    'address' => $request->input('address'),
-                    'city' => $request->input('city'),
+                    'name' => $request->input('name'),
+                    'avatar' => null,
+                    'bio' => null,
+                    'university' => null,
+                    'department' => null,
+                    'social_links' => null,
+                    'status' => 'active',
                 ]);
             }
 

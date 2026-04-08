@@ -247,4 +247,278 @@ class UserManagementController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Status changed successfully.']);
     }
+
+    // ===================== Researcher =====================
+    public function researcherIndex(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = User::query()->where('role', 'researcher')->latest();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('avatar', function ($row) {
+                    $src = $row->avatar ? asset($row->avatar) : asset('backend/admin/assets/images/avatar_defult.png');
+                    return '<img src="'.$src.'" class="wh-40 rounded-3" alt="avatar">';
+                })
+                ->addColumn('status', function ($row) {
+                    $s = '<div class="form-check form-switch">';
+                    $s .= '<input onclick="changeStatus(event,'.$row->id.')" type="checkbox" class="form-check-input" style="border-radius: 25rem;width:40px" name="status"'.($row->status == 'active' ? ' checked' : '').'>';
+                    $s .= '</div>';
+                    return $s;
+                })
+                ->addColumn('action', function ($row) {
+                    return '<div class="action-wrapper">
+                        <a type="button" href="'.route('user_management.researcher.show', $row->id).'" class="ps-0 border-0 bg-transparent lh-1"><i class="material-symbols-outlined fs-16 text-primary">visibility</i></a>
+                        <a type="button" href="'.route('user_management.researcher.edit', $row->id).'" class="ps-0 border-0 bg-transparent lh-1"><i class="material-symbols-outlined fs-16 text-body">edit</i></a>
+                        <button class="ps-0 border-0 bg-transparent lh-1" onclick="deleteRecord(event,'.$row->id.')"><i class="material-symbols-outlined fs-16 text-danger">delete</i></button>
+                    </div>';
+                })
+                ->rawColumns(['avatar', 'status', 'action'])
+                ->make(true);
+        }
+
+        return view('backend.layouts.user_management.researcher.index');
+    }
+
+    public function researcherCreate()
+    {
+        return view('backend.layouts.user_management.researcher.create');
+    }
+
+    public function researcherStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:100|unique:users,email',
+            'phone' => 'nullable|string|max:50|unique:users,phone',
+            'gender' => 'nullable|in:male,female,others',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'password' => 'required|string|min:6',
+        ]);
+
+        try {
+            if ($request->hasFile('avatar')) {
+                $validated['avatar'] = Helper::fileUpload($request->file('avatar'), 'user/avatar', time().'_'.getFileName($request->file('avatar')));
+            }
+
+            $validated['password'] = bcrypt($validated['password']);
+            $validated['role'] = 'researcher';
+            $validated['email_verified_at'] = now();
+            $validated['status'] = 'active';
+
+            User::create($validated);
+
+            return redirect()->route('user_management.researcher.index')->with('success', 'Researcher user created successfully.');
+        } catch (Exception $e) {
+            Log::error('UserManagementController::researcherStore '.$e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Researcher user create failed.');
+        }
+    }
+
+    public function researcherShow(string $id)
+    {
+        $data = User::where('role', 'researcher')->findOrFail($id);
+        return view('backend.layouts.user_management.researcher.show', compact('data'));
+    }
+
+    public function researcherEdit(string $id)
+    {
+        $data = User::where('role', 'researcher')->findOrFail($id);
+        return view('backend.layouts.user_management.researcher.edit', compact('data'));
+    }
+
+    public function researcherUpdate(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:100|unique:users,email,'.$id,
+            'phone' => 'nullable|string|max:50|unique:users,phone,'.$id,
+            'gender' => 'nullable|in:male,female,others',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'password' => 'sometimes|nullable|string|min:6',
+        ]);
+
+        try {
+            $user = User::where('role', 'researcher')->findOrFail($id);
+
+            if ($request->hasFile('avatar')) {
+                if (! empty($user->avatar) && file_exists(public_path($user->avatar))) {
+                    Helper::fileDelete(public_path($user->avatar));
+                }
+                $validated['avatar'] = Helper::fileUpload($request->file('avatar'), 'user/avatar', time().'_'.getFileName($request->file('avatar')));
+            } else {
+                unset($validated['avatar']);
+            }
+
+            if ($request->filled('password')) {
+                $validated['password'] = bcrypt($validated['password']);
+            } else {
+                unset($validated['password']);
+            }
+
+            $user->update($validated);
+
+            return redirect()->route('user_management.researcher.index')->with('success', 'Researcher user updated successfully.');
+        } catch (Exception $e) {
+            Log::error('UserManagementController::researcherUpdate '.$e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Researcher user update failed.');
+        }
+    }
+
+    public function researcherDestroy(string $id)
+    {
+        $user = User::where('role', 'researcher')->findOrFail($id);
+        if (! empty($user->avatar) && file_exists(public_path($user->avatar))) {
+            Helper::fileDelete(public_path($user->avatar));
+        }
+        $user->delete();
+
+        return response()->json(['success' => true, 'message' => 'User deleted successfully.']);
+    }
+
+    public function researcherStatus(Request $request, $id)
+    {
+        $user = User::where('role', 'researcher')->findOrFail($id);
+        $user->status = $user->status == 'active' ? 'inactive' : 'active';
+        $user->save();
+
+        return response()->json(['success' => true, 'message' => 'Status changed successfully.']);
+    }
+
+    // ===================== Coordinator =====================
+    public function coordinatorIndex(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = User::query()->where('role', 'coordinator')->latest();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('avatar', function ($row) {
+                    $src = $row->avatar ? asset($row->avatar) : asset('backend/admin/assets/images/avatar_defult.png');
+                    return '<img src="'.$src.'" class="wh-40 rounded-3" alt="avatar">';
+                })
+                ->addColumn('status', function ($row) {
+                    $s = '<div class="form-check form-switch">';
+                    $s .= '<input onclick="changeStatus(event,'.$row->id.')" type="checkbox" class="form-check-input" style="border-radius: 25rem;width:40px" name="status"'.($row->status == 'active' ? ' checked' : '').'>';
+                    $s .= '</div>';
+                    return $s;
+                })
+                ->addColumn('action', function ($row) {
+                    return '<div class="action-wrapper">
+                        <a type="button" href="'.route('user_management.coordinator.show', $row->id).'" class="ps-0 border-0 bg-transparent lh-1"><i class="material-symbols-outlined fs-16 text-primary">visibility</i></a>
+                        <a type="button" href="'.route('user_management.coordinator.edit', $row->id).'" class="ps-0 border-0 bg-transparent lh-1"><i class="material-symbols-outlined fs-16 text-body">edit</i></a>
+                        <button class="ps-0 border-0 bg-transparent lh-1" onclick="deleteRecord(event,'.$row->id.')"><i class="material-symbols-outlined fs-16 text-danger">delete</i></button>
+                    </div>';
+                })
+                ->rawColumns(['avatar', 'status', 'action'])
+                ->make(true);
+        }
+
+        return view('backend.layouts.user_management.coordinator.index');
+    }
+
+    public function coordinatorCreate()
+    {
+        return view('backend.layouts.user_management.coordinator.create');
+    }
+
+    public function coordinatorStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:100|unique:users,email',
+            'phone' => 'nullable|string|max:50|unique:users,phone',
+            'gender' => 'nullable|in:male,female,others',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'password' => 'required|string|min:6',
+        ]);
+
+        try {
+            if ($request->hasFile('avatar')) {
+                $validated['avatar'] = Helper::fileUpload($request->file('avatar'), 'user/avatar', time().'_'.getFileName($request->file('avatar')));
+            }
+
+            $validated['password'] = bcrypt($validated['password']);
+            $validated['role'] = 'coordinator';
+            $validated['email_verified_at'] = now();
+            $validated['status'] = 'active';
+
+            User::create($validated);
+
+            return redirect()->route('user_management.coordinator.index')->with('success', 'Coordinator user created successfully.');
+        } catch (Exception $e) {
+            Log::error('UserManagementController::coordinatorStore '.$e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Coordinator user create failed.');
+        }
+    }
+
+    public function coordinatorShow(string $id)
+    {
+        $data = User::where('role', 'coordinator')->findOrFail($id);
+        return view('backend.layouts.user_management.coordinator.show', compact('data'));
+    }
+
+    public function coordinatorEdit(string $id)
+    {
+        $data = User::where('role', 'coordinator')->findOrFail($id);
+        return view('backend.layouts.user_management.coordinator.edit', compact('data'));
+    }
+
+    public function coordinatorUpdate(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:100|unique:users,email,'.$id,
+            'phone' => 'nullable|string|max:50|unique:users,phone,'.$id,
+            'gender' => 'nullable|in:male,female,others',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'password' => 'sometimes|nullable|string|min:6',
+        ]);
+
+        try {
+            $user = User::where('role', 'coordinator')->findOrFail($id);
+
+            if ($request->hasFile('avatar')) {
+                if (! empty($user->avatar) && file_exists(public_path($user->avatar))) {
+                    Helper::fileDelete(public_path($user->avatar));
+                }
+                $validated['avatar'] = Helper::fileUpload($request->file('avatar'), 'user/avatar', time().'_'.getFileName($request->file('avatar')));
+            } else {
+                unset($validated['avatar']);
+            }
+
+            if ($request->filled('password')) {
+                $validated['password'] = bcrypt($validated['password']);
+            } else {
+                unset($validated['password']);
+            }
+
+            $user->update($validated);
+
+            return redirect()->route('user_management.coordinator.index')->with('success', 'Coordinator user updated successfully.');
+        } catch (Exception $e) {
+            Log::error('UserManagementController::coordinatorUpdate '.$e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Coordinator user update failed.');
+        }
+    }
+
+    public function coordinatorDestroy(string $id)
+    {
+        $user = User::where('role', 'coordinator')->findOrFail($id);
+        if (! empty($user->avatar) && file_exists(public_path($user->avatar))) {
+            Helper::fileDelete(public_path($user->avatar));
+        }
+        $user->delete();
+
+        return response()->json(['success' => true, 'message' => 'User deleted successfully.']);
+    }
+
+    public function coordinatorStatus(Request $request, $id)
+    {
+        $user = User::where('role', 'coordinator')->findOrFail($id);
+        $user->status = $user->status == 'active' ? 'inactive' : 'active';
+        $user->save();
+
+        return response()->json(['success' => true, 'message' => 'Status changed successfully.']);
+    }
 }

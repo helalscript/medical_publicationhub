@@ -59,10 +59,11 @@ class PartnershipRequestController extends Controller
             $r->status = $r->status === 'pending' ? 'reviewed' : 'pending';
             $r->save();
 
-            return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
+  
+            return redirect()->back()->with('success', 'Status updated successfully.');
         } catch (Exception $e) {
             Log::error('PartnershipRequestController::status '.$e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Status update failed.'], 500);
+            return redirect()->back()->with('error', 'Status update failed.');
         }
     }
 }

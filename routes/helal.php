@@ -84,6 +84,26 @@ Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function (
         Route::put('/mentor/{id}', [UserManagementController::class, 'mentorUpdate'])->name('mentor.update');
         Route::delete('/mentor/{id}', [UserManagementController::class, 'mentorDestroy'])->name('mentor.destroy');
         Route::post('/mentor/status/{id}', [UserManagementController::class, 'mentorStatus'])->name('mentor.status');
+
+        // Researcher
+        Route::get('/researcher', [UserManagementController::class, 'researcherIndex'])->name('researcher.index');
+        Route::get('/researcher/create', [UserManagementController::class, 'researcherCreate'])->name('researcher.create');
+        Route::post('/researcher', [UserManagementController::class, 'researcherStore'])->name('researcher.store');
+        Route::get('/researcher/{id}', [UserManagementController::class, 'researcherShow'])->name('researcher.show');
+        Route::get('/researcher/{id}/edit', [UserManagementController::class, 'researcherEdit'])->name('researcher.edit');
+        Route::put('/researcher/{id}', [UserManagementController::class, 'researcherUpdate'])->name('researcher.update');
+        Route::delete('/researcher/{id}', [UserManagementController::class, 'researcherDestroy'])->name('researcher.destroy');
+        Route::post('/researcher/status/{id}', [UserManagementController::class, 'researcherStatus'])->name('researcher.status');
+
+        // Coordinator
+        Route::get('/coordinator', [UserManagementController::class, 'coordinatorIndex'])->name('coordinator.index');
+        Route::get('/coordinator/create', [UserManagementController::class, 'coordinatorCreate'])->name('coordinator.create');
+        Route::post('/coordinator', [UserManagementController::class, 'coordinatorStore'])->name('coordinator.store');
+        Route::get('/coordinator/{id}', [UserManagementController::class, 'coordinatorShow'])->name('coordinator.show');
+        Route::get('/coordinator/{id}/edit', [UserManagementController::class, 'coordinatorEdit'])->name('coordinator.edit');
+        Route::put('/coordinator/{id}', [UserManagementController::class, 'coordinatorUpdate'])->name('coordinator.update');
+        Route::delete('/coordinator/{id}', [UserManagementController::class, 'coordinatorDestroy'])->name('coordinator.destroy');
+        Route::post('/coordinator/status/{id}', [UserManagementController::class, 'coordinatorStatus'])->name('coordinator.status');
     });
 
     // Research ideas (admin review & dates)

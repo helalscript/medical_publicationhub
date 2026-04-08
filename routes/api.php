@@ -6,30 +6,30 @@ use App\Http\Controllers\API\Auth\RegisterController;
 use App\Http\Controllers\API\Auth\ResetPasswordController;
 use App\Http\Controllers\API\Auth\SocialLoginController;
 use App\Http\Controllers\API\Auth\UserController;
-use App\Http\Controllers\API\V1\CMS\HomePageController;
+use App\Http\Controllers\API\V1\CalendlyController as CalendlyApiController;
 use App\Http\Controllers\API\V1\CMS\FaqPageController as APIFaqPageController;
+use App\Http\Controllers\API\V1\CMS\HomePageController;
 use App\Http\Controllers\API\V1\CMS\MetaAcademyPageController as APIMetaAcademyPageController;
+use App\Http\Controllers\API\V1\CMS\PartnershipPageController as APIPartnershipPageController;
 use App\Http\Controllers\API\V1\CMS\ResearchPageController as APIResearchPageController;
 use App\Http\Controllers\API\V1\CMS\ServicePageController as APIServicePageController;
-use App\Http\Controllers\API\V1\CMS\PartnershipPageController as APIPartnershipPageController;
+use App\Http\Controllers\API\V1\CourseController as CourseApiController;
+use App\Http\Controllers\API\V1\CoursePurchaseController as CoursePurchaseApiController;
 use App\Http\Controllers\API\V1\DashboardController;
+use App\Http\Controllers\API\V1\FavouriteController as FavouriteApiController;
+use App\Http\Controllers\API\V1\Mentor\ChatController as MentorChatApiController;
+use App\Http\Controllers\API\V1\Mentor\ResearchIdeaController as MentorResearchIdeaApiController;
+use App\Http\Controllers\API\V1\MyCourseController as MyCourseApiController;
+use App\Http\Controllers\API\V1\OpportunityApplicationController as OpportunityApplicationApiController;
+use App\Http\Controllers\API\V1\OpportunityController as OpportunityApiController;
+use App\Http\Controllers\API\V1\PartnershipRequestController as PartnershipRequestApiController;
+use App\Http\Controllers\API\V1\PublicationController as PublicationApiController;
+use App\Http\Controllers\API\V1\Researcher\ChatController as ResearcherChatApiController;
+use App\Http\Controllers\API\V1\ServiceController as ServiceApiController;
 use App\Http\Controllers\API\V1\User\Faqs\UserFaqController;
 use App\Http\Controllers\API\V1\User\NewsletterController;
 use App\Http\Controllers\API\V1\User\NotificationController;
 use App\Http\Controllers\API\V1\User\UserContactSupportController;
-use App\Http\Controllers\API\V1\Mentor\ResearchIdeaController as MentorResearchIdeaApiController;
-use App\Http\Controllers\API\V1\OpportunityController as OpportunityApiController;
-use App\Http\Controllers\API\V1\OpportunityApplicationController as OpportunityApplicationApiController;
-use App\Http\Controllers\API\V1\FavouriteController as FavouriteApiController;
-use App\Http\Controllers\API\V1\Mentor\ChatController as MentorChatApiController;
-use App\Http\Controllers\API\V1\Researcher\ChatController as ResearcherChatApiController;
-use App\Http\Controllers\API\V1\CourseController as CourseApiController;
-use App\Http\Controllers\API\V1\MyCourseController as MyCourseApiController;
-use App\Http\Controllers\API\V1\CoursePurchaseController as CoursePurchaseApiController;
-use App\Http\Controllers\API\V1\PublicationController as PublicationApiController;
-use App\Http\Controllers\API\V1\PartnershipRequestController as PartnershipRequestApiController;
-use App\Http\Controllers\API\V1\CalendlyController as CalendlyApiController;
-use App\Http\Controllers\API\V1\ServiceController as ServiceApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'guest:api'], function ($router) {
@@ -66,23 +66,8 @@ Route::group(['middleware' => ['auth:api', 'check_is_user']], function ($router)
     Route::post('/my-notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
     Route::delete('/my-notifications-delete/{id}', [NotificationController::class, 'delete']);
     Route::delete('/my-notifications-delete-all', [NotificationController::class, 'deleteAll']);
-});
 
-// Opportunities & applications (JWT user)
-Route::group(['middleware' => ['auth:api']], function ($router) {
-    // applications
-    Route::get('/opportunity-applications', [OpportunityApplicationApiController::class, 'index']);
-    Route::post('/opportunity-applications', [OpportunityApplicationApiController::class, 'store']);
-    Route::get('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'show']);
-    Route::put('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'update']);
-    Route::delete('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'destroy']);
-
-    // favourites (opportunities)
-    Route::get('/favourites', [FavouriteApiController::class, 'index']);
-    Route::post('/favourites', [FavouriteApiController::class, 'store']);
-    Route::get('/favourites/{id}', [FavouriteApiController::class, 'show']);
-    Route::delete('/favourites/{id}', [FavouriteApiController::class, 'destroy']);
-
+    
     // My courses
     Route::get('/my-courses', [MyCourseApiController::class, 'index']);
     Route::post('/courses/{courseId}/buy', [CoursePurchaseApiController::class, 'buy']);
@@ -102,14 +87,28 @@ Route::group(['prefix' => 'mentor', 'middleware' => ['auth:api', 'check_is_mento
     Route::post('/chats/{id}/messages', [MentorChatApiController::class, 'sendMessage']);
 });
 
-// Researcher chats
+// Opportunities & applications (JWT user) and Researcher chats
 Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_researcher']], function ($router) {
+    // applications
+    Route::get('/opportunity-applications', [OpportunityApplicationApiController::class, 'index']);
+    Route::post('/opportunity-applications', [OpportunityApplicationApiController::class, 'store']);
+    Route::get('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'show']);
+    Route::put('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'update']);
+    Route::delete('/opportunity-applications/{id}', [OpportunityApplicationApiController::class, 'destroy']);
+
+    // favourites (opportunities)
+    Route::get('/favourites', [FavouriteApiController::class, 'index']);
+    Route::post('/favourites', [FavouriteApiController::class, 'store']);
+    Route::get('/favourites/{id}', [FavouriteApiController::class, 'show']);
+    Route::delete('/favourites/{id}', [FavouriteApiController::class, 'destroy']);
+
+
     Route::get('/chats', [ResearcherChatApiController::class, 'index']);
     Route::get('/chats/{id}', [ResearcherChatApiController::class, 'show']);
     Route::post('/chats/{id}/messages', [ResearcherChatApiController::class, 'sendMessage']);
 });
 
-    // opportunities (public)
+// opportunities (public)
 Route::get('/opportunities', [OpportunityApiController::class, 'index']);
 Route::get('/opportunities/{id}', [OpportunityApiController::class, 'show']);
 
@@ -144,11 +143,9 @@ Route::get('/social-links', [HomePageController::class, 'getSocialLinks']);
 // without auth
 Route::post('/contact-support-message/sent', [UserContactSupportController::class, 'store']);
 
-
 // --------- cms part --------------
 // Route::get('/social-link', [HomePageController::class, 'getSocialLinks']);
 Route::get('/system-info', [HomePageController::class, 'getSystemInfo']);
-
 
 // dynamic page
 Route::get('dynamic-pages', [HomePageController::class, 'getDynamicPages']);
@@ -165,7 +162,6 @@ Route::group(['prefix' => 'cms/home-page'], function () {
     Route::get('/research-journey-section', [HomePageController::class, 'getResearchJourneySection']);
     Route::get('/faq-section', [HomePageController::class, 'getFaqSection']);
 });
-
 
 // route for faq page
 Route::group(['prefix' => 'cms/faq-page'], function () {
@@ -207,5 +203,3 @@ Route::group(['prefix' => 'cms/partnership-page'], function () {
     Route::get('/why-partner-section', [APIPartnershipPageController::class, 'getWhyPartnerSection']);
     Route::get('/partner-model-section', [APIPartnershipPageController::class, 'getPartnerModelSection']);
 });
-
-

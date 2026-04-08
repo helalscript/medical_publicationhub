@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->morphs('payable');
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
             $table->decimal('amount', 10, 2)->default(0);
             $table->string('payment_gateway')->nullable();
             $table->string('payment_gateway_id')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'paid', 'failed', 'cancelled', 'refunded'])->default('pending');
             $table->timestamps();
 
-            $table->index(['user_id', 'course_id']);
+            $table->index(['user_id', 'payable_id', 'payable_type']);
         });
     }
 

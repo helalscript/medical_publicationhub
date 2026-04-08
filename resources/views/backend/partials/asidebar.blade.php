@@ -143,6 +143,18 @@ $systemSetting = App\Models\SystemSetting::first();
                             Mentor
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a href="{{ route('user_management.researcher.index') }}"
+                            class="menu-link {{ request()->routeIs('user_management.researcher.*') ? 'active' : '' }}">
+                            Researcher
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('user_management.coordinator.index') }}"
+                            class="menu-link {{ request()->routeIs('user_management.coordinator.*') ? 'active' : '' }}">
+                            Coordinator
+                        </a>
+                    </li>
                 </ul>
             </li>
             
