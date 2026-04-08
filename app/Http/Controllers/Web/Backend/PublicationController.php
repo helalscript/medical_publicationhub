@@ -9,6 +9,7 @@ use App\Models\Publication;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 
 class PublicationController extends Controller
@@ -50,6 +51,7 @@ class PublicationController extends Controller
     public function create()
     {
         $categories = Category::query()->where('status', 'active')->where('type', 'publication')->orderBy('name')->get();
+
         return view('backend.layouts.publications.create', compact('categories'));
     }
 
@@ -70,6 +72,7 @@ class PublicationController extends Controller
             return redirect()->route('admin.publications.index')->with('success', 'Publication created successfully.');
         } catch (Exception $e) {
             Log::error('PublicationController::store '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Publication create failed.');
         }
     }
@@ -96,6 +99,7 @@ class PublicationController extends Controller
     {
         $data = Publication::findOrFail($id);
         $categories = Category::query()->where('status', 'active')->where('type', 'publication')->orderBy('name')->get();
+
         return view('backend.layouts.publications.edit', compact('data', 'categories'));
     }
 
@@ -121,6 +125,7 @@ class PublicationController extends Controller
             return redirect()->route('admin.publications.index')->with('success', 'Publication updated successfully.');
         } catch (Exception $e) {
             Log::error('PublicationController::update '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Publication update failed.');
         }
     }
@@ -140,6 +145,7 @@ class PublicationController extends Controller
             return response()->json(['success' => true, 'message' => 'Publication deleted successfully.']);
         } catch (Exception $e) {
             Log::error('PublicationController::destroy '.$e->getMessage());
+
             return response()->json(['success' => false, 'message' => 'Publication delete failed.'], 500);
         }
     }
@@ -154,21 +160,38 @@ class PublicationController extends Controller
             return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
         } catch (Exception $e) {
             Log::error('PublicationController::status '.$e->getMessage());
+
             return response()->json(['success' => false, 'message' => 'Status update failed.'], 500);
         }
     }
 
     private function validatePayload(Request $request, ?string $id = null): array
     {
+        $rawIds = $request->input('category_ids', []);
+        if (is_array($rawIds)) {
+            $rawIds = array_values(array_filter($rawIds, fn ($v) => $v !== '' && $v !== null));
+            $request->merge(['category_ids' => $rawIds]);
+        }
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'overview' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'attachment' => ['nullable', 'file', 'max:10240'],
             'category_ids' => ['nullable', 'array'],
-            'category_ids.*' => ['integer'],
+            'category_ids.*' => [
+                'integer',
+                Rule::exists('categories', 'id')->where('type', 'publication'),
+            ],
             'status' => ['nullable', 'in:active,inactive'],
         ]);
+
+        $ids = $request->input('category_ids');
+        if (! is_array($ids) || count($ids) === 0) {
+            $validated['category_ids'] = null;
+        } else {
+            $validated['category_ids'] = array_values(array_unique(array_map('intval', $ids)));
+        }
 
         return $validated;
     }

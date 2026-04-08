@@ -17,14 +17,19 @@ $p = $data ?? null;
     </div>
 
     <div class="col-md-12">
-        <label class="form-label">Categories</label>
-        <select name="category_ids[]" class="form-select" multiple>
-            @php $selected = old('category_ids', (array) ($p?->category_ids ?? [])); @endphp
+        <label class="form-label">Categories <span class="text-muted fw-normal">(optional)</span></label>
+        <select name="category_ids[]" id="publicationCategoryIds" class="form-select js-select2-publication-categories" multiple
+                data-placeholder="Search and select publication categories...">
+            <option value=""></option>
+            @php
+                $selectedRaw = old('category_ids', (array) ($p?->category_ids ?? []));
+                $selected = array_map('intval', $selectedRaw);
+            @endphp
             @foreach($categories as $c)
-                <option value="{{ $c->id }}" @selected(in_array($c->id, $selected))>{{ $c->name }}</option>
+                <option value="{{ $c->id }}" @selected(in_array((int) $c->id, $selected, true))>{{ $c->name }}</option>
             @endforeach
         </select>
-        <small class="text-muted">Type: publication</small>
+        <small class="text-muted">Publication-type categories only. Use search to filter.</small>
     </div>
 
     <div class="col-md-12">

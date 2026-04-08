@@ -2,7 +2,11 @@
 @section('title', 'Edit Publication')
 
 @push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <link href="{{ asset('backend/admin/assets/quill/quill.snow.css') }}" rel="stylesheet">
+    <style>
+        .select2-container .select2-selection--multiple { min-height: 38px; }
+    </style>
 @endpush
 
 @section('content')
@@ -29,9 +33,12 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('backend/admin/assets/quill/quill.min.js') }}"></script>
     <script>
         $(function () {
+            $('.js-select2-publication-categories').select2({ width: '100%', allowClear: true });
+
             const quill = new Quill('#pubEditor', { theme: 'snow' });
             const input = document.getElementById('descriptionInput');
             if (input && input.value) quill.root.innerHTML = input.value;
