@@ -27,6 +27,14 @@ use App\Http\Controllers\Web\Backend\ResearchIdeaAdminController;
 use App\Http\Controllers\Web\Backend\OpportunityController;
 use App\Http\Controllers\Web\Backend\OpportunityApplicationAdminController;
 use App\Http\Controllers\Web\Backend\OpportunityChatController;
+use App\Http\Controllers\Web\Backend\CourseController;
+use App\Http\Controllers\Web\Backend\ModuleController;
+use App\Http\Controllers\Web\Backend\LessonController;
+use App\Http\Controllers\Web\Backend\PaymentController;
+use App\Http\Controllers\Web\Backend\CourseAccessController;
+use App\Http\Controllers\Web\Backend\PublicationController;
+use App\Http\Controllers\Web\Backend\PartnershipRequestController;
+use App\Http\Controllers\Web\Backend\ServiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function () {
@@ -46,6 +54,10 @@ Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function (
 
     // Route for updating system settings
     Route::post('system-settings-update', [SystemSettingController::class, 'update'])->name('system_settings.update');
+
+    // Calendly settings
+    Route::get('system-settings-calendly', [SystemSettingController::class, 'calendlySettingGet'])->name('system_settings.calendly_get');
+    Route::post('system-settings-calendly', [SystemSettingController::class, 'calendlySettingUpdate'])->name('system_settings.calendly_update');
 
     // Mail Settings index
     Route::get('system-settings-mail', [SystemSettingController::class, 'mailSettingGet'])->name('system_settings.mail_get');
@@ -95,6 +107,43 @@ Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function (
     Route::get('/opportunity-chats', [OpportunityChatController::class, 'index'])->name('admin.opportunity_chats.index');
     Route::get('/opportunity-chats/{id}', [OpportunityChatController::class, 'show'])->name('admin.opportunity_chats.show');
     Route::post('/opportunity-chats/{id}/messages', [OpportunityChatController::class, 'sendMessage'])->name('admin.opportunity_chats.messages.store');
+
+    // Courses
+    Route::resource('/courses', CourseController::class)->names('admin.courses');
+    Route::post('/courses/status/{id}', [CourseController::class, 'status'])->name('admin.courses.status');
+
+    // Modules (filter by ?course_id=)
+    Route::resource('/modules', ModuleController::class)->names('admin.modules')->except(['show']);
+    Route::post('/modules/status/{id}', [ModuleController::class, 'status'])->name('admin.modules.status');
+
+    // Lessons (filter by ?module_id=)
+    Route::resource('/lessons', LessonController::class)->names('admin.lessons')->except(['show']);
+    Route::post('/lessons/status/{id}', [LessonController::class, 'status'])->name('admin.lessons.status');
+
+    // Course access (admin grant/revoke)
+    Route::get('/course-access', [CourseAccessController::class, 'index'])->name('admin.course_access.index');
+    Route::post('/course-access/grant', [CourseAccessController::class, 'grant'])->name('admin.course_access.grant');
+    Route::post('/course-access/revoke', [CourseAccessController::class, 'revoke'])->name('admin.course_access.revoke');
+
+    // Payments
+    Route::get('/payments', [PaymentController::class, 'index'])->name('admin.payments.index');
+    Route::get('/payments/{id}', [PaymentController::class, 'show'])->name('admin.payments.show');
+    Route::post('/payments/{id}/status', [PaymentController::class, 'status'])->name('admin.payments.status');
+
+    // Publications
+    Route::resource('/publications', PublicationController::class)->names('admin.publications');
+    Route::post('/publications/status/{id}', [PublicationController::class, 'status'])->name('admin.publications.status');
+
+    // Partnership requests
+    Route::get('/partnership-requests', [PartnershipRequestController::class, 'index'])->name('admin.partnership_requests.index');
+    Route::get('/partnership-requests/{id}', [PartnershipRequestController::class, 'show'])->name('admin.partnership_requests.show');
+    Route::delete('/partnership-requests/{id}', [PartnershipRequestController::class, 'destroy'])->name('admin.partnership_requests.destroy');
+    Route::post('/partnership-requests/status/{id}', [PartnershipRequestController::class, 'status'])->name('admin.partnership_requests.status');
+
+    // Services
+    Route::resource('/services', ServiceController::class)->names('admin.services');
+    Route::post('/services/status/{id}', [ServiceController::class, 'status'])->name('admin.services.status');
+    Route::post('/services/featured/{id}', [ServiceController::class, 'featured'])->name('admin.services.featured');
 
     // Route for FaqController
     Route::resource('/faqs', FaqController::class)->names('faqs');

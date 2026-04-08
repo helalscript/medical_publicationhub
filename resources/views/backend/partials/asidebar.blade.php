@@ -52,6 +52,14 @@ $systemSetting = App\Models\SystemSetting::first();
                     <span class="title">Partnership Requests</span>
                 </a>
             </li>
+
+            <li class="menu-item open">
+                <a href="{{ route('admin.services.index') }}"
+                    class="menu-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
+                    <span class="material-symbols-outlined menu-icon">design_services</span>
+                    <span class="title">Services</span>
+                </a>
+            </li>
             <li class="menu-item {{ request()->routeIs('admin.opportunities.*', 'admin.opportunity_applications.*') ? 'open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle active">
                     <span class="material-symbols-outlined menu-icon">work</span>

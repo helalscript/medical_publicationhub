@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "97363398a875871fde2d398e3ca10468",
+    "content-hash": "6072ba499dc1727d786a30c41e3b439b",
     "packages": [
         {
             "name": "brick/math",
@@ -3093,6 +3093,66 @@
                 "source": "https://github.com/MarkBaker/PHPMatrix/tree/3.0.1"
             },
             "time": "2022-12-02T22:17:43+00:00"
+        },
+        {
+            "name": "meilleursbiens/laravel-calendly-wrapper",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MeilleursBiens/laravel-calendly-wrapper.git",
+                "reference": "1d56ce3dba695d0742fd1895496cd16b49ecad34"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MeilleursBiens/laravel-calendly-wrapper/zipball/1d56ce3dba695d0742fd1895496cd16b49ecad34",
+                "reference": "1d56ce3dba695d0742fd1895496cd16b49ecad34",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7",
+                "php": "^8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Calendly": "MeilleursBiens\\Calendly\\Calendly"
+                    },
+                    "providers": [
+                        "MeilleursBiens\\Calendly\\CalendlyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MeilleursBiens\\Calendly\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "MeilleursBiens",
+                    "email": "tech@meilleursbiens.com"
+                }
+            ],
+            "description": "PHP Calendly API (v2) Wrapper SDK for Laravel",
+            "keywords": [
+                "api",
+                "calendly",
+                "laravel",
+                "php",
+                "rest",
+                "sdk",
+                "wrapper"
+            ],
+            "support": {
+                "issues": "https://github.com/MeilleursBiens/laravel-calendly-wrapper/issues",
+                "source": "https://github.com/MeilleursBiens/laravel-calendly-wrapper/tree/v1.0.3"
+            },
+            "time": "2023-01-09T14:55:38+00:00"
         },
         {
             "name": "monolog/monolog",

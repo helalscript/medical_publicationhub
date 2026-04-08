@@ -23,6 +23,13 @@ use App\Http\Controllers\API\V1\OpportunityApplicationController as OpportunityA
 use App\Http\Controllers\API\V1\FavouriteController as FavouriteApiController;
 use App\Http\Controllers\API\V1\Mentor\ChatController as MentorChatApiController;
 use App\Http\Controllers\API\V1\Researcher\ChatController as ResearcherChatApiController;
+use App\Http\Controllers\API\V1\CourseController as CourseApiController;
+use App\Http\Controllers\API\V1\MyCourseController as MyCourseApiController;
+use App\Http\Controllers\API\V1\CoursePurchaseController as CoursePurchaseApiController;
+use App\Http\Controllers\API\V1\PublicationController as PublicationApiController;
+use App\Http\Controllers\API\V1\PartnershipRequestController as PartnershipRequestApiController;
+use App\Http\Controllers\API\V1\CalendlyController as CalendlyApiController;
+use App\Http\Controllers\API\V1\ServiceController as ServiceApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'guest:api'], function ($router) {
@@ -75,6 +82,10 @@ Route::group(['middleware' => ['auth:api']], function ($router) {
     Route::post('/favourites', [FavouriteApiController::class, 'store']);
     Route::get('/favourites/{id}', [FavouriteApiController::class, 'show']);
     Route::delete('/favourites/{id}', [FavouriteApiController::class, 'destroy']);
+
+    // My courses
+    Route::get('/my-courses', [MyCourseApiController::class, 'index']);
+    Route::post('/courses/{courseId}/buy', [CoursePurchaseApiController::class, 'buy']);
 });
 
 // Mentor — research ideas (JWT + mentor role)
@@ -101,6 +112,24 @@ Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_r
     // opportunities (public)
 Route::get('/opportunities', [OpportunityApiController::class, 'index']);
 Route::get('/opportunities/{id}', [OpportunityApiController::class, 'show']);
+
+// Courses (public)
+Route::get('/courses', [CourseApiController::class, 'index']);
+Route::get('/courses/{id}', [CourseApiController::class, 'show']);
+
+// Publications (public)
+Route::get('/publications', [PublicationApiController::class, 'index']);
+Route::get('/publications/{id}', [PublicationApiController::class, 'show']);
+
+// Partnership requests (public)
+Route::post('/partnership-requests', [PartnershipRequestApiController::class, 'store']);
+
+// Calendly schedule (public)
+Route::get('/calendly/schedule-link', [CalendlyApiController::class, 'scheduleLink']);
+
+// Services (public)
+Route::get('/services', [ServiceApiController::class, 'index']);
+Route::get('/services/{id}', [ServiceApiController::class, 'show']);
 
 // FAQ for users (public)
 Route::get('/faqs', [UserFaqController::class, 'index']);
