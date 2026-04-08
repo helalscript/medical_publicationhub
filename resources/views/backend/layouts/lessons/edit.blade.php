@@ -10,7 +10,7 @@
 
         <div class="card bg-white border-0 rounded-3 mb-4">
             <div class="card-body">
-                <form action="{{ route('admin.lessons.update', $data->id) }}" method="POST">
+                <form action="{{ route('admin.lessons.update', $data->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     @include('backend.layouts.lessons._form', ['data' => $data])

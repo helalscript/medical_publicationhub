@@ -17,6 +17,21 @@
     $cIsFuture = (int) ($course?->is_future ?? 0);
     $cThumb = $course?->thumbnail;
     $cIntro = $course?->intro_video;
+    $cThumbDefaultUrl = null;
+    $cIntroCurrentUrl = null;
+
+    if (!empty($cThumb)) {
+        $cThumbDefaultUrl = str_starts_with((string) $cThumb, 'uploads/') ? asset($cThumb) : asset('storage/'.$cThumb);
+    }
+    if (!empty($cIntro)) {
+        if (str_starts_with((string) $cIntro, 'http')) {
+            $cIntroCurrentUrl = $cIntro;
+        } elseif (str_starts_with((string) $cIntro, 'uploads/')) {
+            $cIntroCurrentUrl = asset($cIntro);
+        } else {
+            $cIntroCurrentUrl = asset('storage/'.$cIntro);
+        }
+    }
     $cCatIds = (array) old('category_ids', $course?->category_ids ?? []);
     $cMentorIds = (array) old('mentor_ids', $course?->mentor_ids ?? []);
     $cDescJson = old('descriptions', $course?->descriptions ? json_encode($course->descriptions) : '');
@@ -90,7 +105,7 @@
         <label class="form-label">Thumbnail <span class="text-muted">(optional)</span></label>
         <input type="file" name="thumbnail" class="form-control dropify" accept="image/*"
                data-height="200"
-               data-default-file="{{ !empty($cThumb) ? asset($cThumb) : '' }}">
+               data-default-file="{{ !empty($cThumbDefaultUrl) ? $cThumbDefaultUrl : '' }}">
         <small class="text-muted">JPG, PNG, WebP — Dropify preview</small>
     </div>
 
@@ -101,9 +116,9 @@
         @if(!empty($cIntro))
             <div class="mt-2 small">
                 @if(str_starts_with((string) $cIntro, 'http'))
-                    <span class="text-muted">Current:</span> <a href="{{ $cIntro }}" target="_blank" rel="noopener">Open link</a>
+                    <span class="text-muted">Current:</span> <a href="{{ $cIntroCurrentUrl }}" target="_blank" rel="noopener">Open link</a>
                 @else
-                    <span class="text-muted">Current file:</span> <a href="{{ asset($cIntro) }}" target="_blank">View / download</a>
+                    <span class="text-muted">Current file:</span> <a href="{{ $cIntroCurrentUrl }}" target="_blank">View / download</a>
                 @endif
             </div>
         @endif

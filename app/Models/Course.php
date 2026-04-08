@@ -40,6 +40,43 @@ class Course extends Model
         'old_price' => 'decimal:2',
     ];
 
+    private function toPublicUrl(?string $value): ?string
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        // Only convert paths when returning API JSON.
+        if (! request()->is('api/*')) {
+            return $value;
+        }
+
+        if (str_starts_with($value, 'uploads/')) {
+            return asset($value);
+        }
+
+        if (str_starts_with($value, 'storage/')) {
+            return asset($value);
+        }
+
+        // `Storage::disk('public')->putFileAs()` returns a disk-relative path.
+        return asset('storage/'.$value);
+    }
+
+    public function getThumbnailAttribute($value): ?string
+    {
+        return $this->toPublicUrl($value);
+    }
+
+    public function getIntroVideoAttribute($value): ?string
+    {
+        return $this->toPublicUrl($value);
+    }
+
     public function modules(): HasMany
     {
         return $this->hasMany(Module::class);

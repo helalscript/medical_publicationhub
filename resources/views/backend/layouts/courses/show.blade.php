@@ -19,7 +19,12 @@
                         <div class="border rounded-3 p-3 h-100">
                             <div class="fw-semibold mb-2">Thumbnail</div>
                             @if(!empty($data->thumbnail))
-                                <img src="{{ asset($data->thumbnail) }}" class="img-fluid rounded-3" alt="thumbnail">
+                                @php
+                                    $thumbSrc = str_starts_with((string) $data->thumbnail, 'http')
+                                        ? $data->thumbnail
+                                        : (str_starts_with((string) $data->thumbnail, 'uploads/') ? asset($data->thumbnail) : asset('storage/'.$data->thumbnail));
+                                @endphp
+                                <img src="{{ $thumbSrc }}" class="img-fluid rounded-3" alt="thumbnail">
                             @else
                                 <div class="text-muted">No thumbnail</div>
                             @endif

@@ -1,6 +1,9 @@
 @php
 /** @var \App\Models\Module|null $data */
 $m = $data ?? null;
+$videoLink = (!empty($m?->video) && !str_starts_with((string) $m?->video, 'http')) ? asset('storage/'.$m->video) : ($m?->video ?? null);
+$docLink = (!empty($m?->document) && !str_starts_with((string) $m?->document, 'http')) ? asset('storage/'.$m->document) : ($m?->document ?? null);
+$attachedLink = (!empty($m?->attached_file) && !str_starts_with((string) $m?->attached_file, 'http')) ? asset('storage/'.$m->attached_file) : ($m?->attached_file ?? null);
 @endphp
 
 <div class="row g-3">
@@ -35,17 +38,26 @@ $m = $data ?? null;
     </div>
 
     <div class="col-md-6">
-        <label class="form-label">Video URL</label>
-        <input type="text" name="video" class="form-control" value="{{ old('video', $m?->video) }}" placeholder="https://...">
+        <label class="form-label">Video (upload)</label>
+        <input type="file" name="video" class="form-control" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska">
+        @if(!empty($videoLink))
+            <small class="text-muted d-block mt-1">Current: <a href="{{ $videoLink }}" target="_blank">Open</a></small>
+        @endif
     </div>
     <div class="col-md-6">
-        <label class="form-label">Document URL</label>
-        <input type="text" name="document" class="form-control" value="{{ old('document', $m?->document) }}" placeholder="https://...">
+        <label class="form-label">Document (upload)</label>
+        <input type="file" name="document" class="form-control" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+        @if(!empty($docLink))
+            <small class="text-muted d-block mt-1">Current: <a href="{{ $docLink }}" target="_blank">Open</a></small>
+        @endif
     </div>
 
     <div class="col-md-6">
-        <label class="form-label">Attached file URL</label>
-        <input type="text" name="attached_file" class="form-control" value="{{ old('attached_file', $m?->attached_file) }}" placeholder="https://...">
+        <label class="form-label">Attached file (upload)</label>
+        <input type="file" name="attached_file" class="form-control">
+        @if(!empty($attachedLink))
+            <small class="text-muted d-block mt-1">Current: <a href="{{ $attachedLink }}" target="_blank">Open</a></small>
+        @endif
     </div>
     <div class="col-md-6">
         <label class="form-label">Durations</label>

@@ -8,6 +8,8 @@ use App\Models\Module;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class LessonController extends Controller
@@ -36,6 +38,7 @@ class LessonController extends Controller
                     $s = '<div class="form-check form-switch">';
                     $s .= '<input onclick="changeStatus(event,'.$row->id.')" type="checkbox" class="form-check-input" style="border-radius: 25rem;width:40px" name="status"'.($row->status == 'active' ? ' checked' : '').'>';
                     $s .= '</div>';
+
                     return $s;
                 })
                 ->addColumn('action', function ($row) {
@@ -49,6 +52,7 @@ class LessonController extends Controller
         }
 
         $modules = Module::with('course')->orderBy('title')->get();
+
         return view('backend.layouts.lessons.index', compact('modules'));
     }
 
@@ -58,6 +62,7 @@ class LessonController extends Controller
     public function create()
     {
         $modules = Module::with('course')->orderBy('title')->get();
+
         return view('backend.layouts.lessons.create', compact('modules'));
     }
 
@@ -68,10 +73,25 @@ class LessonController extends Controller
     {
         $validated = $this->validatePayload($request);
         try {
+            if ($request->hasFile('video')) {
+                $validated['video'] = $this->storePublicFile($request->file('video'), 'lessons/video');
+            }
+            if ($request->hasFile('document')) {
+                $validated['document'] = $this->storePublicFile($request->file('document'), 'lessons/document');
+            }
+            if ($request->hasFile('attached_file')) {
+                $validated['attached_file'] = $this->storePublicFile($request->file('attached_file'), 'lessons/attached');
+            }
+            if ($request->hasFile('file')) {
+                $validated['file'] = $this->storePublicFile($request->file('file'), 'lessons/file');
+            }
+
             Lesson::create($validated);
+
             return redirect()->route('admin.lessons.index', ['module_id' => $validated['module_id']])->with('success', 'Lesson created successfully.');
         } catch (Exception $e) {
             Log::error('LessonController::store '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Lesson create failed.');
         }
     }
@@ -91,6 +111,7 @@ class LessonController extends Controller
     {
         $data = Lesson::findOrFail($id);
         $modules = Module::with('course')->orderBy('title')->get();
+
         return view('backend.layouts.lessons.edit', compact('data', 'modules'));
     }
 
@@ -102,10 +123,41 @@ class LessonController extends Controller
         $validated = $this->validatePayload($request, $id);
         try {
             $lesson = Lesson::findOrFail($id);
+
+            if ($request->hasFile('video')) {
+                $this->deleteIfPublicStoragePath($lesson->video);
+                $validated['video'] = $this->storePublicFile($request->file('video'), 'lessons/video');
+            } else {
+                unset($validated['video']);
+            }
+
+            if ($request->hasFile('document')) {
+                $this->deleteIfPublicStoragePath($lesson->document);
+                $validated['document'] = $this->storePublicFile($request->file('document'), 'lessons/document');
+            } else {
+                unset($validated['document']);
+            }
+
+            if ($request->hasFile('attached_file')) {
+                $this->deleteIfPublicStoragePath($lesson->attached_file);
+                $validated['attached_file'] = $this->storePublicFile($request->file('attached_file'), 'lessons/attached');
+            } else {
+                unset($validated['attached_file']);
+            }
+
+            if ($request->hasFile('file')) {
+                $this->deleteIfPublicStoragePath($lesson->file);
+                $validated['file'] = $this->storePublicFile($request->file('file'), 'lessons/file');
+            } else {
+                unset($validated['file']);
+            }
+
             $lesson->update($validated);
+
             return redirect()->route('admin.lessons.index', ['module_id' => $lesson->module_id])->with('success', 'Lesson updated successfully.');
         } catch (Exception $e) {
             Log::error('LessonController::update '.$e->getMessage());
+
             return redirect()->back()->withInput()->with('error', 'Lesson update failed.');
         }
     }
@@ -116,10 +168,17 @@ class LessonController extends Controller
     public function destroy(string $id)
     {
         try {
-            Lesson::findOrFail($id)->delete();
+            $lesson = Lesson::findOrFail($id);
+            $this->deleteIfPublicStoragePath($lesson->video);
+            $this->deleteIfPublicStoragePath($lesson->document);
+            $this->deleteIfPublicStoragePath($lesson->attached_file);
+            $this->deleteIfPublicStoragePath($lesson->file);
+            $lesson->delete();
+
             return response()->json(['success' => true, 'message' => 'Lesson deleted successfully.']);
         } catch (Exception $e) {
             Log::error('LessonController::destroy '.$e->getMessage());
+
             return response()->json(['success' => false, 'message' => 'Lesson delete failed.'], 500);
         }
     }
@@ -130,9 +189,11 @@ class LessonController extends Controller
             $lesson = Lesson::findOrFail($id);
             $lesson->status = $lesson->status === 'active' ? 'inactive' : 'active';
             $lesson->save();
+
             return response()->json(['success' => true, 'message' => 'Status updated successfully.']);
         } catch (Exception $e) {
             Log::error('LessonController::status '.$e->getMessage());
+
             return response()->json(['success' => false, 'message' => 'Status update failed.'], 500);
         }
     }
@@ -142,14 +203,34 @@ class LessonController extends Controller
         return $request->validate([
             'module_id' => ['required', 'exists:modules,id'],
             'title' => ['nullable', 'string', 'max:255'],
-            'file' => ['nullable', 'string', 'max:255'],
-            'video' => ['nullable', 'string', 'max:255'],
+            'file' => ['nullable', 'file', 'max:51200'],
+            'video' => ['nullable', 'file', 'mimes:mp4,webm,mov,avi,mkv', 'max:102400'],
             'attached_text' => ['nullable', 'string'],
-            'attached_file' => ['nullable', 'string', 'max:255'],
-            'document' => ['nullable', 'string', 'max:255'],
+            'attached_file' => ['nullable', 'file', 'max:51200'],
+            'document' => ['nullable', 'file', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt', 'max:51200'],
             'order_by' => ['nullable', 'integer', 'min:0'],
             'durations' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable', 'in:active,inactive'],
         ]);
+    }
+
+    private function storePublicFile($file, string $dir): string
+    {
+        $name = time().'_'.Str::random(8).'.'.$file->getClientOriginalExtension();
+
+        return Storage::disk('public')->putFileAs($dir, $file, $name);
+    }
+
+    private function deleteIfPublicStoragePath(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
     }
 }

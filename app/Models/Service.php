@@ -27,6 +27,36 @@ class Service extends Model
         'is_features' => 'boolean',
     ];
 
+    private function toPublicUrl(?string $value): ?string
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        if (! request()->is('api/*')) {
+            return $value;
+        }
+
+        if (str_starts_with($value, 'uploads/')) {
+            return asset($value);
+        }
+
+        if (str_starts_with($value, 'storage/')) {
+            return asset($value);
+        }
+
+        return asset('storage/'.$value);
+    }
+
+    public function getIconAttribute($value): ?string
+    {
+        return $this->toPublicUrl($value);
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

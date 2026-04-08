@@ -10,6 +10,7 @@ use App\Models\Mentor;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 
@@ -81,11 +82,11 @@ class CourseController extends Controller
 
         try {
             if ($request->hasFile('thumbnail')) {
-                $validated['thumbnail'] = Helper::fileUpload($request->file('thumbnail'), 'courses/thumbnail', time().'_'.getFileName($request->file('thumbnail')));
+                $validated['thumbnail'] = $this->storePublicFile($request->file('thumbnail'), 'courses/thumbnail');
             }
 
             if ($request->hasFile('intro_video')) {
-                $validated['intro_video'] = Helper::fileUpload($request->file('intro_video'), 'courses/intro-video', time().'_'.getFileName($request->file('intro_video')));
+                $validated['intro_video'] = $this->storePublicFile($request->file('intro_video'), 'courses/intro-video');
             }
 
             Course::create($validated);
@@ -141,19 +142,15 @@ class CourseController extends Controller
             $course = Course::findOrFail($id);
 
             if ($request->hasFile('thumbnail')) {
-                if (! empty($course->thumbnail)) {
-                    Helper::fileDelete(public_path($course->thumbnail));
-                }
-                $validated['thumbnail'] = Helper::fileUpload($request->file('thumbnail'), 'courses/thumbnail', time().'_'.getFileName($request->file('thumbnail')));
+                $this->deleteCourseStoredFile($course->thumbnail);
+                $validated['thumbnail'] = $this->storePublicFile($request->file('thumbnail'), 'courses/thumbnail');
             } else {
                 unset($validated['thumbnail']);
             }
 
             if ($request->hasFile('intro_video')) {
-                if (! empty($course->intro_video) && ! str_starts_with((string) $course->intro_video, 'http')) {
-                    Helper::fileDelete(public_path($course->intro_video));
-                }
-                $validated['intro_video'] = Helper::fileUpload($request->file('intro_video'), 'courses/intro-video', time().'_'.getFileName($request->file('intro_video')));
+                $this->deleteCourseStoredFile($course->intro_video);
+                $validated['intro_video'] = $this->storePublicFile($request->file('intro_video'), 'courses/intro-video');
             } else {
                 unset($validated['intro_video']);
             }
@@ -175,12 +172,8 @@ class CourseController extends Controller
     {
         try {
             $course = Course::findOrFail($id);
-            if (! empty($course->thumbnail)) {
-                Helper::fileDelete(public_path($course->thumbnail));
-            }
-            if (! empty($course->intro_video) && ! str_starts_with((string) $course->intro_video, 'http')) {
-                Helper::fileDelete(public_path($course->intro_video));
-            }
+            $this->deleteCourseStoredFile($course->thumbnail);
+            $this->deleteCourseStoredFile($course->intro_video);
             $course->delete();
 
             return response()->json(['success' => true, 'message' => 'Course deleted successfully.']);
@@ -264,5 +257,33 @@ class CourseController extends Controller
         }
 
         return $validated;
+    }
+
+    private function storePublicFile($file, string $dir): string
+    {
+        $fileName = getFileName($file).'.'.$file->getClientOriginalExtension();
+
+        return Storage::disk('public')->putFileAs($dir, $file, $fileName);
+    }
+
+    private function deleteCourseStoredFile(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        // Ignore external links
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return;
+        }
+
+        // Backward compatible: older uploads were stored in public/uploads/...
+        if (str_starts_with($path, 'uploads/')) {
+            Helper::fileDelete(public_path($path));
+
+            return;
+        }
+
+        Storage::disk('public')->delete($path);
     }
 }

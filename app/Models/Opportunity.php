@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Opportunity extends Model
 {
@@ -57,6 +57,36 @@ class Opportunity extends Model
         ];
     }
 
+    private function toPublicUrl(?string $value): ?string
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        if (! request()->is('api/*')) {
+            return $value;
+        }
+
+        if (str_starts_with($value, 'uploads/')) {
+            return asset($value);
+        }
+
+        if (str_starts_with($value, 'storage/')) {
+            return asset($value);
+        }
+
+        return asset('storage/'.$value);
+    }
+
+    public function getThumbnailAttribute($value): ?string
+    {
+        return $this->toPublicUrl($value);
+    }
+
     public function mentor(): BelongsTo
     {
         return $this->belongsTo(Mentor::class);
@@ -77,4 +107,3 @@ class Opportunity extends Model
         return $this->morphMany(Favourite::class, 'favouriteable');
     }
 }
-

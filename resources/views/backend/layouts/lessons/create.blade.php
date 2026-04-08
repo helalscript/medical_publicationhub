@@ -10,7 +10,7 @@
 
         <div class="card bg-white border-0 rounded-3 mb-4">
             <div class="card-body">
-                <form action="{{ route('admin.lessons.store') }}" method="POST">
+                <form action="{{ route('admin.lessons.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @include('backend.layouts.lessons._form')
                     <div class="mt-4 d-flex gap-2">
