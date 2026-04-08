@@ -36,9 +36,12 @@ use App\Http\Controllers\Web\Backend\CourseAccessController;
 use App\Http\Controllers\Web\Backend\PublicationController;
 use App\Http\Controllers\Web\Backend\PartnershipRequestController;
 use App\Http\Controllers\Web\Backend\ServiceController;
+use App\Http\Controllers\Web\Backend\AccessControl\RoleController;
+use App\Http\Controllers\Web\Backend\AccessControl\PermissionController;
+use App\Http\Controllers\Web\Backend\AccessControl\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function () {
+Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin')->group(function () {
 
     // Dashboard (overview cards + chat charts)
     Route::get('/', DashboardController::class)->name('admin.dashboard');
@@ -103,6 +106,26 @@ Route::middleware(['auth:web', 'role_check'])->prefix('admin')->group(function (
         Route::put('/coordinator/{id}', [UserManagementController::class, 'coordinatorUpdate'])->name('coordinator.update');
         Route::delete('/coordinator/{id}', [UserManagementController::class, 'coordinatorDestroy'])->name('coordinator.destroy');
         Route::post('/coordinator/status/{id}', [UserManagementController::class, 'coordinatorStatus'])->name('coordinator.status');
+    });
+
+    // Access Control (Roles & Permissions)
+    Route::prefix('access-control')->name('admin.access_control.')->group(function () {
+        Route::get('/roles', [RoleController::class, 'index'])->name('roles.index')->middleware('permission:access_control.roles.view');
+        Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create')->middleware('permission:access_control.roles.create');
+        Route::post('/roles', [RoleController::class, 'store'])->name('roles.store')->middleware('permission:access_control.roles.create');
+        Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit')->middleware('permission:access_control.roles.update');
+        Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update')->middleware('permission:access_control.roles.update');
+        Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('permission:access_control.roles.delete');
+
+        Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index')->middleware('permission:access_control.permissions.view');
+        Route::get('/permissions/create', [PermissionController::class, 'create'])->name('permissions.create')->middleware('permission:access_control.permissions.create');
+        Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store')->middleware('permission:access_control.permissions.create');
+        Route::get('/permissions/{permission}/edit', [PermissionController::class, 'edit'])->name('permissions.edit')->middleware('permission:access_control.permissions.update');
+        Route::put('/permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update')->middleware('permission:access_control.permissions.update');
+        Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy')->middleware('permission:access_control.permissions.delete');
+
+        Route::get('/roles/{role}/permissions', [RolePermissionController::class, 'edit'])->name('roles.permissions.edit')->middleware('permission:access_control.roles.assign_permissions');
+        Route::put('/roles/{role}/permissions', [RolePermissionController::class, 'update'])->name('roles.permissions.update')->middleware('permission:access_control.roles.assign_permissions');
     });
 
     // Research ideas (admin review & dates)

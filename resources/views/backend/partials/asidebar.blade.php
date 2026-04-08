@@ -165,6 +165,29 @@ $systemSetting = App\Models\SystemSetting::first();
                     <span class="title">Contact Message</span>
                 </a>
             </li>
+
+            @haspermission('access_control.roles.view')
+                <li class="menu-item {{ request()->routeIs('admin.access_control.*') ? 'open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                        <span class="material-symbols-outlined menu-icon">admin_panel_settings</span>
+                        <span class="title">Access Control</span>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="{{ route('admin.access_control.roles.index') }}"
+                                class="menu-link {{ request()->routeIs('admin.access_control.roles.*') ? 'active' : '' }}">
+                                Roles
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('admin.access_control.permissions.index') }}"
+                                class="menu-link {{ request()->routeIs('admin.access_control.permissions.*') ? 'active' : '' }}">
+                                Permissions
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endhaspermission
             
 
             

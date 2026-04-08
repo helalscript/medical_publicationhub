@@ -17,11 +17,8 @@ class RoleCheckMiddleWare
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-
         $user = Auth::user();
-        if ($user->role !== 'admin') {
-            // If the user is not authorized, redirect or abort
+        if (! $user || ! in_array($user->role, ['admin', 'coordinator'], true)) {
             return abort(404, 'Unauthorized action.');
         }
         if (Auth::check()) {
