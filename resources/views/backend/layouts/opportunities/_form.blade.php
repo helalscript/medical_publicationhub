@@ -78,7 +78,7 @@
             <option value="">Select mentor</option>
             @foreach (($mentors ?? collect()) as $m)
                 <option value="{{ $m->id }}" {{ (string)old('mentor_id', $opMentorId) === (string)$m->id ? 'selected' : '' }}>
-                    #{{ $m->id }} - {{ $m->name }} ({{ $m->user?->email ?? '-' }})
+                    #{{ $m->id }} - {{ $m->user?->name ?? '—' }} ({{ $m->user?->email ?? '-' }})
                 </option>
             @endforeach
         </select>

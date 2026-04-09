@@ -20,7 +20,7 @@ class DashboardController extends Controller
     {
         try {
             $user = $request->user();
-            $mentor = Mentor::query()->where('user_id', $user->id)->first();
+            $mentor = Mentor::query()->with('user:id,name')->where('user_id', $user->id)->first();
             if (! $mentor) {
                 return Helper::jsonErrorResponse('Mentor profile not found.', 404);
             }
@@ -35,7 +35,7 @@ class DashboardController extends Controller
             $data = [
                 'mentor' => [
                     'id' => $mentor->id,
-                    'name' => $mentor->name,
+                    'name' => $mentor->user?->name,
                     'user_id' => (int) $mentor->user_id,
                 ],
                 'research_ideas' => [

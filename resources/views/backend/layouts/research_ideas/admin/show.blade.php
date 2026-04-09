@@ -26,7 +26,7 @@
         <div class="card bg-white border-0 rounded-3 mb-4">
             <div class="card-body p-4">
                 <p><strong>Status:</strong> {{ $data->status }}</p>
-                <p><strong>Mentor:</strong> {{ $data->mentor?->name ?? '-' }} ({{ $data->user?->email ?? '-' }})</p>
+                <p><strong>Mentor:</strong> {{ $data->mentor?->user?->name ?? '-' }} ({{ $data->mentor?->user?->email ?? '-' }})</p>
                 <p><strong>Title:</strong> {{ $data->study_title }}</p>
                 <p><strong>Deadline:</strong> {{ $data->dead_line?->format('Y-m-d') ?? '-' }}</p>
                 <p><strong>Start:</strong> {{ $data->start_date?->format('Y-m-d') ?? '-' }}</p>

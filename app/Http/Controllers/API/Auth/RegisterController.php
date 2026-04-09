@@ -81,8 +81,6 @@ class RegisterController extends Controller
             if ($request->input('role') === 'mentor') {
                 Mentor::create([
                     'user_id' => $user->id,
-                    'name' => $request->input('name'),
-                    'avatar' => null,
                     'bio' => null,
                     'university' => null,
                     'department' => null,

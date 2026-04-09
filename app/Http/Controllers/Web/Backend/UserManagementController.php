@@ -25,14 +25,14 @@ class UserManagementController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('avatar', function ($row) {
-                    $src = $row->mentor?->avatar
-                        ? asset($row->mentor->avatar)
-                        : ($row->avatar ? asset($row->avatar) : asset('backend/admin/assets/images/avatar_defult.png'));
+                    $src = $row->avatar
+                        ? asset($row->avatar)
+                        : asset('backend/admin/assets/images/avatar_defult.png');
 
                     return '<img src="'.$src.'" class="wh-40 rounded-3" alt="avatar">';
                 })
                 ->addColumn('mentor_name', function ($row) {
-                    return e($row->mentor?->name ?? $row->name ?? '-');
+                    return e($row->name ?? '-');
                 })
                 ->addColumn('status', function ($row) {
                     $s = '<div class="form-check form-switch">';
@@ -69,12 +69,10 @@ class UserManagementController extends Controller
             'gender' => 'nullable|in:male,female,others',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
             'password' => 'required|string|min:6',
-            'mentor_name' => 'required|string|max:255',
             'bio' => 'nullable|string',
             'university' => 'nullable|string|max:255',
             'department' => 'nullable|string|max:255',
             'social_links' => 'nullable|string',
-            'mentor_avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
         ]);
 
         $socialLinks = null;
@@ -93,24 +91,17 @@ class UserManagementController extends Controller
                 $validatedUser['avatar'] = Helper::fileUpload($request->file('avatar'), 'user/avatar', time().'_'.getFileName($request->file('avatar')));
             }
 
-            $mentorAvatarPath = null;
-            if ($request->hasFile('mentor_avatar')) {
-                $mentorAvatarPath = Helper::fileUpload($request->file('mentor_avatar'), 'mentor/avatar', time().'_'.getFileName($request->file('mentor_avatar')));
-            }
-
             $validatedUser['password'] = bcrypt($validatedUser['password']);
             $validatedUser['role'] = 'mentor';
             $validatedUser['email_verified_at'] = now();
             $validatedUser['status'] = 'active';
 
-            unset($validatedUser['mentor_name'], $validatedUser['bio'], $validatedUser['university'], $validatedUser['department'], $validatedUser['social_links'], $validatedUser['mentor_avatar']);
+            unset($validatedUser['bio'], $validatedUser['university'], $validatedUser['department'], $validatedUser['social_links']);
 
             $user = User::create($validatedUser);
 
             Mentor::create([
                 'user_id' => $user->id,
-                'name' => $request->string('mentor_name')->toString(),
-                'avatar' => $mentorAvatarPath,
                 'bio' => $request->input('bio'),
                 'university' => $request->input('university'),
                 'department' => $request->input('department'),
@@ -152,12 +143,10 @@ class UserManagementController extends Controller
             'gender' => 'nullable|in:male,female,others',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
             'password' => 'sometimes|nullable|string|min:6',
-            'mentor_name' => 'required|string|max:255',
             'bio' => 'nullable|string',
             'university' => 'nullable|string|max:255',
             'department' => 'nullable|string|max:255',
             'social_links' => 'nullable|string',
-            'mentor_avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp',
             'mentor_status' => 'nullable|in:active,inactive',
         ]);
 
@@ -190,27 +179,19 @@ class UserManagementController extends Controller
                 unset($validatedUser['password']);
             }
 
-            unset($validatedUser['mentor_name'], $validatedUser['bio'], $validatedUser['university'], $validatedUser['department'], $validatedUser['social_links'], $validatedUser['mentor_avatar'], $validatedUser['mentor_status']);
+            unset($validatedUser['bio'], $validatedUser['university'], $validatedUser['department'], $validatedUser['social_links'], $validatedUser['mentor_status']);
 
             $user->update($validatedUser);
 
-            $mentor = Mentor::firstOrCreate(['user_id' => $user->id], ['name' => $request->string('mentor_name')->toString(), 'status' => 'active']);
+            $mentor = Mentor::firstOrCreate(['user_id' => $user->id], ['status' => 'active']);
 
             $mentorPayload = [
-                'name' => $request->string('mentor_name')->toString(),
                 'bio' => $request->input('bio'),
                 'university' => $request->input('university'),
                 'department' => $request->input('department'),
                 'social_links' => $socialLinks,
                 'status' => $request->input('mentor_status', $mentor->status ?? 'active'),
             ];
-
-            if ($request->hasFile('mentor_avatar')) {
-                if (! empty($mentor->avatar) && file_exists(public_path($mentor->avatar))) {
-                    Helper::fileDelete(public_path($mentor->avatar));
-                }
-                $mentorPayload['avatar'] = Helper::fileUpload($request->file('mentor_avatar'), 'mentor/avatar', time().'_'.getFileName($request->file('mentor_avatar')));
-            }
 
             $mentor->update($mentorPayload);
 
@@ -230,9 +211,6 @@ class UserManagementController extends Controller
         $user = User::with('mentor')->where('role', 'mentor')->findOrFail($id);
         if (! empty($user->avatar) && file_exists(public_path($user->avatar))) {
             Helper::fileDelete(public_path($user->avatar));
-        }
-        if ($user->mentor && ! empty($user->mentor->avatar) && file_exists(public_path($user->mentor->avatar))) {
-            Helper::fileDelete(public_path($user->mentor->avatar));
         }
         $user->delete();
 

@@ -32,7 +32,7 @@
                     <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
                 <p><strong>Title:</strong> {{ $data->study_title }}</p>
-                <p><strong>Mentor:</strong> {{ $data->mentor?->name ?? '-' }}</p>
+                <p><strong>Mentor:</strong> {{ $data->mentor?->user?->name ?? '-' }}</p>
 
                 <form action="{{ route('admin.research_ideas.update', $data->id) }}" method="POST" class="mt-4">
                     @csrf

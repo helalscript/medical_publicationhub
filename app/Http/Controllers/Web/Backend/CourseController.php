@@ -86,7 +86,9 @@ class CourseController extends Controller
         $mentors = Mentor::query()
             ->with('user')
             ->where('status', 'active')
-            ->orderBy('name')
+            ->join('users', 'users.id', '=', 'mentors.user_id')
+            ->orderBy('users.name')
+            ->select('mentors.*')
             ->get();
 
         return view('backend.layouts.courses.create', compact('metaAcademyCategories', 'mentors'));
@@ -144,7 +146,9 @@ class CourseController extends Controller
         $mentors = Mentor::query()
             ->with('user')
             ->where('status', 'active')
-            ->orderBy('name')
+            ->join('users', 'users.id', '=', 'mentors.user_id')
+            ->orderBy('users.name')
+            ->select('mentors.*')
             ->get();
 
         return view('backend.layouts.courses.edit', compact('data', 'metaAcademyCategories', 'mentors'));

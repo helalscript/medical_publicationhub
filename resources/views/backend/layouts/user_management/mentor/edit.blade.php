@@ -78,22 +78,8 @@
                     </div>
 
                     <h6 class="mb-3 mt-2">Mentor profile</h6>
+                    <p class="text-muted small mb-3">Public name and photo use the <strong>Account name</strong> and <strong>User avatar</strong> fields above.</p>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="label">Mentor display name <span class="text-danger">*</span></label>
-                            <input type="text" name="mentor_name"
-                                   value="{{ old('mentor_name', $data->mentor?->name) }}"
-                                   placeholder="Enter mentor display name"
-                                   class="form-control @error('mentor_name') is-invalid @enderror" required>
-                            @error('mentor_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="label">Mentor avatar <span class="text-muted">(Optional)</span></label>
-                            <input type="file" name="mentor_avatar" data-height="160"
-                                   data-default-file="{{ !empty($data->mentor?->avatar) ? asset($data->mentor->avatar) : '' }}"
-                                   class="dropify form-control @error('mentor_avatar') is-invalid @enderror">
-                            @error('mentor_avatar')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
                         <div class="col-md-6 mb-3">
                             <label class="label">University <span class="text-muted">(Optional)</span></label>
                             <input type="text" name="university"

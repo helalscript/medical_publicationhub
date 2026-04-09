@@ -202,11 +202,11 @@
                     <div class="d-flex align-items-center gap-3">
                         @php
                             $mentor = $data->mentor ?? null;
-                            $mentorAvatar = $mentor?->avatar ? asset($mentor->avatar) : asset('backend/admin/assets/images/avatar_defult.png');
+                            $mentorAvatar = $mentor?->user?->avatar ? asset($mentor->user->avatar) : asset('backend/admin/assets/images/avatar_defult.png');
                         @endphp
                         <img class="mentor-avatar" src="{{ $mentorAvatar }}" alt="mentor">
                         <div class="flex-grow-1">
-                            <div class="fw-semibold">{{ $mentor?->name ?? 'Mentor not assigned' }}</div>
+                            <div class="fw-semibold">{{ $mentor?->user?->name ?? 'Mentor not assigned' }}</div>
                             <div class="mentor-sub">
                                 {{ $mentor?->department ?? '' }}
                                 @if (!empty($mentor?->department) && !empty($mentor?->university)) · @endif

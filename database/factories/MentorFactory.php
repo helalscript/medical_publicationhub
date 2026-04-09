@@ -24,8 +24,6 @@ class MentorFactory extends Factory
             'user_id' => User::factory()->mentorAccount()->state([
                 'name' => $name,
             ]),
-            'name' => $name,
-            'avatar' => null,
             'bio' => $this->faker->optional(0.6)->paragraph(),
             'university' => $this->faker->optional(0.7)->company(),
             'department' => $this->faker->optional(0.5)->word(),

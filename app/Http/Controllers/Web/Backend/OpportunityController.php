@@ -22,7 +22,7 @@ class OpportunityController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('mentor_name', function ($row) {
-                    return e($row->mentor?->name ?? '-');
+                    return e($row->mentor?->user?->name ?? '-');
                 })
                 ->addColumn('is_future_badge', function ($row) {
                     $c = $row->is_future ? 'info' : 'secondary';
@@ -72,7 +72,13 @@ class OpportunityController extends Controller
 
     public function create()
     {
-        $mentors = Mentor::with('user')->where('status', 'active')->orderBy('name')->get();
+        $mentors = Mentor::query()
+            ->with('user')
+            ->where('status', 'active')
+            ->join('users', 'users.id', '=', 'mentors.user_id')
+            ->orderBy('users.name')
+            ->select('mentors.*')
+            ->get();
         $categories = $this->categoryLists();
 
         return view('backend.layouts.opportunities.create', compact('mentors', 'categories'));
@@ -124,7 +130,13 @@ class OpportunityController extends Controller
     {
         $data = Opportunity::findOrFail($id);
 
-        $mentors = Mentor::with('user')->where('status', 'active')->orderBy('name')->get();
+        $mentors = Mentor::query()
+            ->with('user')
+            ->where('status', 'active')
+            ->join('users', 'users.id', '=', 'mentors.user_id')
+            ->orderBy('users.name')
+            ->select('mentors.*')
+            ->get();
         $categories = $this->categoryLists();
 
         return view('backend.layouts.opportunities.edit', compact('data', 'mentors', 'categories'));

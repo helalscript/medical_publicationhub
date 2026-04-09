@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-md-6">
                         @if ($data->mentor)
-                            <p><strong>Mentor name:</strong> {{ $data->mentor->name }}</p>
+                            <p><strong>Public name (from account):</strong> {{ $data->name }}</p>
                             <p><strong>University:</strong> {{ $data->mentor->university ?? '-' }}</p>
                             <p><strong>Department:</strong> {{ $data->mentor->department ?? '-' }}</p>
                             <p><strong>Mentor profile status:</strong> {{ $data->mentor->status }}</p>

@@ -155,7 +155,7 @@
             <option value=""></option>
             @foreach ($mentors as $m)
                 <option value="{{ $m->id }}" @selected(in_array((int) $m->id, array_map('intval', $cMentorIds), true))>
-                    #{{ $m->id }} — {{ $m->name }} @if($m->user) ({{ $m->user->email }}) @endif
+                    #{{ $m->id }} — {{ $m->user?->name ?? '—' }} @if($m->user) ({{ $m->user->email }}) @endif
                 </option>
             @endforeach
         </select>

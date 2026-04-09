@@ -23,7 +23,6 @@ class OpportunitySeeder extends Seeder
             ]);
             $mentor = Mentor::create([
                 'user_id' => $mentorUser->id,
-                'name' => 'Seed Mentor',
                 'status' => 'active',
             ]);
         }

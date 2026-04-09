@@ -36,7 +36,6 @@ class DatabaseSeeder extends Seeder
         ]);
         Mentor::create([
             'user_id' => $mentorUser->id,
-            'name' => 'Mentor',
             'status' => 'active',
         ]);
         User::factory()->create([
