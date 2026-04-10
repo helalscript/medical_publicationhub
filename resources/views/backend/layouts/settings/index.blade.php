@@ -63,6 +63,21 @@
 
             <div class="col-lg-6">
                 <div class="form-group mb-4">
+                    <label class="label text-secondary">WhatsApp Number</label>
+                    <div class="form-group position-relative">
+                        <input type="text"
+                            class="form-control text-dark ps-5 h-55 @error('whatsapp_number') is-invalid @enderror"
+                            name="whatsapp_number" value="{{ old('whatsapp_number', $settings->whatsapp_number ?? '') }}"
+                            placeholder="Enter WhatsApp number here">
+                    </div>
+                    @error('whatsapp_number')
+                        <div id="whatsapp_number-error" class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="form-group mb-4">
                     <label class="label text-secondary">Email</label>
                     <div class="form-group position-relative">
                         <input type="email" class="form-control text-dark ps-5 h-55 @error('email') is-invalid @enderror"

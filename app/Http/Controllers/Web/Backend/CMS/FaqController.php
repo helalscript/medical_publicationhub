@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Backend\CMS;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Faq;
 use App\Models\FaqCategory;
 use Illuminate\Http\Request;
@@ -65,7 +66,7 @@ class FaqController extends Controller
      */
     public function create()
     {
-        $categories = FaqCategory::where('status', 'active')->orderBy('id')->get();
+        $categories = Category::where('type', 'faq')->where('status', 'active')->orderBy('id')->get();
 
         return view("backend.layouts.faq.create", compact('categories'));
     }
@@ -78,7 +79,7 @@ class FaqController extends Controller
         $validatedData = $request->validate([
             'question' => 'required|string|max:255',
             'answer' => 'required|string',
-            'faq_category_id' => 'required|exists:faq_categories,id',
+            'category_id' => 'required|exists:categories,id',
         ]);
         // dd($validatedData);
         try {
@@ -107,7 +108,7 @@ class FaqController extends Controller
     {
         $data = Faq::findOrFail($id);
 
-        $categories = FaqCategory::where('status', 'active')->orderBy('id')->get();
+        $categories = Category::where('type', 'faq')->where('status', 'active')->orderBy('id')->get();
 
         return view("backend.layouts.faq.edit", compact('data', 'categories'));
     }
@@ -120,7 +121,7 @@ class FaqController extends Controller
         $validatedData = $request->validate([
             'question' => 'required|string|max:255',
             'answer' => 'required|string',
-            'faq_category_id' => 'required|exists:faq_categories,id',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         try {

@@ -89,11 +89,11 @@ class HomePageController extends Controller
     public function getCounterSection(): JsonResponse
     {
         try {
-            $section = CMS::where('page', Page::HomePage)
-                ->where('section', Section::CounterSection)
-                ->where('status', 'active')
-                ->select('id', 'title')
-                ->first();
+            // $section = CMS::where('page', Page::HomePage)
+            //     ->where('section', Section::CounterSection)
+            //     ->where('status', 'active')
+            //     ->select('id', 'title')
+            //     ->first();
 
             $items = CMS::where('page', Page::HomePage)
                 ->where('section', Section::CounterSectionContent)
@@ -103,7 +103,7 @@ class HomePageController extends Controller
                 ->get();
 
             $data = [
-                'content' => ['title' => $section?->title ?? ''],
+                // 'content' => ['title' => $section?->title ?? ''],
                 'items' => $items,
             ];
             return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);

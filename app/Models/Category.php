@@ -23,4 +23,8 @@ class Category extends Model
         'description' => 'string',
         'status' => 'string',
     ];
+    public function faqs()
+    {
+        return $this->hasMany(Faq::class, 'category_id');
+    }
 }

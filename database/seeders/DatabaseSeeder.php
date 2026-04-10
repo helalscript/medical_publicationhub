@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\City;
-use App\Models\Clergy;
 use App\Models\Mentor;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -23,7 +21,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'role' => 'admin',
         ]);
-        
+
         User::factory()->create([
             'name' => 'Coordinator',
             'email' => 'coordinator@coordinator.com',
@@ -38,7 +36,6 @@ class DatabaseSeeder extends Seeder
         ]);
         Mentor::create([
             'user_id' => $mentorUser->id,
-            'name' => 'Mentor',
             'status' => 'active',
         ]);
         User::factory()->create([
@@ -48,11 +45,21 @@ class DatabaseSeeder extends Seeder
             'role' => 'researcher',
         ]);
 
-       
         $this->call(SystemSettingSeeder::class);
         $this->call(CMSSeeder::class);
         $this->call(DynamicPageSeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(FaqSeeder::class);
+        $this->call(OpportunitySeeder::class);
+        $this->call(ServiceSeeder::class);
+        $this->call(PublicationSeeder::class);
+        $this->call(PartnershipRequestSeeder::class);
+        $this->call(AccessControlSeeder::class);
+        $this->call(MentorResearcherDemoSeeder::class);
+        $this->call(CourseSeeder::class);
+        $this->call(ModuleSeeder::class);
+        $this->call(LessonSeeder::class);
+        $this->call(OpportunityApplicationChatSeeder::class);
+        $this->call(ContactUsSeeder::class);
     }
 }

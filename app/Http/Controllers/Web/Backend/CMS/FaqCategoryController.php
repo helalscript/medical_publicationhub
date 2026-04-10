@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Web\Backend\CMS;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Models\FaqCategory;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
@@ -14,7 +14,7 @@ class FaqCategoryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = FaqCategory::latest();
+            $data = Category::where('type', 'faq')->latest();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -61,7 +61,8 @@ class FaqCategoryController extends Controller
         ]);
 
         try {
-            FaqCategory::create($validated);
+            $validated['type'] = 'faq';
+            Category::create($validated);
             flash()->success('Faq category created successfully');
 
             return redirect()->route('faq_categories.index');
@@ -75,7 +76,7 @@ class FaqCategoryController extends Controller
 
     public function edit(string $id)
     {
-        $data = FaqCategory::findOrFail($id);
+        $data = Category::findOrFail($id);
 
         return view('backend.layouts.faq_categories.edit', compact('data'));
     }
@@ -88,7 +89,8 @@ class FaqCategoryController extends Controller
         ]);
 
         try {
-            $data = FaqCategory::findOrFail($id);
+            $validated['type'] = 'faq';
+            $data = Category::findOrFail($id);
             $data->update($validated);
 
             flash()->success('Faq category updated successfully');
@@ -104,7 +106,7 @@ class FaqCategoryController extends Controller
 
     public function destroy(string $id)
     {
-        $data = FaqCategory::findOrFail($id);
+        $data = Category::findOrFail($id);
         $data->delete();
 
         return response()->json([
@@ -115,7 +117,7 @@ class FaqCategoryController extends Controller
 
     public function status(Request $request, $id)
     {
-        $data = FaqCategory::find($id);
+        $data = Category::find($id);
 
         if (empty($data)) {
             return response()->json([

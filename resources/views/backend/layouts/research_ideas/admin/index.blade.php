@@ -16,7 +16,12 @@
             <h3 class="mb-0">Research ideas</h3>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
                 <ol class="breadcrumb align-items-center mb-0 lh-1">
-                    <li class="breadcrumb-item active"><span class="fw-medium">Review &amp; schedule</span></li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ route('admin.dashboard') }}" class="fw-medium text-decoration-none">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <span class="fw-medium">Research Ideas</span>
+                    </li>
                 </ol>
             </nav>
         </div>

@@ -1,0 +1,2295 @@
+{
+    "info": {
+        "_postman_id": "c9d0e1f2-a3b4-5678-cdef-901234567890",
+        "name": "Ibraheem Altamim API",
+        "description": "Laravel API collection.\n\n**Variables** (Collection \u2192 Variables):\n- `base_url` = http://ibraheemaltamim.test\n- `token` = JWT from Login or Verify email (Bearer)\n\nProtected folders inherit Bearer {{token}}. Paste token after auth.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://ibraheemaltamim.test"
+        },
+        {
+            "key": "token",
+            "value": ""
+        },
+        {
+            "key": "course_id",
+            "value": "1"
+        },
+        {
+            "key": "opportunity_id",
+            "value": "1"
+        },
+        {
+            "key": "chat_id",
+            "value": "1"
+        },
+        {
+            "key": "research_idea_id",
+            "value": "1"
+        },
+        {
+            "key": "application_id",
+            "value": "1"
+        },
+        {
+            "key": "favourite_id",
+            "value": "1"
+        },
+        {
+            "key": "publication_id",
+            "value": "1"
+        },
+        {
+            "key": "service_id",
+            "value": "1"
+        },
+        {
+            "key": "notification_id",
+            "value": ""
+        },
+        {
+            "key": "dynamic_page_slug",
+            "value": "about"
+        }
+    ],
+    "item": [
+        {
+            "name": "01 \u2014 Auth (Guest)",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/register",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "name",
+                                    "value": "Test User",
+                                    "type": "text",
+                                    "description": "required"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "user@example.com",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "password",
+                                    "type": "text",
+                                    "description": "min 6"
+                                },
+                                {
+                                    "key": "password_confirmation",
+                                    "value": "password",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "role",
+                                    "value": "researcher",
+                                    "type": "text",
+                                    "description": "mentor | researcher"
+                                }
+                            ]
+                        },
+                        "description": "Creates user. Sends OTP to email."
+                    }
+                },
+                {
+                    "name": "Verify email",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/verify-email",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "email",
+                                    "value": "user@example.com",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "otp",
+                                    "value": "1234",
+                                    "type": "text",
+                                    "description": "4 digits"
+                                }
+                            ]
+                        },
+                        "description": "Returns JWT token on success."
+                    }
+                },
+                {
+                    "name": "Resend OTP",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/resend-otp",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "email",
+                                    "value": "user@example.com",
+                                    "type": "text",
+                                    "description": ""
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/login",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "email",
+                                    "value": "user@example.com",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "password",
+                                    "type": "text",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "description": "Requires verified email."
+                    }
+                },
+                {
+                    "name": "Forgot password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/forget-password",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "email",
+                                    "value": "user@example.com",
+                                    "type": "text",
+                                    "description": ""
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Verify OTP (password reset)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/verify-otp",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "email",
+                                    "value": "user@example.com",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "otp",
+                                    "value": "1234",
+                                    "type": "text",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "description": "Response includes `token` for reset-password."
+                    }
+                },
+                {
+                    "name": "Reset password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/reset-password",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "email",
+                                    "value": "user@example.com",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "token",
+                                    "value": "PASTE_FROM_VERIFY_OTP",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "newsecret12",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "password_confirmation",
+                                    "value": "newsecret12",
+                                    "type": "text",
+                                    "description": ""
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Social login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/social-login",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "token",
+                                    "value": "OAUTH_ACCESS_TOKEN",
+                                    "type": "text",
+                                    "description": "required"
+                                },
+                                {
+                                    "key": "provider",
+                                    "value": "google",
+                                    "type": "text",
+                                    "description": "google|facebook|apple|instagram"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "02 \u2014 Auth (JWT)",
+            "item": [
+                {
+                    "name": "Refresh token",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/refresh-token",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/logout",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Me",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/me",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update profile",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/update-profile",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "first_name",
+                                    "value": "John",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "last_name",
+                                    "value": "Doe",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "city",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "state",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "zip_code",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "gender",
+                                    "value": "male",
+                                    "type": "text",
+                                    "description": "male|female|others"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "password_confirmation",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "avatar",
+                                    "description": "optional image",
+                                    "type": "file",
+                                    "src": null
+                                },
+                                {
+                                    "key": "cover_photo",
+                                    "description": "optional",
+                                    "type": "file",
+                                    "src": null
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "description": "multipart/form-data. Files optional."
+                    }
+                },
+                {
+                    "name": "Change password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/update-password",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "current_password",
+                                    "value": "old",
+                                    "type": "text",
+                                    "description": "required"
+                                },
+                                {
+                                    "key": "new_password",
+                                    "value": "newpass12",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "new_password_confirmation",
+                                    "value": "newpass12",
+                                    "type": "text",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Clergy profile update",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/clergy-profile-update",
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "first_name",
+                                    "value": "John",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "last_name",
+                                    "value": "Doe",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "gender",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "religion",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "bio",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "avatar",
+                                    "type": "file",
+                                    "src": null
+                                },
+                                {
+                                    "key": "cover_photo",
+                                    "type": "file",
+                                    "src": null
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "description": "Only for users with role `clergy`."
+                    }
+                }
+            ],
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{token}}",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "03 \u2014 App user (role user)",
+            "item": [
+                {
+                    "name": "Dashboard home",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/dashboard-data/home",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My notifications",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/my-notifications",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Mark notifications read",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/my-notifications/mark-as-read",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"notification_ids\": [\n        \"id-1\",\n        \"id-2\"\n    ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "description": "Use actual notification id values from your DB."
+                    }
+                },
+                {
+                    "name": "Delete notification",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/my-notifications-delete/{{notification_id}}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete all notifications",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/my-notifications-delete-all",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "My courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/my-courses",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Buy course",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/courses/{{course_id}}/buy",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "payment_gateway",
+                                    "value": "manual",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "payment_gateway_id",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "payment_method_id",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "pay_id",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ],
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{token}}",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "04 \u2014 Mentor",
+            "item": [
+                {
+                    "name": "Research ideas list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/mentor/research-ideas?per_page=15",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create research idea",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/mentor/research-ideas",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "study_title",
+                                    "value": "Title",
+                                    "type": "text",
+                                    "description": "required"
+                                },
+                                {
+                                    "key": "study_descritions",
+                                    "value": "Long description",
+                                    "type": "text",
+                                    "description": "API field spelling"
+                                },
+                                {
+                                    "key": "research_objectives",
+                                    "value": "Objectives",
+                                    "type": "text",
+                                    "description": "required"
+                                },
+                                {
+                                    "key": "perposed_methodology",
+                                    "value": "Methodology",
+                                    "type": "text",
+                                    "description": "API spelling perposed"
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "description": "Can use form-urlencoded or raw JSON with same keys."
+                    }
+                },
+                {
+                    "name": "Research idea show",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/mentor/research-ideas/{{research_idea_id}}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update research idea",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/mentor/research-ideas/{{research_idea_id}}",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "study_title",
+                                    "value": "Title",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "study_descritions",
+                                    "value": "Desc",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "research_objectives",
+                                    "value": "Obj",
+                                    "type": "text",
+                                    "description": ""
+                                },
+                                {
+                                    "key": "perposed_methodology",
+                                    "value": "Meth",
+                                    "type": "text",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Submit submission proof",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "proof_files[]",
+                                    "type": "file",
+                                    "src": null,
+                                    "description": "pdf,jpg,jpeg,png,webp; add multiple"
+                                }
+                            ]
+                        },
+                        "url": "{{base_url}}/api/mentor/research-ideas/{{research_idea_id}}/submission-proof"
+                    }
+                },
+                {
+                    "name": "Chats list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/mentor/chats",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Chat show (+ messages)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/mentor/chats/{{chat_id}}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Send chat message",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/mentor/chats/{{chat_id}}/messages",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "message",
+                                    "value": "Hello",
+                                    "type": "text",
+                                    "description": "required"
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ],
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{token}}",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "05 \u2014 Researcher",
+            "item": [
+                {
+                    "name": "Applications list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/opportunity-applications?per_page=15",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create opportunity application",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "opportunity_id",
+                                    "value": "{{opportunity_id}}",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "first_name",
+                                    "value": "Jane",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "last_name",
+                                    "value": "Doe",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "jane@example.com",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "highest_edu_level",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "institution",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "field_of_study",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "research_experience",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "current_position",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "linkedin_profile",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "personal_website",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "cover_letter",
+                                    "value": "",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "accept_term",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "required boolean"
+                                },
+                                {
+                                    "key": "documents[]",
+                                    "type": "file",
+                                    "src": null,
+                                    "description": "optional multiple"
+                                }
+                            ]
+                        },
+                        "url": "{{base_url}}/api/researcher/opportunity-applications"
+                    }
+                },
+                {
+                    "name": "Update application",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "first_name",
+                                    "value": "Jane",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "jane@example.com",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": "{{base_url}}/api/researcher/opportunity-applications/{{application_id}}",
+                        "description": "Only while status is pending. Optional documents[]."
+                    }
+                },
+                {
+                    "name": "Application show",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/opportunity-applications/{{application_id}}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Application delete",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/opportunity-applications/{{application_id}}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Favourites list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/favourites",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Favourite add",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/favourites",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "opportunity_id",
+                                    "value": "{{opportunity_id}}",
+                                    "type": "text",
+                                    "description": "required"
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Favourite show",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/favourites/{{favourite_id}}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Favourite remove",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/favourites/{{favourite_id}}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Chats list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/chats",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Chat show",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/chats/{{chat_id}}",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Send message",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/researcher/chats/{{chat_id}}/messages",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "message",
+                                    "value": "Hi",
+                                    "type": "text",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ],
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{token}}",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "06 \u2014 Public / Marketing",
+            "item": [
+                {
+                    "name": "Opportunities list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/opportunities?per_page=15&only_active=1",
+                        "description": "Query: is_future=0|1, only_active (default true)."
+                    }
+                },
+                {
+                    "name": "Opportunity detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/opportunities/{{opportunity_id}}"
+                    }
+                },
+                {
+                    "name": "Courses list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/courses?per_page=10&search=&is_future="
+                    }
+                },
+                {
+                    "name": "Course detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/courses/{{course_id}}"
+                    }
+                },
+                {
+                    "name": "Publications list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/publications?per_page=10&search=&category_id="
+                    }
+                },
+                {
+                    "name": "Publication detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/publications/{{publication_id}}"
+                    }
+                },
+                {
+                    "name": "Services list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/services?per_page=10&search=&featured="
+                    }
+                },
+                {
+                    "name": "Service detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/services/{{service_id}}"
+                    }
+                },
+                {
+                    "name": "Partnership request (form)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/partnership-requests",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "full_name",
+                                    "value": "Partner Name",
+                                    "type": "text",
+                                    "description": "required"
+                                },
+                                {
+                                    "key": "organization",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "partner@org.com",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "message",
+                                    "value": "We would like to collaborate.",
+                                    "type": "text",
+                                    "description": "optional"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Calendly scheduling URL",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/calendly/schedule-link"
+                    }
+                },
+                {
+                    "name": "FAQs list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/faqs"
+                    }
+                },
+                {
+                    "name": "FAQ categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/faqs-categories"
+                    }
+                },
+                {
+                    "name": "FAQ category show",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/faqs-categories/1"
+                    }
+                },
+                {
+                    "name": "Newsletter subscribe",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/newsletter/subscribe",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "email",
+                                    "value": "sub@example.com",
+                                    "type": "text",
+                                    "description": "required"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Social links",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/social-links"
+                    }
+                },
+                {
+                    "name": "Contact support",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/contact-support-message/sent",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "full_name",
+                                    "value": "User",
+                                    "type": "text",
+                                    "description": "required"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "user@example.com",
+                                    "type": "text",
+                                    "description": "required"
+                                },
+                                {
+                                    "key": "message",
+                                    "value": "Need help",
+                                    "type": "text",
+                                    "description": "required"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "System info",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/system-info"
+                    }
+                },
+                {
+                    "name": "Dynamic pages list",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/dynamic-pages"
+                    }
+                },
+                {
+                    "name": "Dynamic page by slug",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/dynamic-pages/single/{{dynamic_page_slug}}"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "07 \u2014 CMS / Home page",
+            "item": [
+                {
+                    "name": "Hero section",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/home-page/hero-section"
+                    }
+                },
+                {
+                    "name": "Counter section",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/home-page/counter-section"
+                    }
+                },
+                {
+                    "name": "Why researchers choose",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/home-page/why-researchers-choose-section"
+                    }
+                },
+                {
+                    "name": "Featured research opportunities",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/home-page/featured-research-opportunities-section"
+                    }
+                },
+                {
+                    "name": "Meta academy section",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/home-page/meta-academy-section"
+                    }
+                },
+                {
+                    "name": "Review section",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/home-page/review-section"
+                    }
+                },
+                {
+                    "name": "Research journey section",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/home-page/research-journey-section"
+                    }
+                },
+                {
+                    "name": "FAQ section",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/home-page/faq-section"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "08 \u2014 CMS / FAQ page",
+            "item": [
+                {
+                    "name": "FAQ hero (GET)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/faq-page/hero-section"
+                    }
+                },
+                {
+                    "name": "FAQ hero (POST)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/faq-page/hero-section",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "title",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "sub_title",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "FAQ questions section (GET)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/faq-page/question-section"
+                    }
+                },
+                {
+                    "name": "FAQ questions section (POST)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/faq-page/question-section",
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "title",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                },
+                                {
+                                    "key": "button_text",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "optional"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "09 \u2014 CMS / Other pages",
+            "item": [
+                {
+                    "name": "Meta academy \u2014 hero",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/meta-academy-page/hero-section"
+                    }
+                },
+                {
+                    "name": "Meta academy \u2014 counter",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/meta-academy-page/counter-section"
+                    }
+                },
+                {
+                    "name": "Research page \u2014 section",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/research-page/research-section"
+                    }
+                },
+                {
+                    "name": "Service page \u2014 section",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/service-page/service-section"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "10 \u2014 CMS / Partnership page",
+            "item": [
+                {
+                    "name": "Hero",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/hero-section"
+                    }
+                },
+                {
+                    "name": "Our mission",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/our-mission-section"
+                    }
+                },
+                {
+                    "name": "About us",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/about-us-section"
+                    }
+                },
+                {
+                    "name": "Partnership value",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/partnership-value-section"
+                    }
+                },
+                {
+                    "name": "Core research",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/core-research-section"
+                    }
+                },
+                {
+                    "name": "Systematic review",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/systematic-review-section"
+                    }
+                },
+                {
+                    "name": "Manuscript",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/manuscript-section"
+                    }
+                },
+                {
+                    "name": "Partnership model",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/partnership-model-section"
+                    }
+                },
+                {
+                    "name": "Reviewer comment",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/reviewer-comment-section"
+                    }
+                },
+                {
+                    "name": "Journal",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/journal-section"
+                    }
+                },
+                {
+                    "name": "Research opportunities",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/research-opportunitie-section"
+                    }
+                },
+                {
+                    "name": "Why partner",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/why-partner-section"
+                    }
+                },
+                {
+                    "name": "Partner model",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": "{{base_url}}/api/cms/partnership-page/partner-model-section"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -7,15 +7,11 @@ use App\Http\Controllers\Web\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Web\Auth\NewPasswordController;
 use App\Http\Controllers\Web\Auth\PasswordController;
 use App\Http\Controllers\Web\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Web\Auth\RegisterContractorController;
 use App\Http\Controllers\Web\Auth\RegisteredUserController;
 use App\Http\Controllers\Web\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    // contractor register 
-    Route::get('/provider/register', [RegisterContractorController::class, 'create'])->name('provider.register');
-    Route::post('/provider/register', [RegisterContractorController::class, 'store'])->name('provider.register.store');
 
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');

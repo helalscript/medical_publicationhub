@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -39,6 +40,32 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Demo / seed: verified mentor user (create {@see Mentor} row separately or via MentorFactory).
+     */
+    public function mentorAccount(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'mentor',
+            'password' => Hash::make('12345678'),
+            'email_verified_at' => now(),
+            'status' => 'active',
+        ]);
+    }
+
+    /**
+     * Demo / seed: verified researcher user (no extra profile table).
+     */
+    public function researcherAccount(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'researcher',
+            'password' => Hash::make('12345678'),
+            'email_verified_at' => now(),
+            'status' => 'active',
         ]);
     }
 }

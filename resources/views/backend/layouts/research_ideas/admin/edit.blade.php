@@ -4,7 +4,25 @@
 @section('content')
     <div class="main-content-container overflow-hidden">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-            <h3 class="mb-0">Review research idea</h3>
+            <div>
+                <h3 class="mb-1">Review research idea</h3>
+                <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                    <ol class="breadcrumb align-items-center mb-0 lh-1">
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.dashboard') }}" class="fw-medium text-decoration-none">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.research_ideas.index') }}" class="fw-medium text-decoration-none">Research Ideas</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.research_ideas.show', $data->id) }}" class="fw-medium text-decoration-none">Details</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <span class="fw-medium">Review</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
             <a href="{{ route('admin.research_ideas.show', $data->id) }}" class="btn btn-outline-secondary">View</a>
         </div>
 
@@ -14,7 +32,7 @@
                     <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
                 <p><strong>Title:</strong> {{ $data->study_title }}</p>
-                <p><strong>Mentor:</strong> {{ $data->mentor?->name ?? '-' }}</p>
+                <p><strong>Mentor:</strong> {{ $data->mentor?->user?->name ?? '-' }}</p>
 
                 <form action="{{ route('admin.research_ideas.update', $data->id) }}" method="POST" class="mt-4">
                     @csrf

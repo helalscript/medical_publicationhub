@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     // Rest omitted for brevity
 
@@ -99,22 +101,65 @@ class User extends Authenticatable implements JWTSubject
             'is_otp_verified' => 'boolean',
             'reset_password_token_expires_at' => 'datetime',
             'last_seen' => 'datetime',
-            'password' => 'hashed'
+            'password' => 'hashed',
         ];
     }
 
-    public function getAvatarAttribute($value): string|null
+    public function getAvatarAttribute($value): ?string
     {
+        if (empty($value)) {
+            return $value;
+        }
+
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             return $value;
         }
-        // Check if the request is an API request
-        if (request()->is('api/*') && !empty($value)) {
-            // Return the full URL for API requests
-            return url($value);
+
+        // For API responses return an absolute public URL (so mobile can load it).
+        if (request()->is('api/*')) {
+            if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+                return $value;
+            }
+
+            // Legacy uploads are stored in `public/uploads/...`
+            if (str_starts_with($value, 'uploads/')) {
+                return asset($value);
+            }
+
+            // New uploads are stored in `storage/app/public/...` (value is disk path)
+            if (str_starts_with($value, 'storage/')) {
+                return asset($value);
+            }
+
+            return asset('storage/'.$value);
         }
 
-        // Return only the path for web requests
+        // For web: keep DB value as-is (path).
+        return $value;
+    }
+
+    public function getCoverPhotoAttribute($value): ?string
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        if (request()->is('api/*')) {
+            if (str_starts_with($value, 'uploads/')) {
+                return asset($value);
+            }
+
+            if (str_starts_with($value, 'storage/')) {
+                return asset($value);
+            }
+
+            return asset('storage/'.$value);
+        }
+
         return $value;
     }
 
@@ -128,5 +173,48 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(ResearchIdea::class, 'user_id');
     }
 
-}
+    public function opportunityApplications(): HasMany
+    {
+        return $this->hasMany(OpportunityApplication::class);
+    }
 
+    public function favourites(): HasMany
+    {
+        return $this->hasMany(Favourite::class);
+    }
+
+    public function chatUsers(): HasMany
+    {
+        return $this->hasMany(ChatUser::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function courseAccesses(): HasMany
+    {
+        return $this->hasMany(UserCourseAccess::class);
+    }
+
+    public function moduleAccesses(): HasMany
+    {
+        return $this->hasMany(UserModuleAccess::class);
+    }
+
+    public function progresses(): HasMany
+    {
+        return $this->hasMany(UserProgress::class);
+    }
+
+    public function watchLogs(): HasMany
+    {
+        return $this->hasMany(UserWatchLog::class);
+    }
+}

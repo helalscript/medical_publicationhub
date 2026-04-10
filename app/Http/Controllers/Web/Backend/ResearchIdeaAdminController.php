@@ -24,7 +24,7 @@ class ResearchIdeaAdminController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('mentor_name', function ($row) {
-                    return $row->mentor?->name ?? '-';
+                    return $row->mentor?->user?->name ?? '-';
                 })
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at?->format('Y-m-d H:i') ?? '-';

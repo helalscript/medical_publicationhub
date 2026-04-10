@@ -4,14 +4,29 @@
 @section('content')
     <div class="main-content-container overflow-hidden">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-            <h3 class="mb-0">Research idea</h3>
+            <div>
+                <h3 class="mb-1">Research idea</h3>
+                <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                    <ol class="breadcrumb align-items-center mb-0 lh-1">
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.dashboard') }}" class="fw-medium text-decoration-none">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.research_ideas.index') }}" class="fw-medium text-decoration-none">Research Ideas</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <span class="fw-medium">Details</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
             <a href="{{ route('admin.research_ideas.edit', $data->id) }}" class="btn btn-primary">Edit / Review</a>
         </div>
 
         <div class="card bg-white border-0 rounded-3 mb-4">
             <div class="card-body p-4">
                 <p><strong>Status:</strong> {{ $data->status }}</p>
-                <p><strong>Mentor:</strong> {{ $data->mentor?->name ?? '-' }} ({{ $data->user?->email ?? '-' }})</p>
+                <p><strong>Mentor:</strong> {{ $data->mentor?->user?->name ?? '-' }} ({{ $data->mentor?->user?->email ?? '-' }})</p>
                 <p><strong>Title:</strong> {{ $data->study_title }}</p>
                 <p><strong>Deadline:</strong> {{ $data->dead_line?->format('Y-m-d') ?? '-' }}</p>
                 <p><strong>Start:</strong> {{ $data->start_date?->format('Y-m-d') ?? '-' }}</p>
