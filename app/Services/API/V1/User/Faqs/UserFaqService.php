@@ -2,8 +2,8 @@
 
 namespace App\Services\API\V1\User\Faqs;
 
+use App\Models\Category;
 use App\Models\Faq;
-use App\Models\FaqCategory;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -36,12 +36,12 @@ class UserFaqService
                 }
 
                 return Faq::select('id', 'question', 'answer')
-                    ->where('faq_category_id', $category->id)
+                    ->where('category_id', $category->id)
                     ->where('status', 'active')
                     ->paginate($per_page);
             }
 
-            return Faq::select('id', 'question', 'answer', 'faq_category_id')
+            return Faq::select('id', 'question', 'answer', 'category_id')
                 ->where('status', 'active')
                 ->paginate($per_page);
         } catch (Exception $e) {
@@ -50,9 +50,9 @@ class UserFaqService
         }
     }
 
-    public function getCategoryByType(string $type): ?FaqCategory
+    public function getCategoryByType(string $type): ?Category
     {
-        return FaqCategory::where('type', $type)
+        return Category::where('type', $type)
             ->where('status', 'active')
             ->first();
     }
@@ -65,14 +65,15 @@ class UserFaqService
         }
 
         return Faq::select('id', 'question', 'answer')
-            ->where('faq_category_id', $category->id)
+            ->where('category_id', $category->id)
             ->where('status', 'active')
             ->paginate($per_page);
     }
 
     public function getAllCategories()
     {
-        return FaqCategory::where('status', 'active')
+        return Category::where('status', 'active')
+            ->where('type', 'faq')
             ->orderBy('id')
             ->select('id', 'name')
             ->get();
@@ -80,8 +81,11 @@ class UserFaqService
 
     public function getCategoryById(string $id)
     {
-        $category = FaqCategory::where('status', 'active')
-            ->with('faqs:id,question,answer,faq_category_id')
+        $category = Category::where('status', 'active')
+            ->where('type', 'faq')
+            ->where('status', 'active')
+            ->where('type', 'faq')
+            ->with('faqs:id,question,answer,category_id')
             ->find($id);
         if (! $category) {
             throw new Exception('Category not found');

@@ -37,6 +37,11 @@
                             Settings</a>
                     </li>
                     <li>
+                        <a href="{{ route('system_settings.calendly_get') }}"
+                            class="btn btn-primary border border-primary {{ request()->routeIs('system_settings.calendly_get') ? 'bg-primary text-white' : 'bg-transparent text-primary' }} py-2 px-3 fw-semibold">Calendly
+                            Settings</a>
+                    </li>
+                    <li>
                         <a href="{{ route('system_settings.mail_get') }}"
                             class="btn btn-primary border border-primary {{ request()->routeIs('system_settings.mail_get') ? 'bg-primary text-white' : 'bg-transparent text-primary' }} py-2 px-3 fw-semibold">Mail
                             <Source:media:sizes></Source:media:sizes>Settings

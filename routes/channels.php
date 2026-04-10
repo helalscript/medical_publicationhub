@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Chat;
 use App\Models\ChatRoom;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -22,4 +23,18 @@ Broadcast::channel('chat.{chatRoomId}', function ($user, $chatRoomId) {
     }
 
     return (int) $user->id === (int) $room->seeker_id || (int) $user->id === (int) $room->clergy_id;
+});
+
+Broadcast::channel('opportunity_chat.{chatId}', function ($user, $chatId) {
+    if (! $user) {
+        return false;
+    }
+    if (($user->role ?? null) === 'admin') {
+        return true;
+    }
+
+    return \App\Models\ChatUser::query()
+        ->where('chat_id', (int) $chatId)
+        ->where('user_id', (int) $user->id)
+        ->exists();
 });

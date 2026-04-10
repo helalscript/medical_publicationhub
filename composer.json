@@ -14,9 +14,11 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
+        "meilleursbiens/laravel-calendly-wrapper": "*",
         "php-flasher/flasher-laravel": "^2.1",
         "phpoffice/phpword": "^1.4",
         "smalot/pdfparser": "^2.12",
+        "spatie/laravel-permission": "*",
         "tymon/jwt-auth": "^2.1",
         "yajra/laravel-datatables": "11.0"
     },

@@ -40,6 +40,38 @@ class SystemSettingController extends Controller
 
         return view('backend.layouts.settings.mail_settings', compact('settings'));
     }
+
+    public function calendlySettingGet()
+    {
+        $settings = SystemSetting::latest('id')->first();
+        return view('backend.layouts.settings.calendly_settings', compact('settings'));
+    }
+
+    public function calendlySettingUpdate(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'calendly_personal_access_token' => 'nullable|string',
+            'calendly_scheduling_url' => 'required|string|max:255',
+            'calendly_user_uri' => 'nullable|string|max:255',
+            'calendly_event_type_uri' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            $setting = SystemSetting::firstOrNew();
+            $setting->calendly_personal_access_token = $validated['calendly_personal_access_token'] ?? null;
+            $setting->calendly_scheduling_url = $validated['calendly_scheduling_url'];
+            $setting->calendly_user_uri = $validated['calendly_user_uri'] ?? null;
+            $setting->calendly_event_type_uri = $validated['calendly_event_type_uri'] ?? null;
+            $setting->save();
+
+            flash()->success('Calendly settings updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Calendly Setting Update Error: '.$e->getMessage());
+            flash()->error('Something went wrong while updating Calendly settings.');
+        }
+
+        return redirect()->back();
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -51,6 +83,7 @@ class SystemSettingController extends Controller
             'system_name' => 'required|string|max:50',
             'email' => 'nullable|string|email|max:255',
             'contact_number' => 'nullable|string|max:20',
+            'whatsapp_number' => 'nullable|string|max:30',
             'company_open_hour' => 'nullable|string|max:255',
             'copyright_text' => 'nullable|string|max:255',
             'logo' => 'nullable|mimes:jpeg,jpg,png,ico,svg',
@@ -59,11 +92,12 @@ class SystemSettingController extends Controller
             'web_url' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',
         ]);
-        $setting = SystemSetting::firstOrNew();
+        $setting = SystemSetting::query()->first() ?? new SystemSetting();
         $setting->title = $request->title;
         $setting->system_name = $request->system_name;
         $setting->email = $request->email;
         $setting->contact_number = $request->contact_number??null;
+        $setting->whatsapp_number = $request->whatsapp_number ?? null;
         $setting->company_open_hour = $request->company_open_hour??null;
         $setting->copyright_text = $request->copyright_text;
         $setting->address = $request->address;
@@ -73,13 +107,13 @@ class SystemSettingController extends Controller
             if ($setting->logo) {
                 Helper::fileDelete(public_path($setting->logo));
             }
-            $setting->logo = Helper::fileUpload($request->file('logo'), 'logos', time() . '_' . getFileName($request->file('logo')));
+            $setting->setAttribute('logo', Helper::fileUpload($request->file('logo'), 'logos', time() . '_' . getFileName($request->file('logo'))));
         }
         if ($request->hasFile('favicon')) {
             if ($setting->favicon) {
                 Helper::fileDelete(public_path($setting->favicon));
             }
-            $setting->favicon = Helper::fileUpload($request->file('favicon'), 'favicons', time() . '_' . getFileName($request->file('favicon')));
+            $setting->setAttribute('favicon', Helper::fileUpload($request->file('favicon'), 'favicons', time() . '_' . getFileName($request->file('favicon'))));
         }
         $setting->save();
 

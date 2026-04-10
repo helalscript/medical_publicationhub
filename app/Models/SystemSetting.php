@@ -18,6 +18,7 @@ class SystemSetting extends Model
         'system_name',
         'email',
         'contact_number',
+        'whatsapp_number',
         'company_open_hour',
         'copyright_text',
         'logo',
@@ -25,6 +26,10 @@ class SystemSetting extends Model
         'address',
         'description',
         'web_url',
+        'calendly_personal_access_token',
+        'calendly_user_uri',
+        'calendly_event_type_uri',
+        'calendly_scheduling_url',
     ];
     protected $casts = [
         'id' => 'integer',
@@ -32,6 +37,7 @@ class SystemSetting extends Model
         'system_name' => 'string',
         'email' => 'string',
         'contact_number' => 'string',
+        'whatsapp_number' => 'string',
         'company_open_hour' => 'string',
         'copyright_text' => 'string',
         'logo' => 'string',
@@ -39,6 +45,10 @@ class SystemSetting extends Model
         'address' => 'string',
         'description' => 'string',
         'web_url' => 'string',
+        'calendly_personal_access_token' => 'string',
+        'calendly_user_uri' => 'string',
+        'calendly_event_type_uri' => 'string',
+        'calendly_scheduling_url' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

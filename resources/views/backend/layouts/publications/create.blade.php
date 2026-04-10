@@ -1,0 +1,66 @@
+@extends('backend.app')
+@section('title', 'Create Publication')
+
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link href="{{ asset('backend/admin/assets/quill/quill.snow.css') }}" rel="stylesheet">
+    <style>
+        .select2-container .select2-selection--multiple { min-height: 38px; }
+    </style>
+@endpush
+
+@section('content')
+    <div class="main-content-container overflow-hidden">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+            <div>
+                <h3 class="mb-1">Create Publication</h3>
+                <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                    <ol class="breadcrumb align-items-center mb-0 lh-1">
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.dashboard') }}" class="fw-medium text-decoration-none">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('admin.publications.index') }}" class="fw-medium text-decoration-none">Publications</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <span class="fw-medium">Create</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+            <a href="{{ route('admin.publications.index') }}" class="btn btn-outline-secondary">Back</a>
+        </div>
+
+        <div class="card bg-white border-0 rounded-3 mb-4">
+            <div class="card-body">
+                <form action="{{ route('admin.publications.store') }}" method="POST" enctype="multipart/form-data" id="pubForm">
+                    @csrf
+                    @include('backend.layouts.publications._form')
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <a href="{{ route('admin.publications.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('backend/admin/assets/quill/quill.min.js') }}"></script>
+    <script>
+        $(function () {
+            $('.js-select2-publication-categories').select2({ width: '100%', allowClear: true });
+
+            const quill = new Quill('#pubEditor', { theme: 'snow' });
+            const input = document.getElementById('descriptionInput');
+            if (input && input.value) quill.root.innerHTML = input.value;
+
+            document.getElementById('pubForm').addEventListener('submit', function () {
+                input.value = quill.root.innerHTML;
+            });
+        });
+    </script>
+@endpush
+

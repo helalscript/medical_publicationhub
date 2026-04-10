@@ -38,14 +38,25 @@ class AuthenticatedSessionController extends Controller
         //     flash()->error('your account is not active.');
         //     return redirect('/login');
         // }
-        // Check the user's role
-        if ($user->role === 'admin') {
-            flash()->success('Login successfully.');
-            // Redirect to admin dashboard
-            return redirect()->route('admin.dashboard');
+        if (! $user || ! in_array($user->role, ['admin', 'coordinator'], true)) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            if ($user->role === 'mentor') {
+                return redirect()->route('login')->withErrors([
+                    'email' => 'Mentors use the API / mobile app only. Web login is for administrators.',
+                ]);
+            }
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Web access is restricted to administrators.',
+            ]);
         }
+
+        flash()->success('Login successfully.');
         $request->session()->regenerate();
-        return redirect()->intended(route('admin.dashboard', absolute: false));
+
+        return redirect()->route('admin.dashboard');
     }
 
     /**
