@@ -52,6 +52,9 @@ class ModuleController extends Controller
                     $user = auth()->user();
                     $buttons = [];
 
+                    if ($user && $user->can('admin.modules.show')) {
+                        $buttons[] = '<a type="button" href="'.route('admin.modules.show', $row->id).'" class="ps-0 border-0 bg-transparent lh-1" title="View"><i class="material-symbols-outlined fs-16 text-primary">visibility</i></a>';
+                    }
                     if ($user && $user->can('admin.lessons.index')) {
                         $buttons[] = '<a type="button" href="'.route('admin.lessons.index', ['module_id' => $row->id]).'" class="ps-0 border-0 bg-transparent lh-1" title="Lessons"><i class="material-symbols-outlined fs-16 text-primary">menu_book</i></a>';
                     }
@@ -119,7 +122,10 @@ class ModuleController extends Controller
      */
     public function show(string $id)
     {
-        abort(404);
+        $data = Module::with(['course', 'mentor.user', 'lessons' => fn ($q) => $q->orderBy('order_by')->orderBy('id')])
+            ->findOrFail($id);
+
+        return view('backend.layouts.modules.show', compact('data'));
     }
 
     /**

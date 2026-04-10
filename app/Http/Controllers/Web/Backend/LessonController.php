@@ -51,6 +51,9 @@ class LessonController extends Controller
                     $user = auth()->user();
                     $buttons = [];
 
+                    if ($user && $user->can('admin.lessons.show')) {
+                        $buttons[] = '<a type="button" href="'.route('admin.lessons.show', $row->id).'" class="ps-0 border-0 bg-transparent lh-1" title="View"><i class="material-symbols-outlined fs-16 text-primary">visibility</i></a>';
+                    }
                     if ($user && $user->can('admin.lessons.edit')) {
                         $buttons[] = '<a type="button" href="'.route('admin.lessons.edit', $row->id).'" class="ps-0 border-0 bg-transparent lh-1" title="Edit"><i class="material-symbols-outlined fs-16 text-body">edit</i></a>';
                     }
@@ -118,7 +121,9 @@ class LessonController extends Controller
      */
     public function show(string $id)
     {
-        abort(404);
+        $data = Lesson::with(['module.course'])->findOrFail($id);
+
+        return view('backend.layouts.lessons.show', compact('data'));
     }
 
     /**

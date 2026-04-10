@@ -106,12 +106,14 @@ class AccessControlSeeder extends Seeder
         $crud('Courses', 'admin.courses', true);
         $add('Courses', 'admin.courses.status');
 
-        // Modules (no show)
+        // Modules (show = detail + media preview)
         $crud('Modules', 'admin.modules', false);
+        $add('Modules', 'admin.modules.show');
         $add('Modules', 'admin.modules.status');
 
-        // Lessons (no show)
+        // Lessons (show separate: list/detail + video preview)
         $crud('Lessons', 'admin.lessons', false);
+        $add('Lessons', 'admin.lessons.show');
         $add('Lessons', 'admin.lessons.status');
 
         // Course access
@@ -327,7 +329,9 @@ class AccessControlSeeder extends Seeder
             'admin.courses.index',
             'admin.courses.show',
             'admin.modules.index',
+            'admin.modules.show',
             'admin.lessons.index',
+            'admin.lessons.show',
             'admin.payments.index',
             'admin.payments.show',
             'admin.publications.index',

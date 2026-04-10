@@ -182,6 +182,7 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::get('/modules', [ModuleController::class, 'index'])->name('admin.modules.index')->middleware('permission:admin.modules.index');
     Route::get('/modules/create', [ModuleController::class, 'create'])->name('admin.modules.create')->middleware('permission:admin.modules.create');
     Route::post('/modules', [ModuleController::class, 'store'])->name('admin.modules.store')->middleware('permission:admin.modules.store');
+    Route::get('/modules/{module}', [ModuleController::class, 'show'])->name('admin.modules.show')->middleware('permission:admin.modules.show');
     Route::get('/modules/{module}/edit', [ModuleController::class, 'edit'])->name('admin.modules.edit')->middleware('permission:admin.modules.edit');
     Route::put('/modules/{module}', [ModuleController::class, 'update'])->name('admin.modules.update')->middleware('permission:admin.modules.update');
     Route::delete('/modules/{module}', [ModuleController::class, 'destroy'])->name('admin.modules.destroy')->middleware('permission:admin.modules.destroy');
@@ -191,6 +192,7 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::get('/lessons', [LessonController::class, 'index'])->name('admin.lessons.index')->middleware('permission:admin.lessons.index');
     Route::get('/lessons/create', [LessonController::class, 'create'])->name('admin.lessons.create')->middleware('permission:admin.lessons.create');
     Route::post('/lessons', [LessonController::class, 'store'])->name('admin.lessons.store')->middleware('permission:admin.lessons.store');
+    Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('admin.lessons.show')->middleware('permission:admin.lessons.show');
     Route::get('/lessons/{lesson}/edit', [LessonController::class, 'edit'])->name('admin.lessons.edit')->middleware('permission:admin.lessons.edit');
     Route::put('/lessons/{lesson}', [LessonController::class, 'update'])->name('admin.lessons.update')->middleware('permission:admin.lessons.update');
     Route::delete('/lessons/{lesson}', [LessonController::class, 'destroy'])->name('admin.lessons.destroy')->middleware('permission:admin.lessons.destroy');

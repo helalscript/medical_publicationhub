@@ -56,6 +56,9 @@ class DatabaseSeeder extends Seeder
         $this->call(PartnershipRequestSeeder::class);
         $this->call(AccessControlSeeder::class);
         $this->call(MentorResearcherDemoSeeder::class);
+        $this->call(CourseSeeder::class);
+        $this->call(ModuleSeeder::class);
+        $this->call(LessonSeeder::class);
         $this->call(OpportunityApplicationChatSeeder::class);
         $this->call(ContactUsSeeder::class);
     }
