@@ -769,12 +769,12 @@
             "version": "v7.0.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/firebase/php-jwt.git",
+                "url": "https://github.com/googleapis/php-jwt.git",
                 "reference": "47ad26bab5e7c70ae8a6f08ed25ff83631121380"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/47ad26bab5e7c70ae8a6f08ed25ff83631121380",
+                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/47ad26bab5e7c70ae8a6f08ed25ff83631121380",
                 "reference": "47ad26bab5e7c70ae8a6f08ed25ff83631121380",
                 "shasum": ""
             },
@@ -823,8 +823,8 @@
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v7.0.5"
+                "issues": "https://github.com/googleapis/php-jwt/issues",
+                "source": "https://github.com/googleapis/php-jwt/tree/v7.0.5"
             },
             "time": "2026-04-01T20:38:03+00:00"
         },
@@ -1858,16 +1858,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v2.0.10",
+            "version": "v2.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "870fc81d2f879903dfc5b60bf8a0f94a1609e669"
+                "reference": "d1af40ac4a6ccc12bd062a7184f63c9995a63bdd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/870fc81d2f879903dfc5b60bf8a0f94a1609e669",
-                "reference": "870fc81d2f879903dfc5b60bf8a0f94a1609e669",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/d1af40ac4a6ccc12bd062a7184f63c9995a63bdd",
+                "reference": "d1af40ac4a6ccc12bd062a7184f63c9995a63bdd",
                 "shasum": ""
             },
             "require": {
@@ -1915,7 +1915,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2026-02-20T19:59:49+00:00"
+            "time": "2026-04-07T13:32:18+00:00"
         },
         {
             "name": "laravel/socialite",
@@ -2835,16 +2835,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.7.14",
+            "version": "v3.7.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "2d20cdf0707819e547a305f6133e3f269ddad56b"
+                "reference": "d68e65beb7717eaabef74a1cf63cd1670260ff5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/2d20cdf0707819e547a305f6133e3f269ddad56b",
-                "reference": "2d20cdf0707819e547a305f6133e3f269ddad56b",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/d68e65beb7717eaabef74a1cf63cd1670260ff5f",
+                "reference": "d68e65beb7717eaabef74a1cf63cd1670260ff5f",
                 "shasum": ""
             },
             "require": {
@@ -2899,7 +2899,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.7.14"
+                "source": "https://github.com/livewire/livewire/tree/v3.7.15"
             },
             "funding": [
                 {
@@ -2907,7 +2907,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-02T22:25:22+00:00"
+            "time": "2026-04-03T13:08:41+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -3259,16 +3259,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "3.11.3",
+            "version": "3.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CarbonPHP/carbon.git",
-                "reference": "6a7e652845bb018c668220c2a545aded8594fbbf"
+                "reference": "e890471a3494740f7d9326d72ce6a8c559ffee60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/6a7e652845bb018c668220c2a545aded8594fbbf",
-                "reference": "6a7e652845bb018c668220c2a545aded8594fbbf",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/e890471a3494740f7d9326d72ce6a8c559ffee60",
+                "reference": "e890471a3494740f7d9326d72ce6a8c559ffee60",
                 "shasum": ""
             },
             "require": {
@@ -3360,7 +3360,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-11T17:23:39+00:00"
+            "time": "2026-04-07T09:57:54+00:00"
         },
         {
             "name": "nette/schema",
@@ -3975,16 +3975,16 @@
         },
         {
             "name": "php-flasher/flasher",
-            "version": "v2.5.1",
+            "version": "v2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-flasher/flasher.git",
-                "reference": "dd25cbc23df165e17cb6da361ed16c6b7ab2474c"
+                "reference": "d02a61b6f43c72014b8944107a310c1738ff6182"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-flasher/flasher/zipball/dd25cbc23df165e17cb6da361ed16c6b7ab2474c",
-                "reference": "dd25cbc23df165e17cb6da361ed16c6b7ab2474c",
+                "url": "https://api.github.com/repos/php-flasher/flasher/zipball/d02a61b6f43c72014b8944107a310c1738ff6182",
+                "reference": "d02a61b6f43c72014b8944107a310c1738ff6182",
                 "shasum": ""
             },
             "require": {
@@ -4033,26 +4033,26 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-28T01:08:46+00:00"
+            "time": "2026-04-05T10:55:06+00:00"
         },
         {
             "name": "php-flasher/flasher-laravel",
-            "version": "v2.5.1",
+            "version": "v2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-flasher/flasher-laravel.git",
-                "reference": "e59de27d4145e8abfda64929530d59379ce0b560"
+                "reference": "a4bb0380e7c7adec167ea4f014234bd013ea7f09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-flasher/flasher-laravel/zipball/e59de27d4145e8abfda64929530d59379ce0b560",
-                "reference": "e59de27d4145e8abfda64929530d59379ce0b560",
+                "url": "https://api.github.com/repos/php-flasher/flasher-laravel/zipball/a4bb0380e7c7adec167ea4f014234bd013ea7f09",
+                "reference": "a4bb0380e7c7adec167ea4f014234bd013ea7f09",
                 "shasum": ""
             },
             "require": {
                 "illuminate/support": "^11.0|^12.0|^13.0",
                 "php": ">=8.2",
-                "php-flasher/flasher": "^2.5.1"
+                "php-flasher/flasher": "^2.5.2"
             },
             "type": "library",
             "extra": {
@@ -4107,7 +4107,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-28T01:08:46+00:00"
+            "time": "2026-04-05T10:55:06+00:00"
         },
         {
             "name": "phpoffice/math",
@@ -4163,16 +4163,16 @@
         },
         {
             "name": "phpoffice/phpspreadsheet",
-            "version": "2.4.3",
+            "version": "2.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPOffice/PhpSpreadsheet.git",
-                "reference": "3b204d00c19f9d809f8d2374f408b197f37ad0bd"
+                "reference": "78bf6f0b4945ab31f1935741324ef3f0bf59a6fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/3b204d00c19f9d809f8d2374f408b197f37ad0bd",
-                "reference": "3b204d00c19f9d809f8d2374f408b197f37ad0bd",
+                "url": "https://api.github.com/repos/PHPOffice/PhpSpreadsheet/zipball/78bf6f0b4945ab31f1935741324ef3f0bf59a6fe",
+                "reference": "78bf6f0b4945ab31f1935741324ef3f0bf59a6fe",
                 "shasum": ""
             },
             "require": {
@@ -4263,9 +4263,9 @@
             ],
             "support": {
                 "issues": "https://github.com/PHPOffice/PhpSpreadsheet/issues",
-                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/2.4.3"
+                "source": "https://github.com/PHPOffice/PhpSpreadsheet/tree/2.4.4"
             },
-            "time": "2026-01-11T06:08:40+00:00"
+            "time": "2026-04-10T03:20:38+00:00"
         },
         {
             "name": "phpoffice/phpword",
@@ -4452,16 +4452,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.50",
+            "version": "3.0.51",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "aa6ad8321ed103dc3624fb600a25b66ebf78ec7b"
+                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/aa6ad8321ed103dc3624fb600a25b66ebf78ec7b",
-                "reference": "aa6ad8321ed103dc3624fb600a25b66ebf78ec7b",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d59c94077f9c9915abb51ddb52ce85188ece1748",
+                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748",
                 "shasum": ""
             },
             "require": {
@@ -4542,7 +4542,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.50"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.51"
             },
             "funding": [
                 {
@@ -4558,7 +4558,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-19T02:57:58+00:00"
+            "time": "2026-04-10T01:33:53+00:00"
         },
         {
             "name": "psr/clock",
@@ -10560,16 +10560,16 @@
         },
         {
             "name": "nunomaduro/collision",
-            "version": "v8.9.2",
+            "version": "v8.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nunomaduro/collision.git",
-                "reference": "6eb16883e74fd725ac64dbe81544c961ab448ba5"
+                "reference": "b0d8ab95b29c3189aeeb902d81215231df4c1b64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/6eb16883e74fd725ac64dbe81544c961ab448ba5",
-                "reference": "6eb16883e74fd725ac64dbe81544c961ab448ba5",
+                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/b0d8ab95b29c3189aeeb902d81215231df4c1b64",
+                "reference": "b0d8ab95b29c3189aeeb902d81215231df4c1b64",
                 "shasum": ""
             },
             "require": {
@@ -10652,7 +10652,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-31T21:51:27+00:00"
+            "time": "2026-04-06T19:25:53+00:00"
         },
         {
             "name": "pestphp/pest",
@@ -13148,16 +13148,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "2.1.6",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "ff31ad6efc62e66e518fbab1cde3453d389bcdc8"
+                "reference": "1b99650e7ffcad232624a260bc7fbdec2ffc407c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ff31ad6efc62e66e518fbab1cde3453d389bcdc8",
-                "reference": "ff31ad6efc62e66e518fbab1cde3453d389bcdc8",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/1b99650e7ffcad232624a260bc7fbdec2ffc407c",
+                "reference": "1b99650e7ffcad232624a260bc7fbdec2ffc407c",
                 "shasum": ""
             },
             "require": {
@@ -13204,9 +13204,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/2.1.6"
+                "source": "https://github.com/webmozarts/assert/tree/2.2.0"
             },
-            "time": "2026-02-27T10:28:38+00:00"
+            "time": "2026-04-09T16:54:47+00:00"
         }
     ],
     "aliases": [],

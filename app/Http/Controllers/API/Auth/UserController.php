@@ -21,8 +21,7 @@ class UserController extends Controller
     public function me()
     {
        try {
-        $user = User::with('clergy:id,user_id,religion,bio,address,city,preferred_language,available_at,specialities,is_verified,is_live_session,is_prayer_request,status')
-        ->select('id', 'name', 'email', 'phone', 'avatar', 'cover_photo', 'gender', 'role')
+        $user = User::select('id', 'name', 'email', 'phone', 'avatar', 'cover_photo', 'gender', 'role','birthdate')
         ->find(auth('api')->id());
         if (!$user) {
             return Helper::jsonResponse(false, 'User not found', 404);

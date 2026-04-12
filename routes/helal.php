@@ -209,7 +209,7 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::post('/payments/{id}/status', [PaymentController::class, 'status'])->name('admin.payments.status')->middleware('permission:admin.payments.status');
 
     // Publications
-    Route::get('/publications', [PublicationController::class, 'index'])->name('admin.publications.index')->middleware('permission:admin.publications.index');
+    Route::get('/apublications', [PublicationController::class, 'index'])->name('admin.publications.index')->middleware('permission:admin.publications.index');
     Route::get('/publications/create', [PublicationController::class, 'create'])->name('admin.publications.create')->middleware('permission:admin.publications.create');
     Route::post('/publications', [PublicationController::class, 'store'])->name('admin.publications.store')->middleware('permission:admin.publications.store');
     Route::get('/publications/{publication}', [PublicationController::class, 'show'])->name('admin.publications.show')->middleware('permission:admin.publications.show');
