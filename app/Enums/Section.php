@@ -109,6 +109,11 @@ enum Section: string
     case PartnershipPagePartnerModelSection = 'partnership_page_partner_model_section';
     case PartnershipPagePartnerModelSectionContent = 'partnership_page_partner_model_section_content';
 
+    // ===== Aboutus Page Sections =====
+    case AboutusPageHeroSection = 'aboutus_page_hero_section';
+    case AboutusPageOurMissionSection = 'aboutus_page_our_mission_section';
+    case AboutusPageOurMissionSectionContent = 'aboutus_page_our_mission_section_content';
+
 }
 
 

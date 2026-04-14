@@ -15,9 +15,6 @@ use App\Http\Controllers\Web\Backend\CMS\FaqCategoryController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageSocialLinkContainerController;
 use App\Http\Controllers\Web\Backend\ContactMessageController;
 use App\Http\Controllers\Web\Backend\DynamicPageController;
-use App\Http\Controllers\Web\Backend\LiveSessionRequestController;
-use App\Http\Controllers\Web\Backend\PrayerRequestController;
-use App\Http\Controllers\Web\Backend\ChatController;
 use App\Http\Controllers\Web\Backend\NewsletterController;
 use App\Http\Controllers\Web\Backend\NotificationController;
 use App\Http\Controllers\Web\Backend\ProfileController;
@@ -209,14 +206,14 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::post('/payments/{id}/status', [PaymentController::class, 'status'])->name('admin.payments.status')->middleware('permission:admin.payments.status');
 
     // Publications
-    Route::get('/publications', [PublicationController::class, 'index'])->name('admin.publications.index')->middleware('permission:admin.publications.index');
-    Route::get('/publications/create', [PublicationController::class, 'create'])->name('admin.publications.create')->middleware('permission:admin.publications.create');
-    Route::post('/publications', [PublicationController::class, 'store'])->name('admin.publications.store')->middleware('permission:admin.publications.store');
-    Route::get('/publications/{publication}', [PublicationController::class, 'show'])->name('admin.publications.show')->middleware('permission:admin.publications.show');
-    Route::get('/publications/{publication}/edit', [PublicationController::class, 'edit'])->name('admin.publications.edit')->middleware('permission:admin.publications.edit');
-    Route::put('/publications/{publication}', [PublicationController::class, 'update'])->name('admin.publications.update')->middleware('permission:admin.publications.update');
-    Route::delete('/publications/{publication}', [PublicationController::class, 'destroy'])->name('admin.publications.destroy')->middleware('permission:admin.publications.destroy');
-    Route::post('/publications/status/{id}', [PublicationController::class, 'status'])->name('admin.publications.status')->middleware('permission:admin.publications.status');
+    Route::get('/apublications', [PublicationController::class, 'index'])->name('admin.publications.index')->middleware('permission:admin.publications.index');
+    Route::get('/apublications/create', [PublicationController::class, 'create'])->name('admin.publications.create')->middleware('permission:admin.publications.create');
+    Route::post('/apublications', [PublicationController::class, 'store'])->name('admin.publications.store')->middleware('permission:admin.publications.store');
+    Route::get('/apublications/{publication}', [PublicationController::class, 'show'])->name('admin.publications.show')->middleware('permission:admin.publications.show');
+    Route::get('/apublications/{publication}/edit', [PublicationController::class, 'edit'])->name('admin.publications.edit')->middleware('permission:admin.publications.edit');
+    Route::put('/apublications/{publication}', [PublicationController::class, 'update'])->name('admin.publications.update')->middleware('permission:admin.publications.update');
+    Route::delete('/apublications/{publication}', [PublicationController::class, 'destroy'])->name('admin.publications.destroy')->middleware('permission:admin.publications.destroy');
+    Route::post('/apublications/status/{id}', [PublicationController::class, 'status'])->name('admin.publications.status')->middleware('permission:admin.publications.status');
 
     // Partnership requests
     Route::get('/partnership-requests', [PartnershipRequestController::class, 'index'])->name('admin.partnership_requests.index')->middleware('permission:admin.partnership_requests.index');
