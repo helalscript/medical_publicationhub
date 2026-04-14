@@ -443,6 +443,9 @@ $systemSetting = App\Models\SystemSetting::first();
                     auth()->user()?->can('cms.home_page.faq_section.create') ||
                     auth()->user()?->can('cms.home_page.review_section.index') ||
                     auth()->user()?->can('cms.faq_page.hero_section.create') ||
+                    auth()->user()?->can('cms.aboutus_page.hero_section.create') ||
+                    auth()->user()?->can('cms.aboutus_page.our_mission_section.create') ||
+                    auth()->user()?->can('cms.aboutus_page.our_mission_items.index') ||
                     auth()->user()?->can('cms.research_page.research_section.create') ||
                     auth()->user()?->can('cms.service_page.service_section.create') ||
                     auth()->user()?->can('cms.meta_academy_page.hero_section.create') ||
@@ -478,6 +481,7 @@ $systemSetting = App\Models\SystemSetting::first();
                     auth()->user()?->can('cms.home_page.research_journey_section.create') ||
                     auth()->user()?->can('cms.home_page.faq_section.create') ||
                     auth()->user()?->can('cms.home_page.review_section.index');
+                    
             @endphp
             @if($canCmsHomePageMenu)
                 <li class="menu-item {{ request()->routeIs('cms.home_page.*') ? 'open' : '' }}">
@@ -574,6 +578,40 @@ $systemSetting = App\Models\SystemSetting::first();
                     </ul>
                 </li>
             @endcan
+
+            <!-- CMS Aboutus Page Menu Item -->
+            @php
+                $canAboutusMenu =
+                    auth()->user()?->can('cms.aboutus_page.hero_section.create') ||
+                    auth()->user()?->can('cms.aboutus_page.our_mission_section.create') ||
+                    auth()->user()?->can('cms.aboutus_page.our_mission_items.index');
+            @endphp
+            @if($canAboutusMenu)
+                <li class="menu-item {{ request()->routeIs('cms.aboutus_page.*') ? 'open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                        <span class="material-symbols-outlined menu-icon">info</span>
+                        <span class="title">Aboutus Page</span>
+                    </a>
+                    <ul class="menu-sub">
+                        @can('cms.aboutus_page.hero_section.create')
+                            <li class="menu-item">
+                                <a href="{{ route('cms.aboutus_page.hero_section.create') }}"
+                                    class="menu-link {{ request()->routeIs('cms.aboutus_page.hero_section.*') ? 'active' : '' }}">
+                                    Hero Section
+                                </a>
+                            </li>
+                        @endcan
+                        @can('cms.aboutus_page.our_mission_items.index')
+                            <li class="menu-item">
+                                <a href="{{ route('cms.aboutus_page.our_mission_items.index') }}"
+                                    class="menu-link {{ request()->routeIs('cms.aboutus_page.our_mission_items.*') ? 'active' : '' }}">
+                                    Mission Items
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endif
 
             <!-- CMS Research Page Menu Item -->
             @can('cms.research_page.research_section.create')

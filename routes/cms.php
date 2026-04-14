@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Backend\CMS\AboutusPageController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageCounterController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageReviewController;
@@ -158,6 +159,23 @@ Route::prefix('cms/partnership-page')->name('cms.partnership_page.')->group(func
 });
 
 
+});
+
+// ===================== CMS ABOUTUS PAGE =====================
+Route::prefix('cms/aboutus-page')->name('cms.aboutus_page.')->group(function () {
+    Route::get('/hero-section', [AboutusPageController::class, 'getHeroSection'])->name('hero_section.create')->middleware('permission:cms.aboutus_page.hero_section.create');
+    Route::post('/hero-section', [AboutusPageController::class, 'updateHeroSection'])->name('hero_section.update')->middleware('permission:cms.aboutus_page.hero_section.update');
+
+    Route::get('/our-mission-section', [AboutusPageController::class, 'getOurMissionSection'])->name('our_mission_section.create')->middleware('permission:cms.aboutus_page.our_mission_section.create');
+    Route::post('/our-mission-section', [AboutusPageController::class, 'updateOurMissionSection'])->name('our_mission_section.update')->middleware('permission:cms.aboutus_page.our_mission_section.update');
+
+    Route::get('/our-mission-items', [AboutusPageController::class, 'indexOurMissionItems'])->name('our_mission_items.index')->middleware('permission:cms.aboutus_page.our_mission_items.index');
+    Route::get('/our-mission-items/create', [AboutusPageController::class, 'createOurMissionItem'])->name('our_mission_items.create')->middleware('permission:cms.aboutus_page.our_mission_items.create');
+    Route::post('/our-mission-items', [AboutusPageController::class, 'storeOurMissionItem'])->name('our_mission_items.store')->middleware('permission:cms.aboutus_page.our_mission_items.store');
+    Route::get('/our-mission-items/{id}/edit', [AboutusPageController::class, 'editOurMissionItem'])->name('our_mission_items.edit')->middleware('permission:cms.aboutus_page.our_mission_items.edit');
+    Route::put('/our-mission-items/{id}', [AboutusPageController::class, 'updateOurMissionItem'])->name('our_mission_items.update')->middleware('permission:cms.aboutus_page.our_mission_items.update');
+    Route::delete('/our-mission-items/{id}', [AboutusPageController::class, 'destroyOurMissionItem'])->name('our_mission_items.destroy')->middleware('permission:cms.aboutus_page.our_mission_items.destroy');
+    Route::post('/our-mission-items/status/{id}', [AboutusPageController::class, 'statusOurMissionItem'])->name('our_mission_items.status')->middleware('permission:cms.aboutus_page.our_mission_items.status');
 });
 
 // // ===================== CMS CONTACT US PAGE =====================

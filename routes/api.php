@@ -7,6 +7,7 @@ use App\Http\Controllers\API\Auth\ResetPasswordController;
 use App\Http\Controllers\API\Auth\SocialLoginController;
 use App\Http\Controllers\API\Auth\UserController;
 use App\Http\Controllers\API\V1\CalendlyController as CalendlyApiController;
+use App\Http\Controllers\API\V1\CMS\AboutusPageController as APIAboutusPageController;
 use App\Http\Controllers\API\V1\CMS\FaqPageController as APIFaqPageController;
 use App\Http\Controllers\API\V1\CMS\HomePageController;
 use App\Http\Controllers\API\V1\CMS\MetaAcademyPageController as APIMetaAcademyPageController;
@@ -174,9 +175,9 @@ Route::group(['prefix' => 'cms/home-page'], function () {
 // route for faq page
 Route::group(['prefix' => 'cms/faq-page'], function () {
     Route::get('/hero-section', [APIFaqPageController::class, 'getHeroSection']);
-    Route::post('/hero-section', [APIFaqPageController::class, 'updateHeroSection']);
+    // Route::post('/hero-section', [APIFaqPageController::class, 'updateHeroSection']);
     Route::get('/question-section', [APIFaqPageController::class, 'getQuestionSection']);
-    Route::post('/question-section', [APIFaqPageController::class, 'updateQuestionSection']);
+    // Route::post('/question-section', [APIFaqPageController::class, 'updateQuestionSection']);
 });
 
 // route for meta academy page
@@ -210,4 +211,10 @@ Route::group(['prefix' => 'cms/partnership-page'], function () {
     Route::get('/research-opportunitie-section', [APIPartnershipPageController::class, 'getResearchOpportunitieSection']);
     Route::get('/why-partner-section', [APIPartnershipPageController::class, 'getWhyPartnerSection']);
     Route::get('/partner-model-section', [APIPartnershipPageController::class, 'getPartnerModelSection']);
+});
+
+// route for aboutus page
+Route::group(['prefix' => 'cms/aboutus-page'], function () {
+    Route::get('/hero-section', [APIAboutusPageController::class, 'getHeroSection']);
+    Route::get('/our-mission-section', [APIAboutusPageController::class, 'getOurMissionSection']);
 });

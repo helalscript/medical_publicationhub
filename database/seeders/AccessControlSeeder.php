@@ -209,6 +209,19 @@ class AccessControlSeeder extends Seeder
         $add('CMS - Service Page', 'cms.service_page.service_section.create');
         $add('CMS - Service Page', 'cms.service_page.service_section.update');
 
+        // CMS Aboutus Page
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.hero_section.create');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.hero_section.update');
+        // $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_section.create');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_section.update');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_items.index');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_items.create');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_items.store');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_items.edit');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_items.update');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_items.destroy');
+        $add('CMS - Aboutus Page', 'cms.aboutus_page.our_mission_items.status');
+
         // CMS Meta Academy Page
         $add('CMS - Meta Academy Page', 'cms.meta_academy_page.hero_section.create');
         $add('CMS - Meta Academy Page', 'cms.meta_academy_page.hero_section.update');
