@@ -601,6 +601,14 @@ $systemSetting = App\Models\SystemSetting::first();
                                 </a>
                             </li>
                         @endcan
+                        @can('cms.aboutus_page.our_mission_section.create')
+                            <li class="menu-item">
+                                <a href="{{ route('cms.aboutus_page.our_mission_section.create') }}"
+                                    class="menu-link {{ request()->routeIs('cms.aboutus_page.our_mission_section.*') ? 'active' : '' }}">
+                                    Our Mission Section
+                                </a>
+                            </li>
+                        @endcan
                         @can('cms.aboutus_page.our_mission_items.index')
                             <li class="menu-item">
                                 <a href="{{ route('cms.aboutus_page.our_mission_items.index') }}"
