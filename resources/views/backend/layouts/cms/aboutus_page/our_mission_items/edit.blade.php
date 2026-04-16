@@ -53,11 +53,11 @@
                                 <label class="label text-secondary">Count Number <span class="text-danger">*</span></label>
                                 <div class="form-group position-relative">
                                     <input type="number"
-                                        class="form-control text-dark h-55 @error('title') is-invalid @enderror"
-                                        name="title" value="{{ old('title', $data->title) }}" placeholder="Enter count number here" min="1">
+                                        class="form-control text-dark h-55 @error('count_number') is-invalid @enderror"
+                                        name="count_number" value="{{ old('count_number', $data->count_number) }}" placeholder="Enter count number here" min="1">
                                 </div>
-                                @error('title')
-                                    <div id="title-error" class="text-danger">{{ $message }}</div>
+                                @error('count_number')
+                                    <div id="count_number-error" class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>

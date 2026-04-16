@@ -50,11 +50,20 @@ class AboutusPageController extends Controller
     /**
      * ================= Our Mission Section (title, subtitle, description) =================
      */
+    public function getOurMissionSection()
+    {
+        $data = CMS::where('page', Page::AboutPage->value)
+            ->where('section', Section::AboutusPageOurMissionSection->value)
+            ->first();
+
+        return view('backend.layouts.cms.aboutus_page.our_mission_section.create', compact('data'));
+    }
+
     public function updateOurMissionSection(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'nullable|string|max:255',
-            'sub_title' => 'nullable|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
             'description' => 'nullable|string',
         ]);
 
@@ -64,10 +73,10 @@ class AboutusPageController extends Controller
                 array_merge($validatedData, ['status' => 'active'])
             );
 
-            return redirect()->route('cms.aboutus_page.our_mission_items.index')->with('success', 'Our Mission Section Updated Successfully');
+            return redirect()->route('cms.aboutus_page.our_mission_section.create')->with('success', 'Our Mission Section Updated Successfully');
         } catch (Exception $e) {
             Log::error('AboutusPageController::updateOurMissionSection ' . $e->getMessage());
-            return redirect()->route('cms.aboutus_page.our_mission_items.index')->with('error', 'Our Mission Section Not Updated');
+            return redirect()->route('cms.aboutus_page.our_mission_section.create')->with('error', 'Our Mission Section Not Updated');
         }
     }
 
@@ -79,7 +88,7 @@ class AboutusPageController extends Controller
         $containerData = CMS::where('page', Page::AboutPage->value)
             ->where('section', Section::AboutusPageOurMissionSection->value)
             ->first();
-        // dd($containerData->toArray());
+
         if ($request->ajax()) {
             $data = CMS::where('page', Page::AboutPage->value)
                 ->where('section', Section::AboutusPageOurMissionSectionContent->value)
@@ -127,18 +136,9 @@ class AboutusPageController extends Controller
     public function storeOurMissionItem(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
+            'count_number' => 'required|integer|min:1',
             'sub_title' => 'required|string|max:255',
-        ],
-        [
-            'title.required' => 'The count number field is required.',
-            'title.string' => 'The count number must be a string.',
-            'title.max' => 'The count number may not be greater than 255 characters.',
-            'sub_title.required' => 'The sub title field is required.',
-            'sub_title.string' => 'The sub title must be a string.',
-            'sub_title.max' => 'The sub title may not be greater than 255 characters.',
-        ]
-    );
+        ]);
 
         try {
             $validatedData['page'] = Page::AboutPage->value;
@@ -168,18 +168,9 @@ class AboutusPageController extends Controller
     public function updateOurMissionItem(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
+            'count_number' => 'required|integer|min:1',
             'sub_title' => 'required|string|max:255',
-        ],
-        [
-            'title.required' => 'The count number field is required.',
-            'title.string' => 'The count number must be a string.',
-            'title.max' => 'The count number may not be greater than 255 characters.',
-            'sub_title.required' => 'The sub title field is required.',
-            'sub_title.string' => 'The sub title must be a string.',
-            'sub_title.max' => 'The sub title may not be greater than 255 characters.',
-        ]
-    );
+        ]);
 
         try {
             $data = CMS::findOrFail($id);
