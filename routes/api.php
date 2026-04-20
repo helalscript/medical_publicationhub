@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth:api'], function ($router) {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/update-profile', [UserController::class, 'updateProfile']);
     Route::post('/update-password', [UserController::class, 'changePassword']);
+    Route::delete('/delete-profile', [UserController::class, 'deleteProfile']);
 });
 
 // only for user
@@ -119,6 +120,10 @@ Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_r
 // opportunities (public)
 Route::get('/opportunities', [OpportunityApiController::class, 'index']);
 Route::get('/opportunities/{id}', [OpportunityApiController::class, 'show']);
+Route::get('/opportunities/mentors/{id}', [OpportunityApiController::class, 'mentors']);
+
+//fillter list for opportunity
+Route::post('/opportunities/fillter-list', [OpportunityApiController::class, 'fillterList']);
 
 // Courses (public)
 Route::get('/courses', [CourseApiController::class, 'index']);

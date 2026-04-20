@@ -74,9 +74,9 @@ class OpportunityController extends Controller
     {
         $mentors = Mentor::query()
             ->with('user')
-            ->where('status', 'active')
             ->join('users', 'users.id', '=', 'mentors.user_id')
             ->orderBy('users.name')
+            ->where('mentors.status', 'active')
             ->select('mentors.*')
             ->get();
         $categories = $this->categoryLists();
@@ -132,9 +132,9 @@ class OpportunityController extends Controller
 
         $mentors = Mentor::query()
             ->with('user')
-            ->where('status', 'active')
             ->join('users', 'users.id', '=', 'mentors.user_id')
             ->orderBy('users.name')
+            ->where('mentors.status', 'active')
             ->select('mentors.*')
             ->get();
         $categories = $this->categoryLists();

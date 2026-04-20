@@ -48,6 +48,7 @@ class UserController extends Controller
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
             'phone' => 'nullable|unique:users,phone,' . auth()->user()->id . '|string|regex:/^(\+?\d{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{7,15}$/|max:20',
             'password' => 'nullable|string|min:6|confirmed',
+            'birthdate' => 'nullable|date:Y-m-d',
         ]);
         try {
             if (!empty($validatedData['password'])) {
