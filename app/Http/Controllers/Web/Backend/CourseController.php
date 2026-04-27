@@ -145,7 +145,7 @@ class CourseController extends Controller
 
         $mentors = Mentor::query()
             ->with('user')
-            ->where('status', 'active')
+            ->where('mentors.status', 'active')
             ->join('users', 'users.id', '=', 'mentors.user_id')
             ->orderBy('users.name')
             ->select('mentors.*')
