@@ -24,7 +24,7 @@ class ChatController extends Controller
                 ->pluck('chat_id');
 
             $data = Chat::query()
-                ->with(['chatable.opportunity', 'users.user'])
+                ->with(['chatable', 'users.user'])
                 ->whereIn('id', $chatIds)
                 ->latest('id')
                 ->get();
@@ -47,7 +47,7 @@ class ChatController extends Controller
                 return Helper::jsonErrorResponse('Unauthorized', 403);
             }
 
-            $chat = Chat::with(['chatable.opportunity', 'users.user'])->findOrFail($id);
+            $chat = Chat::with(['chatable', 'users.user'])->findOrFail($id);
             $messages = Message::with('user')->where('chat_id', $chat->id)->latest('id')->paginate(30);
 
             return Helper::jsonResponse(true, 'Chat retrieved successfully.', 200, [
