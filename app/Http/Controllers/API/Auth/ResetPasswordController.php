@@ -36,7 +36,7 @@ class ResetPasswordController extends Controller
             $user = User::where('email', $email)->first();
 
             if ($user) {
-                Mail::to($email)->send(new OtpMail($otp, $user, 'Reset Your Password'));
+                // Mail::to($email)->send(new OtpMail($otp, $user, 'Reset Your Password'));
                 $user->update([
                     'otp' => $otp,
                     'otp_expires_at' => Carbon::now()->addMinutes(60),

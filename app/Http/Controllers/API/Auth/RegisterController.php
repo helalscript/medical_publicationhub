@@ -7,6 +7,7 @@ use App\Mail\OtpMail;
 use App\Models\Mentor;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Notifications\WelcomeNotification;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -89,20 +90,20 @@ class RegisterController extends Controller
                 ]);
             }
 
-            try {
-                Mail::to($user->email)->send(new OtpMail($otp, $user, 'Verify Your Email Address'));
-            } catch (Exception $e) {
-                DB::rollBack();
-                Log::error('RegisterController::register' . $e->getMessage());
-                return Helper::jsonErrorResponse('Failed to send verification email. Please try again later.', 500);
-            }
+            // try {
+            //     Mail::to($user->email)->send(new OtpMail($otp, $user, 'Verify Your Email Address'));
+            // } catch (Exception $e) {
+            //     DB::rollBack();
+            //     Log::error('RegisterController::register' . $e->getMessage());
+            //     return Helper::jsonErrorResponse('Failed to send verification email. Please try again later.', 500);
+            // }
 
             DB::commit();
             return Helper::jsonResponse(true, 'A verification email has been successfully sent to your email address. Please check your inbox to complete the verification.', 200);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('RegisterController::register' . $e->getMessage());
-            return Helper::jsonErrorResponse('Something went wrong'.$e->getMessage(), 500);
+            return Helper::jsonErrorResponse('Something went wrong' . $e->getMessage(), 500);
         }
     }
 
@@ -142,7 +143,8 @@ class RegisterController extends Controller
             $user->otp_expires_at = null;
             $user->save();
 
-
+            // user get a welcome notification
+            $user->notify(new WelcomeNotification());
 
             // Notify admins about the new registration
             // $admins = User::where('role', 'admin')->get();
@@ -189,7 +191,8 @@ class RegisterController extends Controller
                 return Helper::jsonErrorResponse('Email already verified.', 409);
             }
 
-            $newOtp = rand(1000, 9999);
+            // $newOtp = rand(1000, 9999);
+            $newOtp= 1234; //for debug
             $otpExpiresAt = Carbon::now()->addMinutes(60);
             $user->otp = $newOtp;
             $user->otp_expires_at = $otpExpiresAt;
@@ -199,7 +202,7 @@ class RegisterController extends Controller
 
             try {
                 // Mail::to($user->email)->send(new OtpMail($otp, $user, 'Verify Your Email Address'));
-                Mail::to($user->email)->send(new OtpMail($newOtp, $user, 'Verify Your Email Address'));
+                // Mail::to($user->email)->send(new OtpMail($newOtp, $user, 'Verify Your Email Address'));
                 return Helper::jsonResponse(true, 'A new OTP has been sent to your email.', 200);
             } catch (Exception $e) {
                 // If email sending fails, delete the created user and return an error message
