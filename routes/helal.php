@@ -25,6 +25,7 @@ use App\Http\Controllers\Web\Backend\ResearchIdeaAdminController;
 use App\Http\Controllers\Web\Backend\OpportunityController;
 use App\Http\Controllers\Web\Backend\OpportunityApplicationAdminController;
 use App\Http\Controllers\Web\Backend\OpportunityChatController;
+use App\Http\Controllers\Web\Backend\OpportunityCategoryController;
 use App\Http\Controllers\Web\Backend\CourseController;
 use App\Http\Controllers\Web\Backend\ModuleController;
 use App\Http\Controllers\Web\Backend\LessonController;
@@ -164,6 +165,15 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::get('/opportunity-chats', [OpportunityChatController::class, 'index'])->name('admin.opportunity_chats.index')->middleware('permission:admin.opportunity_chats.index');
     Route::get('/opportunity-chats/{id}', [OpportunityChatController::class, 'show'])->name('admin.opportunity_chats.show')->middleware('permission:admin.opportunity_chats.show');
     Route::post('/opportunity-chats/{id}/messages', [OpportunityChatController::class, 'sendMessage'])->name('admin.opportunity_chats.messages.store')->middleware('permission:admin.opportunity_chats.messages.store');
+
+    // Opportunity categories (Filter lists)
+    Route::get('/opportunity-categories', [OpportunityCategoryController::class, 'index'])->name('admin.opportunity_categories.index')->middleware('permission:admin.opportunity_categories.index');
+    Route::get('/opportunity-categories/create', [OpportunityCategoryController::class, 'create'])->name('admin.opportunity_categories.create')->middleware('permission:admin.opportunity_categories.create');
+    Route::post('/opportunity-categories', [OpportunityCategoryController::class, 'store'])->name('admin.opportunity_categories.store')->middleware('permission:admin.opportunity_categories.store');
+    Route::get('/opportunity-categories/{id}/edit', [OpportunityCategoryController::class, 'edit'])->name('admin.opportunity_categories.edit')->middleware('permission:admin.opportunity_categories.edit');
+    Route::put('/opportunity-categories/{id}', [OpportunityCategoryController::class, 'update'])->name('admin.opportunity_categories.update')->middleware('permission:admin.opportunity_categories.update');
+    Route::delete('/opportunity-categories/{id}', [OpportunityCategoryController::class, 'destroy'])->name('admin.opportunity_categories.destroy')->middleware('permission:admin.opportunity_categories.destroy');
+    Route::post('/opportunity-categories/status/{id}', [OpportunityCategoryController::class, 'status'])->name('admin.opportunity_categories.status')->middleware('permission:admin.opportunity_categories.status');
 
     // Courses
     Route::get('/courses', [CourseController::class, 'index'])->name('admin.courses.index')->middleware('permission:admin.courses.index');
