@@ -5,6 +5,10 @@
     <style>
         [type=checkbox]:checked,
         [type=radio]:checked { background-size: 40% !important; }
+        .table > :not(caption) > * > * {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
     </style>
 @endpush
 
@@ -78,6 +82,14 @@
                 responsive: true,
                 serverSide: true,
                 paging: true,
+                autoWidth: false,
+                columnDefs: [
+                    { width: "5%", targets: 0 },
+                    { width: "50%", targets: 1 },
+                    { width: "15%", targets: 2 },
+                    { width: "15%", targets: 3 },
+                    { width: "15%", targets: 4 },
+                ],
                 language: {
                     lengthMenu: `<span style="margin-left: 20px;">Show _MENU_ entries</span>`,
                     processing: `<div class="text-center">
