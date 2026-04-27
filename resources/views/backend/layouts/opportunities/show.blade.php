@@ -234,6 +234,35 @@
                         <p class="mb-0"><strong>Created:</strong> {{ $data->created_at?->format('M d, Y') ?? '—' }}</p>
                     </div>
                 </div>
+
+                @if ($data->chat)
+                    <div class="card bg-white border-0 rounded-3 mt-3">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Recent Messages</h6>
+                                <a href="{{ route('admin.opportunity_chats.show', $data->chat->id) }}"
+                                   class="btn btn-sm btn-outline-primary">View Full Chat</a>
+                            </div>
+                            <div class="chat-preview">
+                                @forelse ($data->chat->messages->reverse() as $message)
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <img src="{{ $message->user?->avatar ? asset($message->user->avatar) : asset('backend/admin/assets/images/avatar_defult.png') }}"
+                                                 alt="avatar" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                                            <span class="fw-semibold" style="font-size: 13px;">{{ $message->user?->name ?? 'User' }}</span>
+                                            <span class="text-muted ms-auto" style="font-size: 11px;">{{ $message->created_at?->diffForHumans() }}</span>
+                                        </div>
+                                        <div class="p-2 rounded bg-light" style="font-size: 13px;">
+                                            {{ \Illuminate\Support\Str::limit($message->message ?? '', 150) }}
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-muted text-center py-4 mb-0">No messages yet.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

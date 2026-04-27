@@ -24,7 +24,7 @@ class ChatController extends Controller
                 ->pluck('chat_id');
 
             $data = Chat::query()
-                ->with(['chatable.opportunity', 'users.user'])
+                ->with(['chatable', 'users.user'])
                 ->whereIn('id', $chatIds)
                 ->latest('id')
                 ->get();
@@ -39,6 +39,7 @@ class ChatController extends Controller
     public function show(Request $request, string $id): JsonResponse
     {
         try {
+            $per_page_messages = $request->per_page_messages ?? 30;
             $allowed = ChatUser::query()
                 ->where('chat_id', (int) $id)
                 ->where('user_id', (int) $request->user()->id)
@@ -47,13 +48,14 @@ class ChatController extends Controller
                 return Helper::jsonErrorResponse('Unauthorized', 403);
             }
 
-            $chat = Chat::with(['chatable.opportunity', 'users.user'])->findOrFail($id);
-            $messages = Message::with('user')->where('chat_id', $chat->id)->latest('id')->paginate(30);
+            $chat = Chat::with(['chatable', 'users.user'])->findOrFail($id);
+            $messages = Message::with('user')->where('chat_id', $chat->id)->latest('id')->paginate($per_page_messages);
+
 
             return Helper::jsonResponse(true, 'Chat retrieved successfully.', 200, [
                 'chat' => $chat,
                 'messages' => $messages,
-            ], true, $messages);
+            ]);
         } catch (Exception $e) {
             Log::error('API\\V1\\Mentor\\ChatController::show '.$e->getMessage());
             return Helper::jsonErrorResponse('Chat not found.', 404);

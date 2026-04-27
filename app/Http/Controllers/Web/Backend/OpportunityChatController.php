@@ -28,8 +28,7 @@ class OpportunityChatController extends Controller
                     return e($row->chatable?->title ?? '-');
                 })
                 ->addColumn('participants', function ($row) {
-                    $names = $row->users->map(fn ($cu) => $cu->user?->name ?: $cu->user?->email)->filter()->values();
-                    return e($names->implode(', '));
+                    return $row->users->count() . ' Participants';
                 })
                 ->addColumn('status_badge', function ($row) {
                     $c = $row->status === 'active' ? 'success' : 'secondary';
@@ -47,13 +46,18 @@ class OpportunityChatController extends Controller
         return view('backend.layouts.opportunity_chats.index');
     }
 
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         $chat = Chat::with(['chatable.mentor.user', 'users.user'])->findOrFail($id);
-        $messages = Message::with('user')
+        $messagesQuery = Message::with('user')
             ->where('chat_id', $chat->id)
-            ->latest('id')
-            ->paginate(30);
+            ->latest('id');
+
+        if ($request->ajax()) {
+            return response()->json($messagesQuery->paginate(10));
+        }
+
+        $messages = $messagesQuery->paginate(10);
 
         return view('backend.layouts.opportunity_chats.show', compact('chat', 'messages'));
     }

@@ -106,7 +106,13 @@ class OpportunityController extends Controller
 
     public function show(string $id)
     {
-        $data = Opportunity::with('mentor.user', 'applications.user')->findOrFail($id);
+        $data = Opportunity::with([
+            'mentor.user',
+            'applications.user',
+            'chat.messages' => function ($query) {
+                $query->with('user')->latest()->limit(5);
+            },
+        ])->findOrFail($id);
 
         $categoryIds = (array) ($data->category_ids ?? []);
         $specialityIds = (array) ($data->speciality_ids ?? []);
