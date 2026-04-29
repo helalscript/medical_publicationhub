@@ -36,10 +36,10 @@ class NotificationSeeder extends Seeder
                         'title' => 'Welcome to Our Platform (' . $i . ')',
                         'message' => 'Thank you for registering with us. We are excited to have you!',
                         'type' => 'welcome',
-                        'image' => 'http://ibraheemaltamim.test/notification-icon/png-transparent-tea-cup-color-gr.png',
+                        'image' => url('notification-icon/png-transparent-tea-cup-color-gr.png'),
                         'deep_link' => [
                             'app' => 'myapp://welcome',
-                            'web' => 'http://ibraheemaltamim.test/welcome'
+                            'web' => url('/welcome')
                         ],
                         'data' => [
                             'user_id' => $user->id,
