@@ -16,11 +16,16 @@ class NotificationController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $notifications = auth('api')->user()->notifications;
-            return Helper::jsonResponse(true, "Notifications fetched successfully", 200, $notifications);
+            $per_page = $request->per_page ?? 50;
+            $notifications = auth('api')
+            ->user()
+            ->notifications()
+            ->orderBy('created_at', 'desc')
+            ->paginate($per_page);
+            return Helper::jsonResponse(true, "Notifications fetched successfully", 200, $notifications, true);
         } catch (Exception $e) {
             Log::error('NotificationController::index Error: ' . $e->getMessage());
             return Helper::jsonErrorResponse($e->getMessage(), 500);
