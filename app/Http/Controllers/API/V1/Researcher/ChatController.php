@@ -94,7 +94,8 @@ class ChatController extends Controller
     public function sendMessage(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate([
-            'message' => 'required|string|max:10000',
+            'message' => 'required_without:file|string|max:10000',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif|max:10240',
         ]);
 
         try {
@@ -114,7 +115,8 @@ class ChatController extends Controller
             $msg = Message::create([
                 'chat_id' => $chat->id,
                 'user_id' => (int) $request->user()->id,
-                'message' => $validated['message'],
+                'message' => $request->input('message'),
+                'file' => $request->hasFile('file') ? Helper::fileUpload($request->file('file'), 'chats', 'chat-' . time()) : null,
             ]);
 
             event(new MessageSent($msg));

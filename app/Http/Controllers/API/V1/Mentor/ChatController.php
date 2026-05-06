@@ -31,7 +31,7 @@ class ChatController extends Controller
 
             return Helper::jsonResponse(true, 'Chats retrieved successfully.', 200, $data);
         } catch (Exception $e) {
-            Log::error('API\\V1\\Mentor\\ChatController::index '.$e->getMessage());
+            Log::error('API\\V1\\Mentor\\ChatController::index ' . $e->getMessage());
             return Helper::jsonErrorResponse('Failed to load chats.', 500);
         }
     }
@@ -44,7 +44,7 @@ class ChatController extends Controller
                 ->where('chat_id', (int) $id)
                 ->where('user_id', (int) $request->user()->id)
                 ->exists();
-            if (! $allowed) {
+            if (!$allowed) {
                 return Helper::jsonErrorResponse('Unauthorized', 403);
             }
 
@@ -57,7 +57,7 @@ class ChatController extends Controller
                 'messages' => $messages,
             ]);
         } catch (Exception $e) {
-            Log::error('API\\V1\\Mentor\\ChatController::show '.$e->getMessage());
+            Log::error('API\\V1\\Mentor\\ChatController::show ' . $e->getMessage());
             return Helper::jsonErrorResponse('Chat not found.', 404);
         }
     }
@@ -65,15 +65,17 @@ class ChatController extends Controller
     public function sendMessage(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate([
-            'message' => 'required|string|max:10000',
+            'message' => 'required_without:file|string|max:10000',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif|max:10240',
         ]);
+
 
         try {
             $allowed = ChatUser::query()
                 ->where('chat_id', (int) $id)
                 ->where('user_id', (int) $request->user()->id)
                 ->exists();
-            if (! $allowed) {
+            if (!$allowed) {
                 return Helper::jsonErrorResponse('Unauthorized', 403);
             }
 
@@ -85,7 +87,8 @@ class ChatController extends Controller
             $msg = Message::create([
                 'chat_id' => $chat->id,
                 'user_id' => (int) $request->user()->id,
-                'message' => $validated['message'],
+                'message' => $request->input('message'),
+                'file' => $request->hasFile('file') ? Helper::fileUpload($request->file('file'), 'chats', 'chat-' . time()) : null,
             ]);
 
             event(new MessageSent($msg));
@@ -94,7 +97,7 @@ class ChatController extends Controller
         } catch (RuntimeException $e) {
             return Helper::jsonErrorResponse($e->getMessage(), 422);
         } catch (Exception $e) {
-            Log::error('API\\V1\\Mentor\\ChatController::sendMessage '.$e->getMessage());
+            Log::error('API\\V1\\Mentor\\ChatController::sendMessage ' . $e->getMessage());
             return Helper::jsonErrorResponse('Failed to send message.', 500);
         }
     }
