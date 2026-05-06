@@ -83,6 +83,10 @@ class OpportunityChatController extends Controller
 
             event(new MessageSent($msg));
 
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'message' => $msg->load('user')]);
+            }
+
             return redirect()->back()->with('success', 'Message sent.');
         } catch (Exception $e) {
             Log::error('OpportunityChatController::sendMessage '.$e->getMessage());

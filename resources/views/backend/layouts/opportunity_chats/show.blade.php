@@ -4,22 +4,22 @@
 @push('styles')
     <style>
         .chat-wrapper {
-            background: #fff;
+            background: var(--bs-card-bg, #fff);
             border-radius: 16px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            border: 1px solid rgba(0,0,0,.05);
+            border: 1px solid var(--bs-border-color, rgba(0,0,0,.05));
         }
         .chat-header {
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(0,0,0,.05);
-            background: #f8fafc;
+            border-bottom: 1px solid var(--bs-border-color, rgba(0,0,0,.05));
+            background: var(--bs-tertiary-bg, #f8fafc);
         }
         .chat-body {
             height: 550px;
             overflow-y: auto;
             padding: 1.5rem;
-            background: #fff;
+            background: var(--bs-card-bg, #fff);
             display: flex;
             flex-direction: column;
         }
@@ -45,8 +45,8 @@
             border-bottom-right-radius: 2px;
         }
         .message-row.others .message-bubble {
-            background: #f1f5f9;
-            color: #1e293b;
+            background: var(--bs-tertiary-bg, #f1f5f9);
+            color: var(--bs-body-color, #1e293b);
             border-bottom-left-radius: 2px;
         }
         .message-meta {
@@ -94,6 +94,53 @@
             padding: 10px;
             font-size: 12px;
             color: #64748b;
+        }
+        .chat-footer {
+            background: var(--bs-tertiary-bg, #f8fafc);
+        }
+        textarea.form-control {
+            background: transparent !important;
+            color: var(--bs-body-color) !important;
+        }
+        textarea.form-control::placeholder {
+            color: var(--bs-secondary-color);
+        }
+
+        /* Dark Mode Overrides */
+        body[data-theme="dark"] .chat-wrapper {
+            background: #15203c !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        body[data-theme="dark"] .chat-header {
+            background: #0b1120 !important;
+            border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        body[data-theme="dark"] .chat-header .text-dark {
+            color: #f1f5f9 !important;
+        }
+        body[data-theme="dark"] .chat-body {
+            background: #15203c !important;
+        }
+        body[data-theme="dark"] .message-row.others .message-bubble {
+            background: #1e294b !important;
+            color: #f1f5f9 !important;
+        }
+        body[data-theme="dark"] .message-meta {
+            color: #94a3b8 !important;
+        }
+        body[data-theme="dark"] .chat-footer {
+            background: #0b1120 !important;
+            border-top-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        body[data-theme="dark"] .card {
+            background: #15203c !important;
+            color: #f1f5f9 !important;
+        }
+        body[data-theme="dark"] .participant-item:hover {
+            background: #1e294b !important;
+        }
+        body[data-theme="dark"] .text-muted {
+            color: #94a3b8 !important;
         }
     </style>
 @endpush
@@ -146,8 +193,8 @@
                             @endforeach
                         </div>
                     </div>
-                    <div class="p-3 border-top bg-light">
-                        <form action="{{ route('admin.opportunity_chats.messages.store', $chat->id) }}" method="POST">
+                    <div class="p-3 border-top chat-footer">
+                        <form id="chatForm" action="{{ route('admin.opportunity_chats.messages.store', $chat->id) }}" method="POST">
                             @csrf
                             <div class="input-group">
                                 <textarea name="message" rows="1" class="form-control border-0 shadow-none" placeholder="Write a message..." required style="resize: none;"></textarea>
@@ -161,7 +208,7 @@
             </div>
 
             <div class="col-xl-4">
-                <div class="card border-0 rounded-3 shadow-sm bg-white">
+                <div class="card border-0 rounded-3 shadow-sm">
                     <div class="card-body p-4 ">
                         <h6 class="mb-3 card-header">Participants</h6>
                         <div class="d-flex flex-column gap-2">
@@ -319,6 +366,60 @@
                     </div>
                 `;
             }
+
+            
+            // Echo Listener for real-time updates
+            if (window.Echo) {
+                window.Echo.private('opportunity_chat.{{ $chat->id }}')
+                    .listen('.opportunity.chat', (e) => {
+                        // console.log('Message Received =========================================', e);
+                        if (e.message && e.message.user_id != {{ auth()->id() }}) {
+                            const html = createMessageHtml(e.message);
+                            messageContainer.insertAdjacentHTML('beforeend', html);
+                            chatArea.scrollTop = chatArea.scrollHeight;
+                        }
+                    });
+            }
+            
+            // Handle AJAX form submission
+            const chatForm = document.getElementById('chatForm');
+            if (chatForm) {
+                chatForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(chatForm);
+                    const textarea = chatForm.querySelector('textarea[name="message"]');
+                    const submitBtn = chatForm.querySelector('button[type="submit"]');
+                    
+                    if (!textarea.value.trim()) return;
+                    
+                    submitBtn.disabled = true;
+                    
+                    fetch(chatForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const html = createMessageHtml(data.message);
+                            messageContainer.insertAdjacentHTML('beforeend', html);
+                            chatArea.scrollTop = chatArea.scrollHeight;
+                            textarea.value = '';
+                        }
+                        submitBtn.disabled = false;
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        submitBtn.disabled = false;
+                        // alert('Failed to send message.');
+                    });
+                });
+            }
+            
         });
 
         window.showParticipantModal = function(data) {

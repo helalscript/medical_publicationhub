@@ -16,6 +16,7 @@ class MessageSent implements ShouldBroadcastNow
 
     public function __construct(public Message $message)
     {
+        $this->message->load('user');
     }
 
     public function broadcastOn(): Channel
