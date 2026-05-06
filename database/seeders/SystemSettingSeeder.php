@@ -25,7 +25,8 @@ class SystemSettingSeeder extends Seeder
             'address' => 'TEST',
             'description' => null,
             'web_url' => 'https://publicationhub.co',
-            'whatsapp_number'=> '+8801811121902'
+            'whatsapp_number'=> '+8801811121902',
+            'calendly_scheduling_url'=>'https://calendly.com/husoaib422/30min'
         ]);
     }
 }
