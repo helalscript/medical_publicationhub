@@ -19,7 +19,7 @@ class HomePageController extends Controller
     public function getSystemInfo(Request $request): JsonResponse
     {
         try {
-            $data = SystemSetting::select('id', 'system_name', 'logo', 'favicon', 'copyright_text', 'address', 'company_open_hour', 'description', 'contact_number', 'address', 'email','whatsapp_number')->first();
+            $data = SystemSetting::select('id', 'system_name', 'logo', 'favicon', 'copyright_text', 'address', 'company_open_hour', 'description', 'contact_number', 'address', 'email','whatsapp_number','calendly_scheduling_url')->first();
             return Helper::jsonResponse(true, 'System data fetched successfully', 200, $data);
         } catch (Exception $e) {
             Log::error("HomePageController::getSystemInfo" . $e->getMessage());
