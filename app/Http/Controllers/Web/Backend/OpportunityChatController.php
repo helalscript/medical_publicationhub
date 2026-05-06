@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Backend;
 
 use App\Events\MessageSent;
+use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\ChatUser;
@@ -65,9 +66,9 @@ class OpportunityChatController extends Controller
     public function sendMessage(Request $request, string $id)
     {
         $request->validate([
-            'message' => 'required|string|max:10000',
+            'message' => 'required_without:file|nullable|string|max:10000',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif|max:10240',
         ]);
-
         try {
             $chat = Chat::findOrFail($id);
             // ensure admin is participant (mapped to super_admin role)
@@ -79,17 +80,21 @@ class OpportunityChatController extends Controller
                 'chat_id' => $chat->id,
                 'user_id' => $request->user()->id,
                 'message' => $request->input('message'),
+                'file' => $request->hasFile('file') ? Helper::fileUpload($request->file('file'), 'chats', 'chat-' . time()) : null,
             ]);
 
-            event(new MessageSent($msg));
+            event(new MessageSent($msg->load('user')));
 
             if ($request->ajax()) {
-                return response()->json(['success' => true, 'message' => $msg->load('user')]);
+                return response()->json(['success' => true, 'message' => $msg]);
             }
 
             return redirect()->back()->with('success', 'Message sent.');
         } catch (Exception $e) {
-            Log::error('OpportunityChatController::sendMessage '.$e->getMessage());
+            Log::error('OpportunityChatController::sendMessage ' . $e->getMessage());
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            }
             return redirect()->back()->withInput()->with('error', 'Failed to send message.');
         }
     }

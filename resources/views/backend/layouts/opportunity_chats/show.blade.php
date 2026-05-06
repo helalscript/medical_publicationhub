@@ -32,44 +32,50 @@
             flex-direction: row-reverse;
         }
         .message-bubble {
-            max-width: 70%;
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
+            width: fit-content;
+            max-width: 85%;
+            padding: 0.85rem 1.15rem;
+            border-radius: 18px;
             position: relative;
             font-size: 0.95rem;
             line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .message-row.mine {
+            flex-direction: row-reverse;
         }
         .message-row.mine .message-bubble {
-            background: #4f46e5;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: #fff;
-            border-bottom-right-radius: 2px;
+            border-bottom-right-radius: 4px;
         }
         .message-row.others .message-bubble {
             background: var(--bs-tertiary-bg, #f1f5f9);
             color: var(--bs-body-color, #1e293b);
-            border-bottom-left-radius: 2px;
+            border-bottom-left-radius: 4px;
         }
         .message-meta {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-bottom: 0.25rem;
-            display: block;
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .message-row.mine .message-meta {
-            text-align: right;
+            justify-content: flex-end;
         }
         .message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
             object-fit: cover;
-            margin: 0 0.5rem;
+            margin-bottom: 4px;
         }
         .sender-name {
-            font-weight: 600;
-            font-size: 0.8rem;
-            margin-bottom: 2px;
-            display: block;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--bs-body-color);
         }
         .participant-item {
             display: flex;
@@ -176,17 +182,37 @@
                         <div id="messageContainer" class="d-flex flex-column">
                             @foreach ($messages->reverse() as $m)
                                 @php $isMine = $m->user_id === auth()->id(); @endphp
-                                <div class="message-row {{ $isMine ? 'mine' : 'others' }}">
-                                    @if(!$isMine)
+                                <div class="message-row {{ $isMine ? 'mine' : 'others' }} align-items-end gap-2">
+                                    @if (!$isMine)
                                         <img src="{{ $m->user?->avatar ? asset($m->user->avatar) : asset('backend/admin/assets/images/avatar_defult.png') }}" class="message-avatar" alt="">
                                     @endif
-                                    <div class="flex-grow-1" style="max-width: 70%">
+                                    <div class="d-flex flex-column {{ $isMine ? 'align-items-end' : 'align-items-start' }}" style="max-width: 85%">
                                         <span class="message-meta">
-                                            @if(!$isMine) <span class="sender-name">{{ $m->user?->name ?? 'User' }}</span> @endif
-                                            {{ $m->created_at?->diffForHumans() }}
+                                            @if (!$isMine) <span class="sender-name">{{ $m->user?->name ?? 'User' }}</span> @endif
+                                            <span>{{ $m->created_at?->diffForHumans() }}</span>
                                         </span>
-                                        <div class="message-bubble shadow-sm">
-                                            {{ $m->message }}
+                                        <div class="message-bubble">
+                                            @if ($m->message)
+                                                <div class="message-text">{{ $m->message }}</div>
+                                            @endif
+                                            @if ($m->file)
+                                                <div class="message-file {{ $m->message ? 'mt-2' : '' }}">
+                                                    @php $ext = pathinfo($m->file, PATHINFO_EXTENSION); @endphp
+                                                    @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                        <a href="{{ asset($m->file) }}" target="_blank" class="d-block overflow-hidden rounded-3">
+                                                            <img src="{{ asset($m->file) }}" class="img-fluid" style="max-height: 300px; width: 100%; object-fit: cover;" alt="file">
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ asset($m->file) }}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none py-2 px-3 rounded-3 {{ $isMine ? 'bg-white bg-opacity-10 text-white' : 'bg-light text-primary' }}">
+                                                            <i class="material-symbols-outlined">description</i>
+                                                            <div class="overflow-hidden">
+                                                                <div class="text-truncate small fw-medium" style="max-width: 150px;">{{ basename($m->file) }}</div>
+                                                                <div class="smaller opacity-75 text-uppercase">{{ $ext }}</div>
+                                                            </div>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -194,13 +220,21 @@
                         </div>
                     </div>
                     <div class="p-3 border-top chat-footer">
-                        <form id="chatForm" action="{{ route('admin.opportunity_chats.messages.store', $chat->id) }}" method="POST">
+                        <form id="chatForm" action="{{ route('admin.opportunity_chats.messages.store', $chat->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            <div class="input-group">
-                                <textarea name="message" rows="1" class="form-control border-0 shadow-none" placeholder="Write a message..." required style="resize: none;"></textarea>
-                                <button type="submit" class="btn btn-primary d-flex align-items-center px-3">
+                            <div class="input-group align-items-center">
+                                <label class="btn btn-link text-muted p-2" for="fileInput" style="text-decoration: none;">
+                                    <i class="material-symbols-outlined fs-24">attach_file</i>
+                                </label>
+                                <input type="file" name="file" id="fileInput" class="d-none">
+                                <textarea name="message" rows="1" class="form-control border-0 shadow-none" placeholder="Write a message..." style="resize: none;"></textarea>
+                                <button type="submit" class="btn btn-primary d-flex align-items-center px-3 ms-2 rounded-3">
                                     <i class="material-symbols-outlined fs-20">send</i>
                                 </button>
+                            </div>
+                            <div id="file-preview" class="mt-2 small text-muted d-none">
+                                <span class="file-name"></span>
+                                <button type="button" class="btn btn-link btn-sm text-danger p-0 ms-2" onclick="clearFile()">Remove</button>
                             </div>
                         </form>
                     </div>
@@ -350,17 +384,38 @@
                 
                 const name = m.user?.name || 'User';
                 const date = new Date(m.created_at).toLocaleString();
+
+                let fileHtml = '';
+                if (m.file) {
+                    const fileUrl = m.file.startsWith('http') ? m.file : '/' + m.file;
+                    const ext = m.file.split('.').pop().toLowerCase();
+                    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                        fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
+                            <a href="${fileUrl}" target="_blank">
+                                <img src="${fileUrl}" class="img-fluid rounded" style="max-height: 200px" alt="file">
+                            </a>
+                        </div>`;
+                    } else {
+                        fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
+                            <a href="${fileUrl}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none ${isMine ? 'text-white' : 'text-primary'}">
+                                <i class="material-symbols-outlined">description</i>
+                                <span>Download File</span>
+                            </a>
+                        </div>`;
+                    }
+                }
                 
                 return `
-                    <div class="message-row ${isMine ? 'mine' : 'others'}">
+                    <div class="message-row ${isMine ? 'mine' : 'others'} align-items-end gap-2">
                         ${!isMine ? `<img src="${avatar}" class="message-avatar" alt="">` : ''}
-                        <div class="flex-grow-1" style="max-width: 70%">
+                        <div class="d-flex flex-column ${isMine ? 'align-items-end' : 'align-items-start'}" style="max-width: 85%">
                             <span class="message-meta">
                                 ${!isMine ? `<span class="sender-name">${name}</span>` : ''}
-                                ${date}
+                                <span>${date}</span>
                             </span>
-                            <div class="message-bubble shadow-sm">
-                                ${m.message}
+                            <div class="message-bubble">
+                                ${m.message ? `<div class="message-text">${m.message}</div>` : ''}
+                                ${fileHtml}
                             </div>
                         </div>
                     </div>
@@ -383,15 +438,37 @@
             
             // Handle AJAX form submission
             const chatForm = document.getElementById('chatForm');
+            const fileInput = document.getElementById('fileInput');
+            const filePreview = document.getElementById('file-preview');
+            const fileNameSpan = filePreview.querySelector('.file-name');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        fileNameSpan.textContent = this.files[0].name;
+                        filePreview.classList.remove('d-none');
+                    } else {
+                        clearFile();
+                    }
+                });
+            }
+
+            window.clearFile = function() {
+                fileInput.value = '';
+                filePreview.classList.add('d-none');
+                fileNameSpan.textContent = '';
+            };
+
             if (chatForm) {
                 chatForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
                     const formData = new FormData(chatForm);
+                    // console.log('Sending message with file:', formData.get('file'));
                     const textarea = chatForm.querySelector('textarea[name="message"]');
                     const submitBtn = chatForm.querySelector('button[type="submit"]');
                     
-                    if (!textarea.value.trim()) return;
+                    if (!textarea.value.trim() && !fileInput.files.length) return;
                     
                     submitBtn.disabled = true;
                     
@@ -409,13 +486,13 @@
                             messageContainer.insertAdjacentHTML('beforeend', html);
                             chatArea.scrollTop = chatArea.scrollHeight;
                             textarea.value = '';
+                            clearFile();
                         }
                         submitBtn.disabled = false;
                     })
                     .catch(err => {
                         console.error(err);
                         submitBtn.disabled = false;
-                        // alert('Failed to send message.');
                     });
                 });
             }
