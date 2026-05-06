@@ -19,19 +19,35 @@ class ChatController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
+            $per_page = $request->per_page ?? 10;
             $chatIds = ChatUser::query()
                 ->where('user_id', (int) $request->user()->id)
                 ->pluck('chat_id');
 
             $data = Chat::query()
-                ->with(['chatable', 'users.user'])
+                ->select('id', 'chatable_type', 'chatable_id', 'type', 'status', 'created_at')
+                ->with([
+                    'chatable' => function ($query) {
+                        $query->select('id', 'title', 'thumbnail');
+                    },
+                    'last_message',
+                    // 'users.user' => function ($query) {
+                    //     $query->select('id', 'name');
+                    // },
+                ])
+                ->withCount([
+                    'messages as unseen_count' => function ($query) use ($request) {
+                        $query->where('user_id', '!=', (int) $request->user()->id)
+                            ->whereNull('seen_at');
+                    }
+                ])
                 ->whereIn('id', $chatIds)
                 ->latest('id')
-                ->get();
+                ->paginate($per_page);
 
-            return Helper::jsonResponse(true, 'Chats retrieved successfully.', 200, $data);
+            return Helper::jsonResponse(true, 'Chats retrieved successfully.', 200, $data, true);
         } catch (Exception $e) {
-            Log::error('API\\V1\\Researcher\\ChatController::index '.$e->getMessage());
+            Log::error('API\\V1\\Researcher\\ChatController::index ' . $e->getMessage());
             return Helper::jsonErrorResponse('Failed to load chats.', 500);
         }
     }
@@ -39,23 +55,38 @@ class ChatController extends Controller
     public function show(Request $request, string $id): JsonResponse
     {
         try {
+            $per_page = $request->per_page ?? 10;
             $allowed = ChatUser::query()
                 ->where('chat_id', (int) $id)
                 ->where('user_id', (int) $request->user()->id)
                 ->exists();
-            if (! $allowed) {
+            if (!$allowed) {
                 return Helper::jsonErrorResponse('Unauthorized', 403);
             }
 
-            $chat = Chat::with(['chatable', 'users.user'])->findOrFail($id);
-            $messages = Message::with('user')->where('chat_id', $chat->id)->latest('id')->paginate(30);
+            $chat = Chat::with([
+                'chatable' => function ($query) {
+                    $query->select('id', 'title', 'thumbnail');
+                },
+                'users.user' => function ($query) {
+                    $query->select('id', 'name', 'avatar');
+                }
+            ])->findOrFail($id);
+
+            // Mark messages as seen
+            Message::where('chat_id', $chat->id)
+                ->where('user_id', '!=', (int) $request->user()->id)
+                ->whereNull('seen_at')
+                ->update(['seen_at' => now()]);
+
+            $messages = Message::with('user')->where('chat_id', $chat->id)->latest('id')->paginate($per_page);
 
             return Helper::jsonResponse(true, 'Chat retrieved successfully.', 200, [
                 'chat' => $chat,
-                'messages' => $messages,
+                'messages' => $messages->items(),
             ], true, $messages);
         } catch (Exception $e) {
-            Log::error('API\\V1\\Researcher\\ChatController::show '.$e->getMessage());
+            Log::error('API\\V1\\Researcher\\ChatController::show ' . $e->getMessage());
             return Helper::jsonErrorResponse('Chat not found.', 404);
         }
     }
@@ -71,7 +102,7 @@ class ChatController extends Controller
                 ->where('chat_id', (int) $id)
                 ->where('user_id', (int) $request->user()->id)
                 ->exists();
-            if (! $allowed) {
+            if (!$allowed) {
                 return Helper::jsonErrorResponse('Unauthorized', 403);
             }
 
@@ -92,7 +123,7 @@ class ChatController extends Controller
         } catch (RuntimeException $e) {
             return Helper::jsonErrorResponse($e->getMessage(), 422);
         } catch (Exception $e) {
-            Log::error('API\\V1\\Researcher\\ChatController::sendMessage '.$e->getMessage());
+            Log::error('API\\V1\\Researcher\\ChatController::sendMessage ' . $e->getMessage());
             return Helper::jsonErrorResponse('Failed to send message.', 500);
         }
     }
