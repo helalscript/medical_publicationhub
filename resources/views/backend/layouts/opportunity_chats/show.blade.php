@@ -186,7 +186,24 @@
                                             {{ $m->created_at?->diffForHumans() }}
                                         </span>
                                         <div class="message-bubble shadow-sm">
-                                            {{ $m->message }}
+                                            @if ($m->message)
+                                                <p class="mb-0">{{ $m->message }}</p>
+                                            @endif
+                                            @if ($m->file)
+                                                <div class="message-file {{ $m->message ? 'mt-2' : '' }}">
+                                                    @php $ext = pathinfo($m->file, PATHINFO_EXTENSION); @endphp
+                                                    @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                        <a href="{{ asset($m->file) }}" target="_blank">
+                                                            <img src="{{ asset($m->file) }}" class="img-fluid rounded" style="max-height: 200px" alt="file">
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ asset($m->file) }}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none {{ $isMine ? 'text-white' : 'text-primary' }}">
+                                                            <i class="material-symbols-outlined">description</i>
+                                                            <span>Download File</span>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -194,13 +211,21 @@
                         </div>
                     </div>
                     <div class="p-3 border-top chat-footer">
-                        <form id="chatForm" action="{{ route('admin.opportunity_chats.messages.store', $chat->id) }}" method="POST">
+                        <form id="chatForm" action="{{ route('admin.opportunity_chats.messages.store', $chat->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            <div class="input-group">
-                                <textarea name="message" rows="1" class="form-control border-0 shadow-none" placeholder="Write a message..." required style="resize: none;"></textarea>
-                                <button type="submit" class="btn btn-primary d-flex align-items-center px-3">
+                            <div class="input-group align-items-center">
+                                <label class="btn btn-link text-muted p-2" for="fileInput" style="text-decoration: none;">
+                                    <i class="material-symbols-outlined fs-24">attach_file</i>
+                                </label>
+                                <input type="file" name="file" id="fileInput" class="d-none">
+                                <textarea name="message" rows="1" class="form-control border-0 shadow-none" placeholder="Write a message..." style="resize: none;"></textarea>
+                                <button type="submit" class="btn btn-primary d-flex align-items-center px-3 ms-2 rounded-3">
                                     <i class="material-symbols-outlined fs-20">send</i>
                                 </button>
+                            </div>
+                            <div id="file-preview" class="mt-2 small text-muted d-none">
+                                <span class="file-name"></span>
+                                <button type="button" class="btn btn-link btn-sm text-danger p-0 ms-2" onclick="clearFile()">Remove</button>
                             </div>
                         </form>
                     </div>
@@ -350,6 +375,26 @@
                 
                 const name = m.user?.name || 'User';
                 const date = new Date(m.created_at).toLocaleString();
+
+                let fileHtml = '';
+                if (m.file) {
+                    const fileUrl = m.file.startsWith('http') ? m.file : '/' + m.file;
+                    const ext = m.file.split('.').pop().toLowerCase();
+                    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                        fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
+                            <a href="${fileUrl}" target="_blank">
+                                <img src="${fileUrl}" class="img-fluid rounded" style="max-height: 200px" alt="file">
+                            </a>
+                        </div>`;
+                    } else {
+                        fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
+                            <a href="${fileUrl}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none ${isMine ? 'text-white' : 'text-primary'}">
+                                <i class="material-symbols-outlined">description</i>
+                                <span>Download File</span>
+                            </a>
+                        </div>`;
+                    }
+                }
                 
                 return `
                     <div class="message-row ${isMine ? 'mine' : 'others'}">
@@ -360,7 +405,8 @@
                                 ${date}
                             </span>
                             <div class="message-bubble shadow-sm">
-                                ${m.message}
+                                ${m.message ? `<p class="mb-0">${m.message}</p>` : ''}
+                                ${fileHtml}
                             </div>
                         </div>
                     </div>
@@ -383,15 +429,37 @@
             
             // Handle AJAX form submission
             const chatForm = document.getElementById('chatForm');
+            const fileInput = document.getElementById('fileInput');
+            const filePreview = document.getElementById('file-preview');
+            const fileNameSpan = filePreview.querySelector('.file-name');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        fileNameSpan.textContent = this.files[0].name;
+                        filePreview.classList.remove('d-none');
+                    } else {
+                        clearFile();
+                    }
+                });
+            }
+
+            window.clearFile = function() {
+                fileInput.value = '';
+                filePreview.classList.add('d-none');
+                fileNameSpan.textContent = '';
+            };
+
             if (chatForm) {
                 chatForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
                     const formData = new FormData(chatForm);
+                    // console.log('Sending message with file:', formData.get('file'));
                     const textarea = chatForm.querySelector('textarea[name="message"]');
                     const submitBtn = chatForm.querySelector('button[type="submit"]');
                     
-                    if (!textarea.value.trim()) return;
+                    if (!textarea.value.trim() && !fileInput.files.length) return;
                     
                     submitBtn.disabled = true;
                     
@@ -409,13 +477,13 @@
                             messageContainer.insertAdjacentHTML('beforeend', html);
                             chatArea.scrollTop = chatArea.scrollHeight;
                             textarea.value = '';
+                            clearFile();
                         }
                         submitBtn.disabled = false;
                     })
                     .catch(err => {
                         console.error(err);
                         submitBtn.disabled = false;
-                        // alert('Failed to send message.');
                     });
                 });
             }
