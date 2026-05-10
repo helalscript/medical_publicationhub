@@ -148,6 +148,20 @@
         body[data-theme="dark"] .text-muted {
             color: #94a3b8 !important;
         }
+
+        /* Voice Recording Animation */
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
     </style>
 @endpush
 
@@ -181,7 +195,17 @@
                         </div>
                         <div id="messageContainer" class="d-flex flex-column">
                             @foreach ($messages->reverse() as $m)
-                                @php $isMine = $m->user_id === auth()->id(); @endphp
+                                @php 
+                                    $isMine = $m->user_id === auth()->id(); 
+                                    $hasText = !empty($m->message);
+                                    $hasFile = !empty($m->file);
+                                    $isMedia = false;
+                                    if ($hasFile) {
+                                        $ext = strtolower(pathinfo($m->file, PATHINFO_EXTENSION));
+                                        $isMedia = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp3', 'wav', 'ogg', 'm4a', 'aac', 'webm']);
+                                    }
+                                    $isPlain = $isMedia && !$hasText;
+                                @endphp
                                 <div class="message-row {{ $isMine ? 'mine' : 'others' }} align-items-end gap-2">
                                     @if (!$isMine)
                                         <img src="{{ $m->user?->avatar ? asset($m->user->avatar) : asset('backend/admin/assets/images/avatar_defult.png') }}" class="message-avatar" alt="">
@@ -191,17 +215,25 @@
                                             @if (!$isMine) <span class="sender-name">{{ $m->user?->name ?? 'User' }}</span> @endif
                                             <span>{{ $m->created_at?->diffForHumans() }}</span>
                                         </span>
-                                        <div class="message-bubble">
+                                        <div class="message-bubble {{ $isPlain ? 'bg-transparent shadow-none p-0 border-0' : '' }}">
                                             @if ($m->message)
                                                 <div class="message-text">{{ $m->message }}</div>
                                             @endif
                                             @if ($m->file)
                                                 <div class="message-file {{ $m->message ? 'mt-2' : '' }}">
-                                                    @php $ext = pathinfo($m->file, PATHINFO_EXTENSION); @endphp
+                                                    @php 
+                                                        $ext = pathinfo($m->file, PATHINFO_EXTENSION);
+                                                        $audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'webm'];
+                                                    @endphp
                                                     @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                                                         <a href="{{ asset($m->file) }}" target="_blank" class="d-block overflow-hidden rounded-3">
                                                             <img src="{{ asset($m->file) }}" class="img-fluid" style="max-height: 300px; width: 100%; object-fit: cover;" alt="file">
                                                         </a>
+                                                    @elseif (in_array(strtolower($ext), $audioExts))
+                                                        <audio controls class="mw-100 mt-1" style="height: 35px;">
+                                                            <source src="{{ asset($m->file) }}" type="audio/{{ $ext == 'm4a' ? 'mp4' : strtolower($ext) }}">
+                                                            Your browser does not support the audio element.
+                                                        </audio>
                                                     @else
                                                         <a href="{{ asset($m->file) }}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none py-2 px-3 rounded-3 {{ $isMine ? 'bg-white bg-opacity-10 text-white' : 'bg-light text-primary' }}">
                                                             <i class="material-symbols-outlined">description</i>
@@ -227,10 +259,34 @@
                                     <i class="material-symbols-outlined fs-24">attach_file</i>
                                 </label>
                                 <input type="file" name="file" id="fileInput" class="d-none">
+                                
+                                <button type="button" id="voiceRecBtn" class="btn btn-link text-muted p-2" style="text-decoration: none;">
+                                    <i class="material-symbols-outlined fs-24">mic</i>
+                                </button>
+
                                 <textarea name="message" rows="1" class="form-control border-0 shadow-none" placeholder="Write a message..." style="resize: none;"></textarea>
-                                <button type="submit" class="btn btn-primary d-flex align-items-center px-3 ms-2 rounded-3">
+                                
+                                <button type="submit" id="submitBtn" class="btn btn-primary d-flex align-items-center px-3 ms-2 rounded-3">
                                     <i class="material-symbols-outlined fs-20">send</i>
                                 </button>
+                            </div>
+
+                            <!-- Voice Recording UI -->
+                            <div id="voiceRecUI" class="d-none bg-light p-2 rounded-3 mt-2">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="recording-dot"></div>
+                                        <span id="voiceTimer" class="small fw-medium">00:00</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button type="button" id="cancelRecBtn" class="btn btn-sm btn-outline-danger border-0">
+                                            <i class="material-symbols-outlined fs-18">close</i>
+                                        </button>
+                                        <button type="button" id="stopRecBtn" class="btn btn-sm btn-primary rounded-circle p-1">
+                                            <i class="material-symbols-outlined fs-20">stop</i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div id="file-preview" class="mt-2 small text-muted d-none">
                                 <span class="file-name"></span>
@@ -386,24 +442,43 @@
                 const date = new Date(m.created_at).toLocaleString();
 
                 let fileHtml = '';
+                let isMedia = false;
                 if (m.file) {
                     const fileUrl = m.file.startsWith('http') ? m.file : '/' + m.file;
                     const ext = m.file.split('.').pop().toLowerCase();
-                    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+                    const audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'webm'];
+                    const imgExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+                    if (imgExts.includes(ext)) {
+                        isMedia = true;
                         fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
-                            <a href="${fileUrl}" target="_blank">
-                                <img src="${fileUrl}" class="img-fluid rounded" style="max-height: 200px" alt="file">
+                            <a href="${fileUrl}" target="_blank" class="d-block overflow-hidden rounded-3">
+                                <img src="${fileUrl}" class="img-fluid" style="max-height: 300px; width: 100%; object-fit: cover;" alt="file">
                             </a>
+                        </div>`;
+                    } else if (audioExts.includes(ext)) {
+                        isMedia = true;
+                        const type = ext === 'm4a' ? 'audio/mp4' : `audio/${ext}`;
+                        fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
+                            <audio controls class="mw-100 mt-1" style="height: 35px;">
+                                <source src="${fileUrl}" type="${type}">
+                                Your browser does not support the audio element.
+                            </audio>
                         </div>`;
                     } else {
                         fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
-                            <a href="${fileUrl}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none ${isMine ? 'text-white' : 'text-primary'}">
+                            <a href="${fileUrl}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none py-2 px-3 rounded-3 ${isMine ? 'bg-white bg-opacity-10 text-white' : 'bg-light text-primary'}">
                                 <i class="material-symbols-outlined">description</i>
-                                <span>Download File</span>
+                                <div class="overflow-hidden">
+                                    <div class="text-truncate small fw-medium" style="max-width: 150px;">${m.file.split('/').pop()}</div>
+                                    <div class="smaller opacity-75 text-uppercase">${ext}</div>
+                                </div>
                             </a>
                         </div>`;
                     }
                 }
+
+                const isPlain = isMedia && !m.message;
                 
                 return `
                     <div class="message-row ${isMine ? 'mine' : 'others'} align-items-end gap-2">
@@ -413,7 +488,7 @@
                                 ${!isMine ? `<span class="sender-name">${name}</span>` : ''}
                                 <span>${date}</span>
                             </span>
-                            <div class="message-bubble">
+                            <div class="message-bubble ${isPlain ? 'bg-transparent shadow-none p-0 border-0' : ''}">
                                 ${m.message ? `<div class="message-text">${m.message}</div>` : ''}
                                 ${fileHtml}
                             </div>
@@ -441,12 +516,27 @@
             const fileInput = document.getElementById('fileInput');
             const filePreview = document.getElementById('file-preview');
             const fileNameSpan = filePreview.querySelector('.file-name');
+            
+            // Voice Recording Variables
+            const voiceRecBtn = document.getElementById('voiceRecBtn');
+            const voiceRecUI = document.getElementById('voiceRecUI');
+            const voiceTimer = document.getElementById('voiceTimer');
+            const stopRecBtn = document.getElementById('stopRecBtn');
+            const cancelRecBtn = document.getElementById('cancelRecBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            let mediaRecorder;
+            let audioChunks = [];
+            let timerInterval;
+            let startTime;
+            let recordedBlob = null;
 
             if (fileInput) {
                 fileInput.addEventListener('change', function() {
                     if (this.files && this.files[0]) {
                         fileNameSpan.textContent = this.files[0].name;
                         filePreview.classList.remove('d-none');
+                        recordedBlob = null; // Clear recorded audio if file selected
                     } else {
                         clearFile();
                     }
@@ -457,18 +547,93 @@
                 fileInput.value = '';
                 filePreview.classList.add('d-none');
                 fileNameSpan.textContent = '';
+                recordedBlob = null;
             };
+
+            // Voice Recording Logic
+            if (voiceRecBtn) {
+                voiceRecBtn.addEventListener('click', async function() {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+
+                        mediaRecorder.ondataavailable = (event) => {
+                            audioChunks.push(event.data);
+                        };
+
+                        mediaRecorder.onstop = () => {
+                            recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                            fileNameSpan.textContent = "Voice Message Recorded";
+                            filePreview.classList.remove('d-none');
+                            
+                            // Stop all tracks to release microphone
+                            stream.getTracks().forEach(track => track.stop());
+                        };
+
+                        mediaRecorder.start();
+                        showVoiceUI();
+                    } catch (err) {
+                        console.error("Microphone access denied:", err);
+                        alert("Could not access microphone.");
+                    }
+                });
+            }
+
+            function showVoiceUI() {
+                voiceRecUI.classList.remove('d-none');
+                voiceRecBtn.classList.add('d-none');
+                startTime = Date.now();
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+
+            function hideVoiceUI() {
+                voiceRecUI.classList.add('d-none');
+                voiceRecBtn.classList.remove('d-none');
+                clearInterval(timerInterval);
+            }
+
+            function updateTimer() {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                const secs = String(elapsed % 60).padStart(2, '0');
+                voiceTimer.textContent = `${mins}:${secs}`;
+            }
+
+            if (stopRecBtn) {
+                stopRecBtn.addEventListener('click', function() {
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                        hideVoiceUI();
+                    }
+                });
+            }
+
+            if (cancelRecBtn) {
+                cancelRecBtn.addEventListener('click', function() {
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                    }
+                    hideVoiceUI();
+                    recordedBlob = null;
+                    fileNameSpan.textContent = '';
+                    filePreview.classList.add('d-none');
+                });
+            }
 
             if (chatForm) {
                 chatForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
                     const formData = new FormData(chatForm);
-                    // console.log('Sending message with file:', formData.get('file'));
                     const textarea = chatForm.querySelector('textarea[name="message"]');
-                    const submitBtn = chatForm.querySelector('button[type="submit"]');
                     
-                    if (!textarea.value.trim() && !fileInput.files.length) return;
+                    if (recordedBlob) {
+                        formData.append('file', recordedBlob, 'voice_message.webm');
+                    }
+                    
+                    if (!textarea.value.trim() && !fileInput.files.length && !recordedBlob) return;
                     
                     submitBtn.disabled = true;
                     
@@ -496,7 +661,16 @@
                     });
                 });
             }
-            
+            // Ensure only one audio plays at a time
+            document.addEventListener('play', function(e) {
+                const audios = document.getElementsByTagName('audio');
+                for (let i = 0, len = audios.length; i < len; i++) {
+                    if (audios[i] != e.target) {
+                        audios[i].pause();
+                    }
+                }
+            }, true);
+
         });
 
         window.showParticipantModal = function(data) {
