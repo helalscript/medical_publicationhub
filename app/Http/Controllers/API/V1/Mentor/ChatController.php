@@ -20,7 +20,7 @@ class ChatController extends Controller
     {
         try {
             $chatIds = ChatUser::query()
-                ->where('user_id', (int) $request->user()->id)
+                ->where('user_id',  $request->user()->id)
                 ->pluck('chat_id');
 
             $data = Chat::query()
@@ -41,8 +41,8 @@ class ChatController extends Controller
         try {
             $per_page_messages = $request->per_page_messages ?? 30;
             $allowed = ChatUser::query()
-                ->where('chat_id', (int) $id)
-                ->where('user_id', (int) $request->user()->id)
+                ->where('chat_id',$id)
+                ->where('user_id',$request->user()->id)
                 ->exists();
             if (!$allowed) {
                 return Helper::jsonErrorResponse('Unauthorized', 403);
@@ -66,14 +66,14 @@ class ChatController extends Controller
     {
         $validated = $request->validate([
             'message' => 'required_without:file|string|max:10000',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif|max:10240',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png,gif,mp3,wav,ogg,m4a,aac,webm|max:10240',
         ]);
 
 
         try {
             $allowed = ChatUser::query()
-                ->where('chat_id', (int) $id)
-                ->where('user_id', (int) $request->user()->id)
+                ->where('chat_id',$id)
+                ->where('user_id',$request->user()->id)
                 ->exists();
             if (!$allowed) {
                 return Helper::jsonErrorResponse('Unauthorized', 403);
@@ -86,7 +86,7 @@ class ChatController extends Controller
 
             $msg = Message::create([
                 'chat_id' => $chat->id,
-                'user_id' => (int) $request->user()->id,
+                'user_id' => $request->user()->id,
                 'message' => $request->input('message'),
                 'file' => $request->hasFile('file') ? Helper::fileUpload($request->file('file'), 'chats', 'chat-' . time()) : null,
             ]);
