@@ -19,6 +19,8 @@
         "phpoffice/phpword": "^1.4",
         "smalot/pdfparser": "^2.12",
         "spatie/laravel-permission": "*",
+        "symfony/brevo-mailer": "^8.0",
+        "symfony/http-client": "^8.0",
         "tymon/jwt-auth": "^2.1",
         "yajra/laravel-datatables": "11.0"
     },
