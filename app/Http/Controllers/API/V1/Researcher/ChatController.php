@@ -21,7 +21,7 @@ class ChatController extends Controller
         try {
             $per_page = $request->per_page ?? 10;
             $chatIds = ChatUser::query()
-                ->where('user_id', (int) $request->user()->id)
+                ->where('user_id', $request->user()->id)
                 ->pluck('chat_id');
 
             $data = Chat::query()
@@ -37,7 +37,7 @@ class ChatController extends Controller
                 ])
                 ->withCount([
                     'messages as unseen_count' => function ($query) use ($request) {
-                        $query->where('user_id', '!=', (int) $request->user()->id)
+                        $query->where('user_id', '!=', $request->user()->id)
                             ->whereNull('seen_at');
                     }
                 ])
@@ -57,8 +57,8 @@ class ChatController extends Controller
         try {
             $per_page = $request->per_page ?? 10;
             $allowed = ChatUser::query()
-                ->where('chat_id', (int) $id)
-                ->where('user_id', (int) $request->user()->id)
+                ->where('chat_id',$id)
+                ->where('user_id',$request->user()->id)
                 ->exists();
             if (!$allowed) {
                 return Helper::jsonErrorResponse('Unauthorized', 403);
@@ -75,7 +75,7 @@ class ChatController extends Controller
 
             // Mark messages as seen
             Message::where('chat_id', $chat->id)
-                ->where('user_id', '!=', (int) $request->user()->id)
+                ->where('user_id', '!=', $request->user()->id)
                 ->whereNull('seen_at')
                 ->update(['seen_at' => now()]);
 
@@ -100,8 +100,8 @@ class ChatController extends Controller
 
         try {
             $allowed = ChatUser::query()
-                ->where('chat_id', (int) $id)
-                ->where('user_id', (int) $request->user()->id)
+                ->where('chat_id',$id)
+                ->where('user_id',$request->user()->id)
                 ->exists();
             if (!$allowed) {
                 return Helper::jsonErrorResponse('Unauthorized', 403);
@@ -114,7 +114,7 @@ class ChatController extends Controller
 
             $msg = Message::create([
                 'chat_id' => $chat->id,
-                'user_id' => (int) $request->user()->id,
+                'user_id' => $request->user()->id,
                 'message' => $request->input('message'),
                 'file' => $request->hasFile('file') ? Helper::fileUpload($request->file('file'), 'chats', 'chat-' . time()) : null,
             ]);
