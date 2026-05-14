@@ -64,7 +64,7 @@
                                                 <div class="flex-shrink-0">
                                                     <div class="d-flex align-items-center">
                                                         <div class="rounded bg-light" style="width: 40px; height: 40px; overflow: hidden;">
-                                                            <img src="{{ $notification->data['thumbnail'] ?? 'default-thumbnail.jpg' }}" 
+                                                            <img src="{{ $notification->data['thumbnail'] ?? asset('notification-icon/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0.png') }}" 
                                                                  alt="Notification Thumbnail" 
                                                                  class="img-fluid rounded">
                                                         </div>

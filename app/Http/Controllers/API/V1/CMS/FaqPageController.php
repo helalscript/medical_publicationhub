@@ -34,29 +34,6 @@ class FaqPageController extends Controller
         }
     }
 
-    public function updateHeroSection(Request $request): JsonResponse
-    {
-        $validatedData = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'sub_title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-        ]);
-
-        try {
-            $validatedData['status'] = 'active';
-
-            $data = CMS::updateOrCreate(
-                ['page' => Page::FaqPage->value, 'section' => Section::FaqPageHeroSection->value],
-                $validatedData
-            );
-
-            return Helper::jsonResponse(true, 'FAQ hero section updated successfully', 200, $data);
-        } catch (Exception $e) {
-            Log::error('FaqPageController::updateHeroSection ' . $e->getMessage());
-            return Helper::jsonErrorResponse('Something went wrong', 500);
-        }
-    }
-
     public function getQuestionSection(): JsonResponse
     {
         try {
@@ -77,27 +54,5 @@ class FaqPageController extends Controller
         }
     }
 
-    public function updateQuestionSection(Request $request): JsonResponse
-    {
-        $validatedData = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'button_text' => 'nullable|string|max:255',
-        ]);
-
-        try {
-            $validatedData['status'] = 'active';
-
-            $data = CMS::updateOrCreate(
-                ['page' => Page::FaqPage->value, 'section' => Section::FaqPageQuestionSection->value],
-                $validatedData
-            );
-
-            return Helper::jsonResponse(true, 'FAQ question section updated successfully', 200, $data);
-        } catch (Exception $e) {
-            Log::error('FaqPageController::updateQuestionSection ' . $e->getMessage());
-            return Helper::jsonErrorResponse('Something went wrong', 500);
-        }
-    }
 }
 

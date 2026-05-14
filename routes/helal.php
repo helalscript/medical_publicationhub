@@ -8,34 +8,35 @@
  * Routes are grouped under the 'admin' prefix and require authentication with the 'admin' middleware.
  */
 
+use App\Http\Controllers\Web\Backend\AccessControl\PermissionController;
+use App\Http\Controllers\Web\Backend\AccessControl\RoleController;
+use App\Http\Controllers\Web\Backend\AccessControl\RolePermissionController;
 use App\Http\Controllers\Web\Backend\BlogController;
-use App\Http\Controllers\Web\Backend\DashboardController;
-use App\Http\Controllers\Web\Backend\CMS\FaqController;
 use App\Http\Controllers\Web\Backend\CMS\FaqCategoryController;
+use App\Http\Controllers\Web\Backend\CMS\FaqController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageSocialLinkContainerController;
 use App\Http\Controllers\Web\Backend\ContactMessageController;
+use App\Http\Controllers\Web\Backend\CourseAccessController;
+use App\Http\Controllers\Web\Backend\CourseController;
+use App\Http\Controllers\Web\Backend\DashboardController;
 use App\Http\Controllers\Web\Backend\DynamicPageController;
+use App\Http\Controllers\Web\Backend\LessonController;
+use App\Http\Controllers\Web\Backend\ModuleController;
 use App\Http\Controllers\Web\Backend\NewsletterController;
 use App\Http\Controllers\Web\Backend\NotificationController;
+use App\Http\Controllers\Web\Backend\OpportunityApplicationAdminController;
+use App\Http\Controllers\Web\Backend\OpportunityCategoryController;
+use App\Http\Controllers\Web\Backend\OpportunityChatController;
+use App\Http\Controllers\Web\Backend\OpportunityController;
+use App\Http\Controllers\Web\Backend\PartnershipRequestController;
+use App\Http\Controllers\Web\Backend\PaymentController;
 use App\Http\Controllers\Web\Backend\ProfileController;
+use App\Http\Controllers\Web\Backend\PublicationController;
+use App\Http\Controllers\Web\Backend\ResearchIdeaAdminController;
+use App\Http\Controllers\Web\Backend\ServiceController;
 use App\Http\Controllers\Web\Backend\SystemSettingController;
 use App\Http\Controllers\Web\Backend\UserController;
 use App\Http\Controllers\Web\Backend\UserManagementController;
-use App\Http\Controllers\Web\Backend\ResearchIdeaAdminController;
-use App\Http\Controllers\Web\Backend\OpportunityController;
-use App\Http\Controllers\Web\Backend\OpportunityApplicationAdminController;
-use App\Http\Controllers\Web\Backend\OpportunityChatController;
-use App\Http\Controllers\Web\Backend\CourseController;
-use App\Http\Controllers\Web\Backend\ModuleController;
-use App\Http\Controllers\Web\Backend\LessonController;
-use App\Http\Controllers\Web\Backend\PaymentController;
-use App\Http\Controllers\Web\Backend\CourseAccessController;
-use App\Http\Controllers\Web\Backend\PublicationController;
-use App\Http\Controllers\Web\Backend\PartnershipRequestController;
-use App\Http\Controllers\Web\Backend\ServiceController;
-use App\Http\Controllers\Web\Backend\AccessControl\RoleController;
-use App\Http\Controllers\Web\Backend\AccessControl\PermissionController;
-use App\Http\Controllers\Web\Backend\AccessControl\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin')->group(function () {
@@ -165,6 +166,15 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::get('/opportunity-chats/{id}', [OpportunityChatController::class, 'show'])->name('admin.opportunity_chats.show')->middleware('permission:admin.opportunity_chats.show');
     Route::post('/opportunity-chats/{id}/messages', [OpportunityChatController::class, 'sendMessage'])->name('admin.opportunity_chats.messages.store')->middleware('permission:admin.opportunity_chats.messages.store');
 
+    // Opportunity categories (Filter lists)
+    Route::get('/opportunity-categories', [OpportunityCategoryController::class, 'index'])->name('admin.opportunity_categories.index')->middleware('permission:admin.opportunity_categories.index');
+    Route::get('/opportunity-categories/create', [OpportunityCategoryController::class, 'create'])->name('admin.opportunity_categories.create')->middleware('permission:admin.opportunity_categories.create');
+    Route::post('/opportunity-categories', [OpportunityCategoryController::class, 'store'])->name('admin.opportunity_categories.store')->middleware('permission:admin.opportunity_categories.store');
+    Route::get('/opportunity-categories/{id}/edit', [OpportunityCategoryController::class, 'edit'])->name('admin.opportunity_categories.edit')->middleware('permission:admin.opportunity_categories.edit');
+    Route::put('/opportunity-categories/{id}', [OpportunityCategoryController::class, 'update'])->name('admin.opportunity_categories.update')->middleware('permission:admin.opportunity_categories.update');
+    Route::delete('/opportunity-categories/{id}', [OpportunityCategoryController::class, 'destroy'])->name('admin.opportunity_categories.destroy')->middleware('permission:admin.opportunity_categories.destroy');
+    Route::post('/opportunity-categories/status/{id}', [OpportunityCategoryController::class, 'status'])->name('admin.opportunity_categories.status')->middleware('permission:admin.opportunity_categories.status');
+
     // Courses
     Route::get('/courses', [CourseController::class, 'index'])->name('admin.courses.index')->middleware('permission:admin.courses.index');
     Route::get('/courses/create', [CourseController::class, 'create'])->name('admin.courses.create')->middleware('permission:admin.courses.create');
@@ -271,7 +281,6 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::post('/blogs/status/{id}', [BlogController::class, 'status'])->name('blogs.status')->middleware('permission:blogs.status');
     Route::post('/blogs/update-container', [BlogController::class, 'updateContainer'])->name('blogs.update_container')->middleware('permission:blogs.update_container');
 
-
     // Routes for NotificationController
     Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notification.read')->middleware('permission:notification.read');
     Route::post('/notifications/mark-as-read/single/{id}', [NotificationController::class, 'markAsSingleRead'])->name('notification.read_single')->middleware('permission:notification.read_single');
@@ -282,14 +291,27 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::get('/contact-us-message/{id}', [ContactMessageController::class, 'show'])->name('admin_contact_us.show')->middleware('permission:admin_contact_us.show');
     Route::delete('/contact-us-message/{id}', [ContactMessageController::class, 'destroy'])->name('admin_contact_us.destroy')->middleware('permission:admin_contact_us.destroy');
 
-
-
-
     // Newsletter subscriptions
     Route::get('/newsletters', [NewsletterController::class, 'index'])->name('admin.newsletters.index')->middleware('permission:admin.newsletters.index');
 });
 
 // Public route for dynamic pages accessible to all users
 Route::get('/pages/{slug}', [DynamicPageController::class, 'showDaynamicPage'])->name('pages');
+
+Route::get('/send-test-mail', function () {
+    try {
+        $to = 'husoaib422@gmail.com';
+
+        Mail::raw('This is a test email from Laravel + Brevo API. Sent at: '.now(), function ($message) use ($to) {
+            $message->to($to)
+                ->subject('Laravel Brevo Test Mail - '.now());
+        });
+
+        return response()->json(['message' => 'Email sent successfully to '.$to.' at '.now()], 200);
+    } catch (Exception $e) {
+        Log::error('SendTestMailController::sendTestMail' . $e->getMessage());
+        return response()->json(['error' => 'Email sending failed: ' . $e->getMessage()], 500);
+    }
+});
 
 require __DIR__.'/cms.php';

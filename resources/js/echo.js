@@ -25,3 +25,7 @@ window.Echo = new Echo({
 //         console.log("New Notification:", notification);
 //     });
 
+// window.Echo.private('opportunity_chat.10')
+//     .listen('.opportunity.chat', (e) => {
+//         console.log('Message Received =========================================', e);
+//     });

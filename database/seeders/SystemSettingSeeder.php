@@ -24,7 +24,9 @@ class SystemSettingSeeder extends Seeder
             'favicon' => 'uploads/favicons/favicon.png',
             'address' => 'TEST',
             'description' => null,
-            'web_url' => 'www.publicationhub.com',
+            'web_url' => 'https://publicationhub.co',
+            'whatsapp_number'=> '+8801811121902',
+            'calendly_scheduling_url'=>'https://calendly.com/ibraheemaltamimi03/publication-hub-partner-meeting'
         ]);
     }
 }

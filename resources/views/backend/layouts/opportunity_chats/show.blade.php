@@ -1,66 +1,688 @@
 @extends('backend.app')
 @section('title', 'Chat')
 
+@push('styles')
+    <style>
+        .chat-wrapper {
+            background: var(--bs-card-bg, #fff);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid var(--bs-border-color, rgba(0,0,0,.05));
+        }
+        .chat-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--bs-border-color, rgba(0,0,0,.05));
+            background: var(--bs-tertiary-bg, #f8fafc);
+        }
+        .chat-body {
+            height: 550px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--bs-card-bg, #fff);
+            display: flex;
+            flex-direction: column;
+        }
+        .message-row {
+            display: flex;
+            margin-bottom: 1.25rem;
+            width: 100%;
+        }
+        .message-row.mine {
+            flex-direction: row-reverse;
+        }
+        .message-bubble {
+            width: fit-content;
+            max-width: 85%;
+            padding: 0.85rem 1.15rem;
+            border-radius: 18px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .message-row.mine {
+            flex-direction: row-reverse;
+        }
+        .message-row.mine .message-bubble {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .message-row.others .message-bubble {
+            background: var(--bs-tertiary-bg, #f1f5f9);
+            color: var(--bs-body-color, #1e293b);
+            border-bottom-left-radius: 4px;
+        }
+        .message-meta {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .message-row.mine .message-meta {
+            justify-content: flex-end;
+        }
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 4px;
+        }
+        .sender-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--bs-body-color);
+        }
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .participant-item:hover {
+            background: #f1f5f9;
+        }
+        .participant-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        #load-more-trigger {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #64748b;
+        }
+        .chat-footer {
+            background: var(--bs-tertiary-bg, #f8fafc);
+        }
+        textarea.form-control {
+            background: transparent !important;
+            color: var(--bs-body-color) !important;
+        }
+        textarea.form-control::placeholder {
+            color: var(--bs-secondary-color);
+        }
+
+        /* Dark Mode Overrides */
+        body[data-theme="dark"] .chat-wrapper {
+            background: #15203c !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        body[data-theme="dark"] .chat-header {
+            background: #0b1120 !important;
+            border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        body[data-theme="dark"] .chat-header .text-dark {
+            color: #f1f5f9 !important;
+        }
+        body[data-theme="dark"] .chat-body {
+            background: #15203c !important;
+        }
+        body[data-theme="dark"] .message-row.others .message-bubble {
+            background: #1e294b !important;
+            color: #f1f5f9 !important;
+        }
+        body[data-theme="dark"] .message-meta {
+            color: #94a3b8 !important;
+        }
+        body[data-theme="dark"] .chat-footer {
+            background: #0b1120 !important;
+            border-top-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        body[data-theme="dark"] .card {
+            background: #15203c !important;
+            color: #f1f5f9 !important;
+        }
+        body[data-theme="dark"] .participant-item:hover {
+            background: #1e294b !important;
+        }
+        body[data-theme="dark"] .text-muted {
+            color: #94a3b8 !important;
+        }
+
+        /* Voice Recording Animation */
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="main-content-container overflow-hidden">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
             <div>
                 <h3 class="mb-0">Chat #{{ $chat->id }}</h3>
-                <small class="text-muted">{{ $chat->chatable?->title ?? '—' }}</small>
+                <p class="text-muted mb-0">{{ $chat->chatable?->title ?? '—' }}</p>
             </div>
             <a href="{{ route('admin.opportunity_chats.index') }}" class="btn btn-outline-secondary">Back</a>
         </div>
 
         @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
+            <div class="alert alert-success border-0 shadow-sm">{{ session('success') }}</div>
         @endif
 
         <div class="row g-3">
             <div class="col-xl-8">
-                <div class="card bg-white border-0 rounded-3">
-                    <div class="card-body p-4">
-                        <div class="d-flex flex-column gap-3" style="max-height: 520px; overflow:auto;">
-                            @foreach ($messages as $m)
-                                <div class="p-3 rounded-3 {{ $m->user_id === auth()->id() ? 'bg-light' : 'bg-white border' }}">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <strong>{{ $m->user?->name ?? $m->user?->email ?? '—' }}</strong>
-                                        <small class="text-muted">{{ $m->created_at?->format('Y-m-d H:i') }}</small>
+                <div class="chat-wrapper">
+                    <div class="chat-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="fw-semibold text-dark">Discussion</span>
+                            <span class="badge bg-soft-primary text-primary">{{ $chat->messages()->count() }} Messages</span>
+                        </div>
+                    </div>
+                    <div class="chat-body" id="chatArea">
+                        <div id="load-more-trigger">
+                            <div class="spinner-border spinner-border-sm d-none" role="status"></div>
+                            <span class="trigger-text">Scroll up to load more</span>
+                        </div>
+                        <div id="messageContainer" class="d-flex flex-column">
+                            @foreach ($messages->reverse() as $m)
+                                @php 
+                                    $isMine = $m->user_id === auth()->id(); 
+                                    $hasText = !empty($m->message);
+                                    $hasFile = !empty($m->file);
+                                    $isMedia = false;
+                                    if ($hasFile) {
+                                        $ext = strtolower(pathinfo($m->file, PATHINFO_EXTENSION));
+                                        $isMedia = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp3', 'wav', 'ogg', 'm4a', 'aac', 'webm']);
+                                    }
+                                    $isPlain = $isMedia && !$hasText;
+                                @endphp
+                                <div class="message-row {{ $isMine ? 'mine' : 'others' }} align-items-end gap-2">
+                                    @if (!$isMine)
+                                        <img src="{{ $m->user?->avatar ? asset($m->user->avatar) : asset('backend/admin/assets/images/avatar_defult.png') }}" class="message-avatar" alt="">
+                                    @endif
+                                    <div class="d-flex flex-column {{ $isMine ? 'align-items-end' : 'align-items-start' }}" style="max-width: 85%">
+                                        <span class="message-meta">
+                                            @if (!$isMine) <span class="sender-name">{{ $m->user?->name ?? 'User' }}</span> @endif
+                                            <span>{{ $m->created_at?->diffForHumans() }}</span>
+                                        </span>
+                                        <div class="message-bubble {{ $isPlain ? 'bg-transparent shadow-none p-0 border-0' : '' }}">
+                                            @if ($m->message)
+                                                <div class="message-text">{{ $m->message }}</div>
+                                            @endif
+                                            @if ($m->file)
+                                                <div class="message-file {{ $m->message ? 'mt-2' : '' }}">
+                                                    @php 
+                                                        $ext = pathinfo($m->file, PATHINFO_EXTENSION);
+                                                        $audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'webm'];
+                                                    @endphp
+                                                    @if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                        <a href="{{ asset($m->file) }}" target="_blank" class="d-block overflow-hidden rounded-3">
+                                                            <img src="{{ asset($m->file) }}" class="img-fluid" style="max-height: 300px; width: 100%; object-fit: cover;" alt="file">
+                                                        </a>
+                                                    @elseif (in_array(strtolower($ext), $audioExts))
+                                                        <audio controls class="mw-100 mt-1" style="height: 35px;">
+                                                            <source src="{{ asset($m->file) }}" type="audio/{{ $ext == 'm4a' ? 'mp4' : strtolower($ext) }}">
+                                                            Your browser does not support the audio element.
+                                                        </audio>
+                                                    @else
+                                                        <a href="{{ asset($m->file) }}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none py-2 px-3 rounded-3 {{ $isMine ? 'bg-white bg-opacity-10 text-white' : 'bg-light text-primary' }}">
+                                                            <i class="material-symbols-outlined">description</i>
+                                                            <div class="overflow-hidden">
+                                                                <div class="text-truncate small fw-medium" style="max-width: 150px;">{{ basename($m->file) }}</div>
+                                                                <div class="smaller opacity-75 text-uppercase">{{ $ext }}</div>
+                                                            </div>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div>{{ $m->message }}</div>
                                 </div>
                             @endforeach
                         </div>
+                    </div>
+                    <div class="p-3 border-top chat-footer">
+                        <form id="chatForm" action="{{ route('admin.opportunity_chats.messages.store', $chat->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="input-group align-items-center">
+                                <label class="btn btn-link text-muted p-2" for="fileInput" style="text-decoration: none;">
+                                    <i class="material-symbols-outlined fs-24">attach_file</i>
+                                </label>
+                                <input type="file" name="file" id="fileInput" class="d-none">
+                                
+                                <button type="button" id="voiceRecBtn" class="btn btn-link text-muted p-2" style="text-decoration: none;">
+                                    <i class="material-symbols-outlined fs-24">mic</i>
+                                </button>
 
-                        <div class="mt-3">
-                            {{ $messages->links() }}
-                        </div>
+                                <textarea name="message" rows="1" class="form-control border-0 shadow-none" placeholder="Write a message..." style="resize: none;"></textarea>
+                                
+                                <button type="submit" id="submitBtn" class="btn btn-primary d-flex align-items-center px-3 ms-2 rounded-3">
+                                    <i class="material-symbols-outlined fs-20">send</i>
+                                </button>
+                            </div>
+
+                            <!-- Voice Recording UI -->
+                            <div id="voiceRecUI" class="d-none bg-light p-2 rounded-3 mt-2">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="recording-dot"></div>
+                                        <span id="voiceTimer" class="small fw-medium">00:00</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button type="button" id="cancelRecBtn" class="btn btn-sm btn-outline-danger border-0">
+                                            <i class="material-symbols-outlined fs-18">close</i>
+                                        </button>
+                                        <button type="button" id="stopRecBtn" class="btn btn-sm btn-primary rounded-circle p-1">
+                                            <i class="material-symbols-outlined fs-20">stop</i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="file-preview" class="mt-2 small text-muted d-none">
+                                <span class="file-name"></span>
+                                <button type="button" class="btn btn-link btn-sm text-danger p-0 ms-2" onclick="clearFile()">Remove</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
 
             <div class="col-xl-4">
-                <div class="card bg-white border-0 rounded-3">
-                    <div class="card-body p-4">
-                        <h6 class="mb-3">Participants</h6>
-                        <ul class="mb-3">
+                <div class="card border-0 rounded-3 shadow-sm">
+                    <div class="card-body p-4 ">
+                        <h6 class="mb-3 card-header">Participants</h6>
+                        <div class="d-flex flex-column gap-2">
                             @foreach ($chat->users as $cu)
-                                <li>{{ $cu->user?->name ?? $cu->user?->email ?? '—' }} @if($cu->role) ({{ $cu->role }}) @endif</li>
+                                @php $u = $cu->user; @endphp
+                                <div class="participant-item" onclick="showParticipantModal({{ json_encode([
+                                    'name' => $u?->name ?? 'User',
+                                    'email' => $u?->email ?? '-',
+                                    'phone' => $u?->phone ?? '-',
+                                    'avatar' => $u?->avatar ? asset($u->avatar) : asset('backend/admin/assets/images/avatar_defult.png'),
+                                    'role' => $cu->role ?? ($u?->role ?? 'User'),
+                                    'institution' => $u?->institution ?? '-'
+                                ]) }})">
+                                    <img src="{{ $u?->avatar ? asset($u->avatar) : asset('backend/admin/assets/images/avatar_defult.png') }}" class="participant-avatar" alt="">
+                                    <div>
+                                        <div class="fw-semibold small">{{ $u?->name ?? $u?->email ?? '—' }}</div>
+                                        <div class="text-muted smaller">{{ $cu->role }}</div>
+                                    </div>
+                                </div>
                             @endforeach
-                        </ul>
-
-                        <h6 class="mb-2">Send message</h6>
-                        <form action="{{ route('admin.opportunity_chats.messages.store', $chat->id) }}" method="POST">
-                            @csrf
-                            <textarea name="message" rows="4" class="form-control" placeholder="Type message..." required>{{ old('message') }}</textarea>
-                            <button class="btn btn-primary w-100 mt-2">Send</button>
-                        </form>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Participant Modal -->
+    <div class="modal fade" id="participantModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <img id="p-avatar" src="" alt="" class="rounded-circle shadow-sm border" style="width: 80px; height: 80px; object-fit: cover;">
+                        <h5 id="p-name" class="mt-3 mb-1"></h5>
+                        <span id="p-role" class="badge bg-soft-primary text-primary px-3"></span>
+                    </div>
+                    <div class="vstack gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="material-symbols-outlined text-muted fs-20">mail</i>
+                            <div>
+                                <div class="text-muted small">Email</div>
+                                <div id="p-email" class="fw-medium"></div>
+                            </div>
+                        </div>
+                        <!-- <div class="d-flex align-items-center gap-2">
+                            <i class="material-symbols-outlined text-muted fs-20">call</i>
+                            <div>
+                                <div class="text-muted small">Phone</div>
+                                <div id="p-phone" class="fw-medium"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="material-symbols-outlined text-muted fs-20">apartment</i>
+                            <div>
+                                <div class="text-muted small">Institution</div>
+                                <div id="p-institution" class="fw-medium"></div>
+                            </div>
+                        </div> -->
+                    </div>
+                    <button type="button" class="btn btn-light w-100 mt-4 h-45" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 @endsection
 
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatArea = document.getElementById('chatArea');
+            const messageContainer = document.getElementById('messageContainer');
+            const loader = document.querySelector('#load-more-trigger .spinner-border');
+            const triggerText = document.querySelector('#load-more-trigger .trigger-text');
+            
+            let currentPage = 1;
+            let lastPage = {{ $messages->lastPage() }};
+            let isLoading = false;
+
+            // Scroll to bottom on init
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            chatArea.addEventListener('scroll', function() {
+                if (chatArea.scrollTop === 0 && !isLoading && currentPage < lastPage) {
+                    loadMoreMessages();
+                }
+            });
+
+            function loadMoreMessages() {
+                isLoading = true;
+                loader.classList.remove('d-none');
+                triggerText.classList.add('d-none');
+                
+                const oldHeight = chatArea.scrollHeight;
+                currentPage++;
+
+                fetch(`{{ route('admin.opportunity_chats.show', $chat->id) }}?page=${currentPage}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const messages = data.data; // latest first
+                    const html = messages.reverse().map(m => createMessageHtml(m)).join('');
+                    messageContainer.insertAdjacentHTML('afterbegin', html);
+                    
+                    // Maintain scroll position
+                    chatArea.scrollTop = chatArea.scrollHeight - oldHeight;
+                    
+                    isLoading = false;
+                    loader.classList.add('d-none');
+                    triggerText.classList.remove('d-none');
+
+                    if (currentPage >= lastPage) {
+                        document.getElementById('load-more-trigger').classList.add('d-none');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    isLoading = false;
+                    loader.classList.add('d-none');
+                    triggerText.classList.remove('d-none');
+                });
+            }
+
+            function createMessageHtml(m) {
+                const isMine = m.user_id == {{ auth()->id() }};
+                const defaultAvatar = '{{ asset('backend/admin/assets/images/avatar_defult.png') }}';
+                let avatar = defaultAvatar;
+                
+                if (m.user?.avatar) {
+                    if (m.user.avatar.startsWith('http')) {
+                        avatar = m.user.avatar;
+                    } else if (m.user.avatar.startsWith('uploads/')) {
+                        avatar = '/' + m.user.avatar;
+                    } else {
+                        avatar = '/storage/' + m.user.avatar;
+                    }
+                }
+                
+                const name = m.user?.name || 'User';
+                const date = new Date(m.created_at).toLocaleString();
+
+                let fileHtml = '';
+                let isMedia = false;
+                if (m.file) {
+                    const fileUrl = m.file.startsWith('http') ? m.file : '/' + m.file;
+                    const ext = m.file.split('.').pop().toLowerCase();
+                    const audioExts = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'webm'];
+                    const imgExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+                    if (imgExts.includes(ext)) {
+                        isMedia = true;
+                        fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
+                            <a href="${fileUrl}" target="_blank" class="d-block overflow-hidden rounded-3">
+                                <img src="${fileUrl}" class="img-fluid" style="max-height: 300px; width: 100%; object-fit: cover;" alt="file">
+                            </a>
+                        </div>`;
+                    } else if (audioExts.includes(ext)) {
+                        isMedia = true;
+                        const type = ext === 'm4a' ? 'audio/mp4' : `audio/${ext}`;
+                        fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
+                            <audio controls class="mw-100 mt-1" style="height: 35px;">
+                                <source src="${fileUrl}" type="${type}">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>`;
+                    } else {
+                        fileHtml = `<div class="message-file ${m.message ? 'mt-2' : ''}">
+                            <a href="${fileUrl}" target="_blank" class="d-flex align-items-center gap-2 text-decoration-none py-2 px-3 rounded-3 ${isMine ? 'bg-white bg-opacity-10 text-white' : 'bg-light text-primary'}">
+                                <i class="material-symbols-outlined">description</i>
+                                <div class="overflow-hidden">
+                                    <div class="text-truncate small fw-medium" style="max-width: 150px;">${m.file.split('/').pop()}</div>
+                                    <div class="smaller opacity-75 text-uppercase">${ext}</div>
+                                </div>
+                            </a>
+                        </div>`;
+                    }
+                }
+
+                const isPlain = isMedia && !m.message;
+                
+                return `
+                    <div class="message-row ${isMine ? 'mine' : 'others'} align-items-end gap-2">
+                        ${!isMine ? `<img src="${avatar}" class="message-avatar" alt="">` : ''}
+                        <div class="d-flex flex-column ${isMine ? 'align-items-end' : 'align-items-start'}" style="max-width: 85%">
+                            <span class="message-meta">
+                                ${!isMine ? `<span class="sender-name">${name}</span>` : ''}
+                                <span>${date}</span>
+                            </span>
+                            <div class="message-bubble ${isPlain ? 'bg-transparent shadow-none p-0 border-0' : ''}">
+                                ${m.message ? `<div class="message-text">${m.message}</div>` : ''}
+                                ${fileHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            
+            // Echo Listener for real-time updates
+            if (window.Echo) {
+                window.Echo.private('opportunity_chat.{{ $chat->id }}')
+                    .listen('.opportunity.chat', (e) => {
+                        // console.log('Message Received =========================================', e);
+                        if (e.message && e.message.user_id != {{ auth()->id() }}) {
+                            const html = createMessageHtml(e.message);
+                            messageContainer.insertAdjacentHTML('beforeend', html);
+                            chatArea.scrollTop = chatArea.scrollHeight;
+                        }
+                    });
+            }
+            
+            // Handle AJAX form submission
+            const chatForm = document.getElementById('chatForm');
+            const fileInput = document.getElementById('fileInput');
+            const filePreview = document.getElementById('file-preview');
+            const fileNameSpan = filePreview.querySelector('.file-name');
+            
+            // Voice Recording Variables
+            const voiceRecBtn = document.getElementById('voiceRecBtn');
+            const voiceRecUI = document.getElementById('voiceRecUI');
+            const voiceTimer = document.getElementById('voiceTimer');
+            const stopRecBtn = document.getElementById('stopRecBtn');
+            const cancelRecBtn = document.getElementById('cancelRecBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            let mediaRecorder;
+            let audioChunks = [];
+            let timerInterval;
+            let startTime;
+            let recordedBlob = null;
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        fileNameSpan.textContent = this.files[0].name;
+                        filePreview.classList.remove('d-none');
+                        recordedBlob = null; // Clear recorded audio if file selected
+                    } else {
+                        clearFile();
+                    }
+                });
+            }
+
+            window.clearFile = function() {
+                fileInput.value = '';
+                filePreview.classList.add('d-none');
+                fileNameSpan.textContent = '';
+                recordedBlob = null;
+            };
+
+            // Voice Recording Logic
+            if (voiceRecBtn) {
+                voiceRecBtn.addEventListener('click', async function() {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+
+                        mediaRecorder.ondataavailable = (event) => {
+                            audioChunks.push(event.data);
+                        };
+
+                        mediaRecorder.onstop = () => {
+                            recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                            fileNameSpan.textContent = "Voice Message Recorded";
+                            filePreview.classList.remove('d-none');
+                            
+                            // Stop all tracks to release microphone
+                            stream.getTracks().forEach(track => track.stop());
+                        };
+
+                        mediaRecorder.start();
+                        showVoiceUI();
+                    } catch (err) {
+                        console.error("Microphone access denied:", err);
+                        alert("Could not access microphone.");
+                    }
+                });
+            }
+
+            function showVoiceUI() {
+                voiceRecUI.classList.remove('d-none');
+                voiceRecBtn.classList.add('d-none');
+                startTime = Date.now();
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+
+            function hideVoiceUI() {
+                voiceRecUI.classList.add('d-none');
+                voiceRecBtn.classList.remove('d-none');
+                clearInterval(timerInterval);
+            }
+
+            function updateTimer() {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                const secs = String(elapsed % 60).padStart(2, '0');
+                voiceTimer.textContent = `${mins}:${secs}`;
+            }
+
+            if (stopRecBtn) {
+                stopRecBtn.addEventListener('click', function() {
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                        hideVoiceUI();
+                    }
+                });
+            }
+
+            if (cancelRecBtn) {
+                cancelRecBtn.addEventListener('click', function() {
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                    }
+                    hideVoiceUI();
+                    recordedBlob = null;
+                    fileNameSpan.textContent = '';
+                    filePreview.classList.add('d-none');
+                });
+            }
+
+            if (chatForm) {
+                chatForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(chatForm);
+                    const textarea = chatForm.querySelector('textarea[name="message"]');
+                    
+                    if (recordedBlob) {
+                        formData.append('file', recordedBlob, 'voice_message.webm');
+                    }
+                    
+                    if (!textarea.value.trim() && !fileInput.files.length && !recordedBlob) return;
+                    
+                    submitBtn.disabled = true;
+                    
+                    fetch(chatForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const html = createMessageHtml(data.message);
+                            messageContainer.insertAdjacentHTML('beforeend', html);
+                            chatArea.scrollTop = chatArea.scrollHeight;
+                            textarea.value = '';
+                            clearFile();
+                        }
+                        submitBtn.disabled = false;
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        submitBtn.disabled = false;
+                    });
+                });
+            }
+            // Ensure only one audio plays at a time
+            document.addEventListener('play', function(e) {
+                const audios = document.getElementsByTagName('audio');
+                for (let i = 0, len = audios.length; i < len; i++) {
+                    if (audios[i] != e.target) {
+                        audios[i].pause();
+                    }
+                }
+            }, true);
+
+        });
+
+        window.showParticipantModal = function(data) {
+            document.getElementById('p-avatar').src = data.avatar;
+            document.getElementById('p-name').innerText = data.name;
+            document.getElementById('p-role').innerText = data.role;
+            document.getElementById('p-email').innerText = data.email;
+            //document.getElementById('p-phone').innerText = data.phone;
+            //document.getElementById('p-institution').innerText = data.institution;
+            
+            const modal = new bootstrap.Modal(document.getElementById('participantModal'));
+            modal.show();
+        };
+    </script>
+@endpush

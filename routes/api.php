@@ -56,7 +56,7 @@ Route::group(['middleware' => 'auth:api'], function ($router) {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/update-profile', [UserController::class, 'updateProfile']);
     Route::post('/update-password', [UserController::class, 'changePassword']);
-    Route::post('/clergy-profile-update', [UserController::class, 'ClergyProfileUpdate']);
+    Route::delete('/delete-profile', [UserController::class, 'deleteProfile']);
 });
 
 // only for user
@@ -120,6 +120,10 @@ Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_r
 // opportunities (public)
 Route::get('/opportunities', [OpportunityApiController::class, 'index']);
 Route::get('/opportunities/{id}', [OpportunityApiController::class, 'show']);
+Route::get('/opportunities/mentors/{id}', [OpportunityApiController::class, 'mentors']);
+
+//fillter list for opportunity
+Route::post('/opportunities/fillter-list', [OpportunityApiController::class, 'fillterList']);
 
 // Courses (public)
 Route::get('/courses', [CourseApiController::class, 'index']);
@@ -175,9 +179,9 @@ Route::group(['prefix' => 'cms/home-page'], function () {
 // route for faq page
 Route::group(['prefix' => 'cms/faq-page'], function () {
     Route::get('/hero-section', [APIFaqPageController::class, 'getHeroSection']);
-    // Route::post('/hero-section', [APIFaqPageController::class, 'updateHeroSection']);
+    Route::post('/hero-section', [APIFaqPageController::class, 'updateHeroSection']);
     Route::get('/question-section', [APIFaqPageController::class, 'getQuestionSection']);
-    // Route::post('/question-section', [APIFaqPageController::class, 'updateQuestionSection']);
+    Route::post('/question-section', [APIFaqPageController::class, 'updateQuestionSection']);
 });
 
 // route for meta academy page
@@ -216,5 +220,12 @@ Route::group(['prefix' => 'cms/partnership-page'], function () {
 // route for aboutus page
 Route::group(['prefix' => 'cms/aboutus-page'], function () {
     Route::get('/hero-section', [APIAboutusPageController::class, 'getHeroSection']);
+    Route::post('/hero-section', [APIAboutusPageController::class, 'updateHeroSection']);
     Route::get('/our-mission-section', [APIAboutusPageController::class, 'getOurMissionSection']);
+    Route::post('/our-mission-section', [APIAboutusPageController::class, 'updateOurMissionSection']);
+    Route::get('/mission-items', [APIAboutusPageController::class, 'getMissionItems']);
+    Route::post('/mission-items', [APIAboutusPageController::class, 'storeMissionItem']);
+    Route::put('/mission-items/{id}', [APIAboutusPageController::class, 'updateMissionItem']);
+    Route::delete('/mission-items/{id}', [APIAboutusPageController::class, 'deleteMissionItem']);
+    Route::get('/full-page', [APIAboutusPageController::class, 'getAboutUsPage']);
 });

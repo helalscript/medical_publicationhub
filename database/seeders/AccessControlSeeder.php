@@ -102,6 +102,10 @@ class AccessControlSeeder extends Seeder
         $add('Opportunity Chats', 'admin.opportunity_chats.show');
         $add('Opportunity Chats', 'admin.opportunity_chats.messages.store');
 
+        // ===================== Opportunity Categories (Filter Lists) =====================
+        $crud('Opportunity Categories', 'admin.opportunity_categories', false);
+        $add('Opportunity Categories', 'admin.opportunity_categories.status');
+
         // ===================== Courses =====================
         $crud('Courses', 'admin.courses', true);
         $add('Courses', 'admin.courses.status');

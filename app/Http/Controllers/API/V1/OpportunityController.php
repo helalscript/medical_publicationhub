@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\API\V1\OpportunityResource;
 use App\Models\Category;
+use App\Models\Mentor;
 use App\Models\Opportunity;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -58,8 +59,8 @@ class OpportunityController extends Controller
         try {
             $perPage = (int) ($request->input('per_page', 15));
             $q = Opportunity::query()->with('mentor.user:id,name,avatar')
-            ->where('status', 'active')
-            ->latest('id');
+                ->where('status', 'active')
+                ->latest('id');
 
             if ($request->boolean('only_active', true)) {
                 $q->where('status', 'active');
@@ -213,6 +214,7 @@ class OpportunityController extends Controller
             $idList = array_keys($idMap);
             if ($idList === []) {
                 $lookup[$type] = collect();
+
                 continue;
             }
             $lookup[$type] = Category::query()
@@ -237,6 +239,42 @@ class OpportunityController extends Controller
                 }
                 $opp->setAttribute($attribute, $payload);
             }
+        }
+    }
+
+    public function mentors(int $id): JsonResponse
+    {
+        try {
+            $mentor = Mentor::with('user:id,name,avatar')
+            ->where('status', 'active')
+            ->find($id);
+
+            return Helper::jsonResponse(true, 'Mentor retrieved successfully.', 200, $mentor);
+        } catch (Exception $e) {
+            Log::error('API\\V1\\OpportunityController::mentors '.$e->getMessage());
+
+            return Helper::jsonErrorResponse('Mentor not found.', 404);
+        }
+    }
+
+    public function fillterList(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|string|in:course,speciality,student_design_type,contribution_type,university_hospital,place,experience_level',
+        ]);
+
+        try {
+            $perPage = (int) ($request->input('per_page', 15));
+            $list = Category::query()
+            ->select('id', 'name')
+                ->where('status', 'active')
+                ->where('type', $request->input('type'))
+                ->orderBy('name')
+                ->paginate($perPage);
+            return Helper::jsonResponse(true, 'Fillter list retrieved successfully.', 200, $list,true);
+        } catch (Exception $e) {
+            Log::error('API\\V1\\OpportunityController::fillterList '.$e->getMessage());
+            return Helper::jsonErrorResponse('Failed to load fillter list.', 500);
         }
     }
 }

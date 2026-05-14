@@ -5,6 +5,7 @@ namespace App\Events;
 use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -15,16 +16,17 @@ class MessageSent implements ShouldBroadcastNow
 
     public function __construct(public Message $message)
     {
+        $this->message->load('user');
     }
 
     public function broadcastOn(): Channel
     {
-        return new Channel('opportunity_chat.'.$this->message->chat_id);
+        return new PrivateChannel('opportunity_chat.'.$this->message->chat_id);
     }
 
     public function broadcastAs(): string
     {
-        return 'message.sent';
+        return 'opportunity.chat';
     }
 }
 

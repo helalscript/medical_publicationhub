@@ -28,6 +28,7 @@ $systemSetting = App\Models\SystemSetting::first();
                     auth()->user()?->can('admin.opportunities.index') ||
                     auth()->user()?->can('admin.opportunity_applications.index') ||
                     auth()->user()?->can('admin.opportunity_chats.index') ||
+                    auth()->user()?->can('admin.opportunity_categories.index') ||
                     auth()->user()?->can('admin.courses.index') ||
                     auth()->user()?->can('admin.modules.index') ||
                     auth()->user()?->can('admin.lessons.index') ||
@@ -94,10 +95,11 @@ $systemSetting = App\Models\SystemSetting::first();
                 $canOpportunitiesMenu =
                     auth()->user()?->can('admin.opportunities.index') ||
                     auth()->user()?->can('admin.opportunity_applications.index') ||
-                    auth()->user()?->can('admin.opportunity_chats.index');
+                    auth()->user()?->can('admin.opportunity_chats.index') ||
+                    auth()->user()?->can('admin.opportunity_categories.index');
             @endphp
             @if($canOpportunitiesMenu)
-                <li class="menu-item {{ request()->routeIs('admin.opportunities.*', 'admin.opportunity_applications.*', 'admin.opportunity_chats.*') ? 'open' : '' }}">
+                <li class="menu-item {{ request()->routeIs('admin.opportunities.*', 'admin.opportunity_applications.*', 'admin.opportunity_chats.*', 'admin.opportunity_categories.*') ? 'open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle active">
                         <span class="material-symbols-outlined menu-icon">work</span>
                         <span class="title">Opportunities</span>
@@ -124,6 +126,14 @@ $systemSetting = App\Models\SystemSetting::first();
                                 <a href="{{ route('admin.opportunity_chats.index') }}"
                                     class="menu-link {{ request()->routeIs('admin.opportunity_chats.*') ? 'active' : '' }}">
                                     Chats
+                                </a>
+                            </li>
+                        @endcan
+                        @can('admin.opportunity_categories.index')
+                            <li class="menu-item">
+                                <a href="{{ route('admin.opportunity_categories.index') }}"
+                                    class="menu-link {{ request()->routeIs('admin.opportunity_categories.*') ? 'active' : '' }}">
+                                    Filter Lists
                                 </a>
                             </li>
                         @endcan
@@ -598,6 +608,14 @@ $systemSetting = App\Models\SystemSetting::first();
                                 <a href="{{ route('cms.aboutus_page.hero_section.create') }}"
                                     class="menu-link {{ request()->routeIs('cms.aboutus_page.hero_section.*') ? 'active' : '' }}">
                                     Hero Section
+                                </a>
+                            </li>
+                        @endcan
+                        @can('cms.aboutus_page.our_mission_section.create')
+                            <li class="menu-item">
+                                <a href="{{ route('cms.aboutus_page.our_mission_section.create') }}"
+                                    class="menu-link {{ request()->routeIs('cms.aboutus_page.our_mission_section.*') ? 'active' : '' }}">
+                                    Our Mission Section
                                 </a>
                             </li>
                         @endcan
