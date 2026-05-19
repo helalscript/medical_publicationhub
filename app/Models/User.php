@@ -9,12 +9,82 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, HasRoles, Notifiable, SoftDeletes;
+    use HasFactory, HasRoles, Notifiable, SoftDeletes {
+        HasRoles::hasPermissionTo as protected spatieHasPermissionTo;
+        HasRoles::hasAnyPermission as protected spatieHasAnyPermission;
+        HasRoles::hasAllPermissions as protected spatieHasAllPermissions;
+        HasRoles::hasRole as protected spatieHasRole;
+        HasRoles::hasAnyRole as protected spatieHasAnyRole;
+    }
+
+    public function isAdmin(): bool
+    {
+        return ($this->role ?? null) === 'admin';
+    }
+
+    public function hasPermissionTo($permission, $guardName = null): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return $this->spatieHasPermissionTo($permission, $guardName);
+    }
+
+    public function checkPermissionTo($permission, $guardName = null): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        try {
+            return $this->spatieHasPermissionTo($permission, $guardName);
+        } catch (PermissionDoesNotExist) {
+            return false;
+        }
+    }
+
+    public function hasAnyPermission(...$permissions): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return $this->spatieHasAnyPermission(...$permissions);
+    }
+
+    public function hasAllPermissions(...$permissions): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return $this->spatieHasAllPermissions(...$permissions);
+    }
+
+    public function hasRole($roles, $guard = null): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return $this->spatieHasRole($roles, $guard);
+    }
+
+    public function hasAnyRole(...$roles): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return $this->spatieHasAnyRole(...$roles);
+    }
 
     // Rest omitted for brevity
 

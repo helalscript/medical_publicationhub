@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Mailer\Bridge\Brevo\Transport\BrevoTransportFactory;
@@ -22,6 +23,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::before(function ($user, string $ability) {
+            if ($user && ($user->role ?? null) === 'admin') {
+                return true;
+            }
+
+            return null;
+        });
+
         Mail::extend('brevo', function () {
             $config = $this->app['config']->get('services.brevo', []);
 
