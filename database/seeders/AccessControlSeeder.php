@@ -145,6 +145,10 @@ class AccessControlSeeder extends Seeder
         $add('Services', 'admin.services.status');
         $add('Services', 'admin.services.featured');
 
+        // ===================== Offers =====================
+        $crud('Offers', 'admin.offers', true);
+        $add('Offers', 'admin.offers.status');
+
         // ===================== FAQs =====================
         $crud("FAQ's", 'faqs', true);
         $add("FAQ's", 'faqs.status');

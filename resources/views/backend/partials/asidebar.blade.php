@@ -25,6 +25,7 @@ $systemSetting = App\Models\SystemSetting::first();
                     auth()->user()?->can('admin.publications.index') ||
                     auth()->user()?->can('admin.partnership_requests.index') ||
                     auth()->user()?->can('admin.services.index') ||
+                    auth()->user()?->can('admin.offers.index') ||
                     auth()->user()?->can('admin.opportunities.index') ||
                     auth()->user()?->can('admin.opportunity_applications.index') ||
                     auth()->user()?->can('admin.opportunity_chats.index') ||
@@ -87,6 +88,16 @@ $systemSetting = App\Models\SystemSetting::first();
                         class="menu-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">design_services</span>
                         <span class="title">Services</span>
+                    </a>
+                </li>
+            @endcan
+
+            @can('admin.offers.index')
+                <li class="menu-item open">
+                    <a href="{{ route('admin.offers.index') }}"
+                        class="menu-link {{ request()->routeIs('admin.offers.*') ? 'active' : '' }}">
+                        <span class="material-symbols-outlined menu-icon">local_offer</span>
+                        <span class="title">Offers</span>
                     </a>
                 </li>
             @endcan

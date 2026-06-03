@@ -28,6 +28,7 @@ use App\Http\Controllers\API\V1\PartnershipRequestController as PartnershipReque
 use App\Http\Controllers\API\V1\PublicationController as PublicationApiController;
 use App\Http\Controllers\API\V1\Researcher\ChatController as ResearcherChatApiController;
 use App\Http\Controllers\API\V1\Researcher\DashboardController as ResearcherDashboardApiController;
+use App\Http\Controllers\API\V1\OfferController as OfferApiController;
 use App\Http\Controllers\API\V1\ServiceController as ServiceApiController;
 use App\Http\Controllers\API\V1\User\Faqs\UserFaqController;
 use App\Http\Controllers\API\V1\User\NewsletterController;
@@ -142,6 +143,10 @@ Route::get('/calendly/schedule-link', [CalendlyApiController::class, 'scheduleLi
 // Services (public)
 Route::get('/services', [ServiceApiController::class, 'index']);
 Route::get('/services/{id}', [ServiceApiController::class, 'show']);
+
+// Offers (public)
+Route::get('/offers', [OfferApiController::class, 'index']);
+Route::get('/offers/{id}', [OfferApiController::class, 'show']);
 
 // FAQ for users (public)
 Route::get('/faqs', [UserFaqController::class, 'index']);

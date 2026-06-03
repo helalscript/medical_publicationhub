@@ -52,6 +52,7 @@ class DatabaseSeeder extends Seeder
         $this->call(FaqSeeder::class);
         $this->call(OpportunitySeeder::class);
         $this->call(ServiceSeeder::class);
+        $this->call(OfferSeeder::class);
         $this->call(PublicationSeeder::class);
         $this->call(PartnershipRequestSeeder::class);
         $this->call(AccessControlSeeder::class);

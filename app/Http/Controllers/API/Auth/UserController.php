@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -144,6 +145,8 @@ class UserController extends Controller
                 'email' => $user->email.'_'.$timestamp,
                 'status' => 'inactive',
             ]);
+            // Logout user
+            Auth::guard('api')->logout();
 
             // Return success response
             return Helper::jsonResponse(true, 'Profile deleted successfully', 200);
