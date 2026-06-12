@@ -19,6 +19,7 @@ use App\Http\Controllers\Web\Backend\ContactMessageController;
 use App\Http\Controllers\Web\Backend\CourseAccessController;
 use App\Http\Controllers\Web\Backend\CourseController;
 use App\Http\Controllers\Web\Backend\DashboardController;
+use App\Http\Controllers\Web\Backend\LocaleController;
 use App\Http\Controllers\Web\Backend\DynamicPageController;
 use App\Http\Controllers\Web\Backend\LessonController;
 use App\Http\Controllers\Web\Backend\ModuleController;
@@ -41,6 +42,8 @@ use App\Http\Controllers\Web\Backend\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin')->group(function () {
+
+    Route::post('locale/{locale}', [LocaleController::class, 'update'])->name('admin.locale.update');
 
     // Dashboard (overview cards + chat charts)
     Route::get('/', DashboardController::class)->name('admin.dashboard')->middleware('permission:admin.dashboard');
@@ -317,6 +320,7 @@ Route::get('/send-test-mail', function () {
             $message->to($to)
                 ->subject('Laravel Brevo Test Mail - '.now());
         });
+        
 
         return response()->json(['message' => 'Email sent successfully to '.$to.' at '.now()], 200);
     } catch (Exception $e) {

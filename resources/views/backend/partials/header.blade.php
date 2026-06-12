@@ -1,5 +1,5 @@
 <!-- Start Header Area -->
-<header class="header-area bg-white mb-4 rounded-bottom-15" id="header-area">
+<header class="header-area" id="header-area">
     <div class="row align-items-center">
         <div class="col-lg-4 col-sm-6">
             <div class="left-header-content">
@@ -20,6 +20,45 @@
             <div class="right-header-content mt-2 mt-sm-0">
                 <ul
                     class="d-flex align-items-center justify-content-center justify-content-sm-end ps-0 mb-0 list-unstyled">
+                    <li class="header-right-item">
+                        <div class="dropdown lang-switcher">
+                            <button class="btn btn-secondary border-0 p-0 bg-transparent d-flex align-items-center gap-1"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                title="{{ __('admin.language') }}">
+                                <span class="material-symbols-outlined text-body">language</span>
+                                <span class="d-none d-md-inline fs-13 fw-medium text-body">
+                                    {{ ($htmlLocale ?? 'en') === 'ar' ? __('admin.arabic') : 'EN' }}
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu border-0 bg-white p-2 shadow-sm min-w-auto {{ ($htmlDir ?? 'ltr') === 'rtl' ? 'dropdown-menu-start' : 'dropdown-menu-end' }}">
+                                <li>
+                                    <form action="{{ route('admin.locale.update', 'en') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit"
+                                            class="dropdown-item rounded d-flex align-items-center justify-content-between {{ ($htmlLocale ?? 'en') === 'en' ? 'active fw-semibold' : '' }}">
+                                            <span>{{ __('admin.english') }}</span>
+                                            @if(($htmlLocale ?? 'en') === 'en')
+                                                <i class="material-symbols-outlined fs-18 text-primary">check</i>
+                                            @endif
+                                        </button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form action="{{ route('admin.locale.update', 'ar') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit"
+                                            class="dropdown-item rounded d-flex align-items-center justify-content-between {{ ($htmlLocale ?? 'en') === 'ar' ? 'active fw-semibold' : '' }}">
+                                            <span>{{ __('admin.arabic') }}</span>
+                                            @if(($htmlLocale ?? 'en') === 'ar')
+                                                <i class="material-symbols-outlined fs-18 text-primary">check</i>
+                                            @endif
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
                     <li class="header-right-item">
                         <div class="light-dark">
                             <button class="switch-toggle settings-btn dark-btn p-0 bg-transparent"
@@ -50,9 +89,9 @@
                             </button>
                             <div class="dropdown-menu dropdown-lg p-0 border-0 p-0 dropdown-menu-end">
                                 <div class="d-flex justify-content-between align-items-center title">
-                                    <span class="fw-semibold fs-15 text-secondary">Notifications <span
+                                    <span class="fw-semibold fs-15 text-secondary">{{ __('admin.notifications') }} <span
                                             class="fw-normal text-body fs-14">({{ Auth::user()?->notifications()->whereNull('read_at')->count() }})</span></span>
-                                    <button class="p-0 m-0 bg-transparent border-0 fs-14 text-primary"  onclick="deleteAllNotification()">Delete All</button>
+                                    <button class="p-0 m-0 bg-transparent border-0 fs-14 text-primary"  onclick="deleteAllNotification()">{{ __('admin.delete_all') }}</button>
                                 </div>
 
                                 <div class="max-h-217" data-simplebar id="notification-list">
@@ -122,7 +161,7 @@
                                         <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
                                             href="{{route('profile_settings.index')}}">
                                             <i class="material-symbols-outlined">account_circle</i>
-                                            <span class="ms-2">My Profile</span>
+                                            <span class="ms-2">{{ __('admin.my_profile') }}</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -131,14 +170,14 @@
                                         <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
                                             href="{{route('system_settings.index')}}">
                                             <i class="material-symbols-outlined">settings </i>
-                                            <span class="ms-2">Settings</span>
+                                            <span class="ms-2">{{ __('admin.settings') }}</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item admin-item-link d-flex align-items-center text-body"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                             <i class="material-symbols-outlined">logout</i>
-                                            <span class="ms-2">Logout</span>
+                                            <span class="ms-2">{{ __('admin.logout') }}</span>
                                         </a>
                                     </li>
                                 </ul>
