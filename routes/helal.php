@@ -19,11 +19,13 @@ use App\Http\Controllers\Web\Backend\ContactMessageController;
 use App\Http\Controllers\Web\Backend\CourseAccessController;
 use App\Http\Controllers\Web\Backend\CourseController;
 use App\Http\Controllers\Web\Backend\DashboardController;
+use App\Http\Controllers\Web\Backend\LocaleController;
 use App\Http\Controllers\Web\Backend\DynamicPageController;
 use App\Http\Controllers\Web\Backend\LessonController;
 use App\Http\Controllers\Web\Backend\ModuleController;
 use App\Http\Controllers\Web\Backend\NewsletterController;
 use App\Http\Controllers\Web\Backend\NotificationController;
+use App\Http\Controllers\Web\Backend\OfferController;
 use App\Http\Controllers\Web\Backend\OpportunityApplicationAdminController;
 use App\Http\Controllers\Web\Backend\OpportunityCategoryController;
 use App\Http\Controllers\Web\Backend\OpportunityChatController;
@@ -40,6 +42,8 @@ use App\Http\Controllers\Web\Backend\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin')->group(function () {
+
+    Route::post('locale/{locale}', [LocaleController::class, 'update'])->name('admin.locale.update');
 
     // Dashboard (overview cards + chat charts)
     Route::get('/', DashboardController::class)->name('admin.dashboard')->middleware('permission:admin.dashboard');
@@ -242,6 +246,16 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::post('/services/status/{id}', [ServiceController::class, 'status'])->name('admin.services.status')->middleware('permission:admin.services.status');
     Route::post('/services/featured/{id}', [ServiceController::class, 'featured'])->name('admin.services.featured')->middleware('permission:admin.services.featured');
 
+    // Offers
+    Route::get('/offers', [OfferController::class, 'index'])->name('admin.offers.index')->middleware('permission:admin.offers.index');
+    Route::get('/offers/create', [OfferController::class, 'create'])->name('admin.offers.create')->middleware('permission:admin.offers.create');
+    Route::post('/offers', [OfferController::class, 'store'])->name('admin.offers.store')->middleware('permission:admin.offers.store');
+    Route::get('/offers/{offer}', [OfferController::class, 'show'])->name('admin.offers.show')->middleware('permission:admin.offers.show');
+    Route::get('/offers/{offer}/edit', [OfferController::class, 'edit'])->name('admin.offers.edit')->middleware('permission:admin.offers.edit');
+    Route::put('/offers/{offer}', [OfferController::class, 'update'])->name('admin.offers.update')->middleware('permission:admin.offers.update');
+    Route::delete('/offers/{offer}', [OfferController::class, 'destroy'])->name('admin.offers.destroy')->middleware('permission:admin.offers.destroy');
+    Route::post('/offers/status/{id}', [OfferController::class, 'status'])->name('admin.offers.status')->middleware('permission:admin.offers.status');
+
     // Route for FaqController
     Route::get('/faqs', [FaqController::class, 'index'])->name('faqs.index')->middleware('permission:faqs.index');
     Route::get('/faqs/create', [FaqController::class, 'create'])->name('faqs.create')->middleware('permission:faqs.create');
@@ -306,6 +320,7 @@ Route::get('/send-test-mail', function () {
             $message->to($to)
                 ->subject('Laravel Brevo Test Mail - '.now());
         });
+        
 
         return response()->json(['message' => 'Email sent successfully to '.$to.' at '.now()], 200);
     } catch (Exception $e) {

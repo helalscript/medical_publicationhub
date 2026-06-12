@@ -25,6 +25,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ['prefix' => 'api', 'middleware' => ['auth:api']],
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
         $middleware->alias([
             'role_check' => \App\Http\Middleware\RoleCheckMiddleWare::class,
             'check_is_user' => \App\Http\Middleware\CheckIsUser::class,

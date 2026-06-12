@@ -3,7 +3,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="zxx">
+<html lang="{{ $htmlLocale ?? 'en' }}" dir="{{ $htmlDir ?? 'ltr' }}" @class(['rtl' => ($htmlDir ?? 'ltr') === 'rtl'])>
 
 <head>
     <!-- Required meta tags -->
@@ -21,7 +21,7 @@
     <title>@yield('title') | {{ $systemSetting->system_name ?? '' }} </title>
 </head>
 
-<body class="boxed-size">
+<body class="boxed-size" @if(($htmlDir ?? 'ltr') === 'rtl') data-layout-direction="rtl" @endif>
 
 
     @include('backend.partials.asidebar')

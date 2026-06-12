@@ -1,22 +1,28 @@
-{{-- @php
-$systemSetting = App\Models\SystemSetting::first();
-@endphp --}}
+@php
+    $systemSetting = App\Models\SystemSetting::first();
+    $sidebarUser = auth()->user();
+    $sidebarAvatar = $sidebarUser?->avatar
+        ? asset($sidebarUser->avatar)
+        : asset('backend/admin/assets/images/avatar_defult.png');
+    $sidebarRole = strtoupper($sidebarUser?->role ?? 'admin');
+@endphp
 <!-- Start Sidebar Area -->
 <div class="sidebar-area" id="sidebar-area">
-    <div class="logo position-relative">
-        <a href="{{ route('admin.dashboard') }}" class="d-block text-decoration-none position-relative">
-            <img src="{{ asset($systemSetting->logo ?? 'backend/admin/assets/logo.png') }}" alt="logo-icon"
-                style="height: 100px">
+    <div class="sidebar-brand logo position-relative">
+        <a href="{{ route('admin.dashboard') }}" class="sidebar-brand-link d-flex align-items-center text-decoration-none">
+            <img src="{{ asset($systemSetting->logo ?? 'backend/admin/assets/logo.png') }}"
+                 alt="{{ $systemSetting->system_name ?? 'Logo' }}"
+                 class="sidebar-brand-logo">
         </a>
-        <button
-            class="sidebar-burger-menu bg-transparent p-0 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y"
-            id="sidebar-burger-menu">
+        <button type="button"
+            class="sidebar-burger-menu bg-transparent p-0 border-0 position-absolute top-50 end-0 translate-middle-y"
+            id="sidebar-burger-menu"
+            aria-label="Close menu">
             <i data-feather="x"></i>
         </button>
     </div>
 
-    <aside id="layout-menu" class="layout-menu menu-vertical menu active" data-simplebar
-        style="height: calc(100vh - 100px)">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu active" data-simplebar>
         <ul class="menu-inner">
             @php
                 $canMainSection =
@@ -25,6 +31,7 @@ $systemSetting = App\Models\SystemSetting::first();
                     auth()->user()?->can('admin.publications.index') ||
                     auth()->user()?->can('admin.partnership_requests.index') ||
                     auth()->user()?->can('admin.services.index') ||
+                    auth()->user()?->can('admin.offers.index') ||
                     auth()->user()?->can('admin.opportunities.index') ||
                     auth()->user()?->can('admin.opportunity_applications.index') ||
                     auth()->user()?->can('admin.opportunity_chats.index') ||
@@ -37,56 +44,66 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canMainSection)
                 <li class="menu-title small text-uppercase">
-                    <span class="menu-title-text">MAIN</span>
+                    <span class="menu-title-text">{{ __('admin.menu.main') }}</span>
                 </li>
             @endif
             <!-- Dashboard Menu Item -->
             @can('admin.dashboard')
-                <li class="menu-item open">
+                <li class="menu-item">
                     <a href="{{ route('admin.dashboard') }}"
                         class="menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">dashboard</span>
-                        <span class="title">Dashboard</span>
+                        <span class="title">{{ __('admin.menu.dashboard') }}</span>
                     </a>
                 </li>
             @endcan
 
             @can('admin.research_ideas.index')
-                <li class="menu-item open">
+                <li class="menu-item">
                     <a href="{{ route('admin.research_ideas.index') }}"
                         class="menu-link {{ request()->routeIs('admin.research_ideas.*') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">biotech</span>
-                        <span class="title">Research Ideas</span>
+                        <span class="title">{{ __('admin.menu.research_ideas') }}</span>
                     </a>
                 </li>
             @endcan
 
             @can('admin.publications.index')
-                <li class="menu-item open">
+                <li class="menu-item">
                     <a href="{{ route('admin.publications.index') }}"
                         class="menu-link {{ request()->routeIs('admin.publications.*') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">library_books</span>
-                        <span class="title">Publications</span>
+                        <span class="title">{{ __('admin.menu.publications') }}</span>
                     </a>
                 </li>
             @endcan
 
             @can('admin.partnership_requests.index')
-                <li class="menu-item open">
+                <li class="menu-item">
                     <a href="{{ route('admin.partnership_requests.index') }}"
                         class="menu-link {{ request()->routeIs('admin.partnership_requests.*') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">handshake</span>
-                        <span class="title">Partnership Requests</span>
+                        <span class="title">{{ __('admin.menu.partnership_requests') }}</span>
                     </a>
                 </li>
             @endcan
 
             @can('admin.services.index')
-                <li class="menu-item open">
+                <li class="menu-item">
                     <a href="{{ route('admin.services.index') }}"
                         class="menu-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">design_services</span>
-                        <span class="title">Services</span>
+                        <span class="title">{{ __('admin.menu.services') }}</span>
+                    </a>
+                </li>
+            @endcan
+
+            @can('admin.offers.index')
+                <li class="menu-item">
+                    <a href="{{ route('admin.offers.index') }}"
+                        class="menu-link {{ request()->routeIs('admin.offers.*') ? 'active' : '' }}">
+                        <span class="material-symbols-outlined menu-icon">local_offer</span>
+                        <span class="title">{{ __('admin.menu.offers') }}</span>
                     </a>
                 </li>
             @endcan
@@ -100,16 +117,16 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canOpportunitiesMenu)
                 <li class="menu-item {{ request()->routeIs('admin.opportunities.*', 'admin.opportunity_applications.*', 'admin.opportunity_chats.*', 'admin.opportunity_categories.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">work</span>
-                        <span class="title">Opportunities</span>
+                        <span class="title">{{ __('admin.menu.opportunities') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('admin.opportunities.index')
                             <li class="menu-item">
                                 <a href="{{ route('admin.opportunities.index') }}"
                                     class="menu-link {{ request()->routeIs('admin.opportunities.*') ? 'active' : '' }}">
-                                    Opportunity List
+                                    {{ __('admin.menu.opportunity_list') }}
                                 </a>
                             </li>
                         @endcan
@@ -117,7 +134,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('admin.opportunity_applications.index') }}"
                                     class="menu-link {{ request()->routeIs('admin.opportunity_applications.*') ? 'active' : '' }}">
-                                    Applications
+                                    {{ __('admin.menu.applications') }}
                                 </a>
                             </li>
                         @endcan
@@ -125,7 +142,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('admin.opportunity_chats.index') }}"
                                     class="menu-link {{ request()->routeIs('admin.opportunity_chats.*') ? 'active' : '' }}">
-                                    Chats
+                                    {{ __('admin.menu.chats') }}
                                 </a>
                             </li>
                         @endcan
@@ -133,7 +150,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('admin.opportunity_categories.index') }}"
                                     class="menu-link {{ request()->routeIs('admin.opportunity_categories.*') ? 'active' : '' }}">
-                                    Filter Lists
+                                    {{ __('admin.menu.filter_lists') }}
                                 </a>
                             </li>
                         @endcan
@@ -151,16 +168,16 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canCoursesMenu)
                 <li class="menu-item {{ request()->routeIs('admin.courses.*', 'admin.modules.*', 'admin.lessons.*', 'admin.course_access.*', 'admin.payments.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">school</span>
-                        <span class="title">Courses</span>
+                        <span class="title">{{ __('admin.menu.courses') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('admin.courses.index')
                             <li class="menu-item">
                                 <a href="{{ route('admin.courses.index') }}"
                                    class="menu-link {{ request()->routeIs('admin.courses.*') ? 'active' : '' }}">
-                                    Course List
+                                    {{ __('admin.menu.course_list') }}
                                 </a>
                             </li>
                         @endcan
@@ -168,7 +185,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('admin.modules.index') }}"
                                    class="menu-link {{ request()->routeIs('admin.modules.*') ? 'active' : '' }}">
-                                    Modules
+                                    {{ __('admin.menu.modules') }}
                                 </a>
                             </li>
                         @endcan
@@ -176,7 +193,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('admin.lessons.index') }}"
                                    class="menu-link {{ request()->routeIs('admin.lessons.*') ? 'active' : '' }}">
-                                    Lessons
+                                    {{ __('admin.menu.lessons') }}
                                 </a>
                             </li>
                         @endcan
@@ -184,7 +201,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('admin.course_access.index') }}"
                                    class="menu-link {{ request()->routeIs('admin.course_access.*') ? 'active' : '' }}">
-                                    Course Access
+                                    {{ __('admin.menu.course_access') }}
                                 </a>
                             </li>
                         @endcan
@@ -192,7 +209,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('admin.payments.index') }}"
                                    class="menu-link {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
-                                    Payments
+                                    {{ __('admin.menu.payments') }}
                                 </a>
                             </li>
                         @endcan
@@ -214,7 +231,7 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canAppsSection)
                 <li class="menu-title small text-uppercase">
-                    <span class="menu-title-text">APPS</span>
+                    <span class="menu-title-text">{{ __('admin.menu.apps') }}</span>
                 </li>
             @endif
 
@@ -227,16 +244,16 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canUsersMenu)
                 <li class="menu-item {{ request()->routeIs('user_management.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">group</span>
-                        <span class="title">Users</span>
+                        <span class="title">{{ __('admin.menu.users') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('user_management.mentor.index')
                             <li class="menu-item">
                                 <a href="{{ route('user_management.mentor.index') }}"
                                     class="menu-link {{ request()->routeIs('user_management.mentor.*') ? 'active' : '' }}">
-                                    Mentor
+                                    {{ __('admin.menu.mentor') }}
                                 </a>
                             </li>
                         @endcan
@@ -244,7 +261,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('user_management.researcher.index') }}"
                                     class="menu-link {{ request()->routeIs('user_management.researcher.*') ? 'active' : '' }}">
-                                    Researcher
+                                    {{ __('admin.menu.researcher') }}
                                 </a>
                             </li>
                         @endcan
@@ -252,7 +269,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('user_management.coordinator.index') }}"
                                     class="menu-link {{ request()->routeIs('user_management.coordinator.*') ? 'active' : '' }}">
-                                    Coordinator
+                                    {{ __('admin.menu.coordinator') }}
                                 </a>
                             </li>
                         @endcan
@@ -261,27 +278,27 @@ $systemSetting = App\Models\SystemSetting::first();
             @endif
             
             @can('admin_contact_us.index')
-                <li class="menu-item open">
+                <li class="menu-item">
                     <a href="{{ route('admin_contact_us.index') }}"
                         class="menu-link {{ request()->routeIs('admin_contact_us.*') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">content_paste</span>
-                        <span class="title">Contact Message</span>
+                        <span class="title">{{ __('admin.menu.contact_message') }}</span>
                     </a>
                 </li>
             @endcan
 
             @can('access_control.roles.view')
                 <li class="menu-item {{ request()->routeIs('admin.access_control.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">admin_panel_settings</span>
-                        <span class="title">Access Control</span>
+                        <span class="title">{{ __('admin.menu.access_control') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('access_control.roles.view')
                             <li class="menu-item">
                                 <a href="{{ route('admin.access_control.roles.index') }}"
                                     class="menu-link {{ request()->routeIs('admin.access_control.roles.*') ? 'active' : '' }}">
-                                    Roles
+                                    {{ __('admin.menu.roles') }}
                                 </a>
                             </li>
                         @endcan
@@ -289,7 +306,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('admin.access_control.permissions.index') }}"
                                     class="menu-link {{ request()->routeIs('admin.access_control.permissions.*') ? 'active' : '' }}">
-                                    Permissions
+                                    {{ __('admin.menu.permissions') }}
                                 </a>
                             </li>
                         @endcan
@@ -299,18 +316,18 @@ $systemSetting = App\Models\SystemSetting::first();
             
 
             
-            {{-- <li class="menu-item open">
+            {{-- <li class="menu-item">
                 <a href="{{ route('admin.newsletters.index') }}"
                     class="menu-link {{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }}">
                     <span class="material-symbols-outlined menu-icon">mail</span>
-                    <span class="title">Newsletter</span>
+                    <span class="title">{{ __('admin.menu.newsletter') }}</span>
                 </a>
             </li> --}}
-            {{-- <li class="menu-item open">
+            {{-- <li class="menu-item">
                 <a href="{{ route('blogs.index') }}"
                     class="menu-link {{ request()->routeIs('blogs.*') ? 'active' : '' }}">
                     <span class="material-symbols-outlined menu-icon">book</span>
-                    <span class="title">Blogs</span>
+                    <span class="title">{{ __('admin.menu.blogs') }}</span>
                 </a>
             </li>--}}
             @php
@@ -320,16 +337,16 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canFaqMenu)
                 <li class="menu-item {{ request()->routeIs('faqs.*', 'faq_categories.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">help_outline</span>
-                        <span class="title">FAQ's</span>
+                        <span class="title">{{ __('admin.menu.faqs') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('faqs.index')
                             <li class="menu-item">
                                 <a href="{{ route('faqs.index') }}"
                                     class="menu-link {{ request()->routeIs('faqs.*') ? 'active' : '' }}">
-                                    FAQ List
+                                    {{ __('admin.menu.faq_list') }}
                                 </a>
                             </li>
                         @endcan
@@ -337,7 +354,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('faq_categories.index') }}"
                                     class="menu-link {{ request()->routeIs('faq_categories.*') ? 'active' : '' }}">
-                                    FAQ Categories
+                                    {{ __('admin.menu.faq_categories') }}
                                 </a>
                             </li>
                         @endcan
@@ -346,11 +363,11 @@ $systemSetting = App\Models\SystemSetting::first();
             @endif
 
             @can('social_link.index')
-                <li class="menu-item open">
+                <li class="menu-item">
                     <a href="{{ route('social_link.index') }}"
                         class="menu-link {{ request()->routeIs('social_link.*') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">link</span>
-                        <span class="title">Social Link</span>
+                        <span class="title">{{ __('admin.menu.social_link') }}</span>
                     </a>
                 </li>
             @endcan
@@ -364,7 +381,7 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canOthersSection)
                 <li class="menu-title small text-uppercase">
-                    <span class="menu-title-text">OTHERS</span>
+                    <span class="menu-title-text">{{ __('admin.menu.others') }}</span>
                 </li>
             @endif
 
@@ -377,16 +394,16 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canSettingsMenu)
                 <li class="menu-item {{ request()->routeIs('profile_settings.*', 'system_settings.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">settings</span>
-                        <span class="title">Settings</span>
+                        <span class="title">{{ __('admin.menu.settings') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('profile_settings.index')
                             <li class="menu-item ">
                                 <a href="{{ route('profile_settings.index') }}"
                                     class="menu-link {{ request()->routeIs('profile_settings.index') ? 'active' : '' }} ">
-                                    Profile Settings
+                                    {{ __('admin.menu.profile_settings') }}
                                 </a>
                             </li>
                         @endcan
@@ -394,7 +411,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('profile_settings.password_change') }}"
                                     class="menu-link {{ request()->routeIs('profile_settings.password_change') ? 'active' : '' }}">
-                                    Change Password
+                                    {{ __('admin.menu.change_password') }}
                                 </a>
                             </li>
                         @endcan
@@ -402,7 +419,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('system_settings.index') }}"
                                     class="menu-link {{ request()->routeIs('system_settings.*') ? 'active' : '' }}">
-                                    System Configaration
+                                    {{ __('admin.menu.system_config') }}
                                 </a>
                             </li>
                         @endcan
@@ -417,16 +434,16 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canDynamicPageMenu)
                 <li class="menu-item {{ request()->routeIs('dynamic_page.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">clarify</span>
-                        <span class="title">Dynamic page</span>
+                        <span class="title">{{ __('admin.menu.dynamic_page') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('dynamic_page.index')
                             <li class="menu-item">
                                 <a href="{{ route('dynamic_page.index') }}"
                                     class="menu-link {{ request()->routeIs('dynamic_page.index') ? 'active' : '' }}">
-                                    Pages
+                                    {{ __('admin.menu.pages') }}
                                 </a>
                             </li>
                         @endcan
@@ -434,7 +451,7 @@ $systemSetting = App\Models\SystemSetting::first();
                             <li class="menu-item">
                                 <a href="{{ route('dynamic_page.create') }}"
                                     class="menu-link {{ request()->routeIs('dynamic_page.create') ? 'active' : '' }}">
-                                    Add New
+                                    {{ __('admin.menu.add_new') }}
                                 </a>
                             </li>
                         @endcan
@@ -476,7 +493,7 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canCmsSection)
                 <li class="menu-title small text-uppercase">
-                    <span class="menu-title-text">CMS</span>
+                    <span class="menu-title-text">{{ __('admin.menu.cms') }}</span>
                 </li>
             @endif
 
@@ -495,9 +512,9 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canCmsHomePageMenu)
                 <li class="menu-item {{ request()->routeIs('cms.home_page.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">home</span>
-                        <span class="title">Home Page</span>
+                        <span class="title">{{ __('admin.menu.home_page') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('cms.home_page.hero_section.create')
@@ -574,9 +591,9 @@ $systemSetting = App\Models\SystemSetting::first();
             <!-- CMS FAQ Page Menu Item -->
             @can('cms.faq_page.hero_section.create')
                 <li class="menu-item {{ request()->routeIs('cms.faq_page.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">help_outline</span>
-                        <span class="title">FAQ Page</span>
+                        <span class="title">{{ __('admin.menu.faq_page') }}</span>
                     </a>
                     <ul class="menu-sub">
                         <li class="menu-item">
@@ -598,9 +615,9 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canAboutusMenu)
                 <li class="menu-item {{ request()->routeIs('cms.aboutus_page.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">info</span>
-                        <span class="title">Aboutus Page</span>
+                        <span class="title">{{ __('admin.menu.aboutus_page') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('cms.aboutus_page.hero_section.create')
@@ -634,9 +651,9 @@ $systemSetting = App\Models\SystemSetting::first();
             <!-- CMS Research Page Menu Item -->
             @can('cms.research_page.research_section.create')
                 <li class="menu-item {{ request()->routeIs('cms.research_page.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">science</span>
-                        <span class="title">Research Page</span>
+                        <span class="title">{{ __('admin.menu.research_page') }}</span>
                     </a>
                     <ul class="menu-sub">
                         <li class="menu-item">
@@ -652,9 +669,9 @@ $systemSetting = App\Models\SystemSetting::first();
             <!-- CMS Service Page Menu Item -->
             @can('cms.service_page.service_section.create')
                 <li class="menu-item {{ request()->routeIs('cms.service_page.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">handyman</span>
-                        <span class="title">Service Page</span>
+                        <span class="title">{{ __('admin.menu.service_page') }}</span>
                     </a>
                     <ul class="menu-sub">
                         <li class="menu-item">
@@ -675,9 +692,9 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canMetaAcademyMenu)
                 <li class="menu-item {{ request()->routeIs('cms.meta_academy_page.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">school</span>
-                        <span class="title">Meta Academy Page</span>
+                        <span class="title">{{ __('admin.menu.meta_academy_page') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('cms.meta_academy_page.hero_section.create')
@@ -719,9 +736,9 @@ $systemSetting = App\Models\SystemSetting::first();
             @endphp
             @if($canPartnershipCmsMenu)
                 <li class="menu-item {{ request()->routeIs('cms.partnership_page.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">handshake</span>
-                        <span class="title">Partnership Page</span>
+                        <span class="title">{{ __('admin.menu.partnership_page') }}</span>
                     </a>
                     <ul class="menu-sub">
                         @can('cms.partnership_page.hero_section.create')
@@ -809,9 +826,9 @@ $systemSetting = App\Models\SystemSetting::first();
 
             {{-- <!-- CMS Contact Us Page Menu Item -->
             <li class="menu-item {{ request()->routeIs('cms.contact_us_page.*') ? 'open' : '' }}">
-                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">contacts</span>
-                    <span class="title">Contact Us</span>
+                    <span class="title">{{ __('admin.menu.contact_us') }}</span>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
@@ -830,9 +847,9 @@ $systemSetting = App\Models\SystemSetting::first();
             </li>
             <!-- CMS Auth Page Menu Item -->
             <li class="menu-item {{ request()->routeIs('cms.auth_page.*') ? 'open' : '' }}">
-                <a href="javascript:void(0);" class="menu-link menu-toggle active">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <span class="material-symbols-outlined menu-icon">fingerprint</span>
-                    <span class="title">Auth</span>
+                    <span class="title">{{ __('admin.menu.auth') }}</span>
                 </a>
                 <ul class="menu-sub">
                     <li class="menu-item">
@@ -861,7 +878,7 @@ $systemSetting = App\Models\SystemSetting::first();
                 <a class="menu-link"
                     onclick="event.preventDefault(); document.getElementById('logout-form-asidebar').submit();">
                     <span class="material-symbols-outlined menu-icon">logout</span>
-                    <span class="title">Logout</span>
+                    <span class="title">{{ __('admin.logout') }}</span>
                 </a>
             </li>
         </ul>
