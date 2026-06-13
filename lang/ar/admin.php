@@ -122,6 +122,13 @@ return [
         'opportunities_overview' => 'نظرة عامة على الفرص',
         'payments_overview' => 'نظرة عامة على المدفوعات',
         'transaction_analytics' => 'تحليل المعاملات',
+        'welcome_back_badge' => 'مرحباً بعودتك',
+        'overview_desc' => 'نظرة عامة على المرشدين والباحثين والفرص والمحادثات.',
+        'overview_title' => 'نظرة عامة',
+        'total_chats_count' => 'إجمالي المحادثات: :count',
+        'last_7_days' => 'آخر 7 أيام',
+        'active_vs_inactive_courses' => 'الدورات النشطة وغير النشطة',
+        'active_vs_inactive_opportunities' => 'الفرص النشطة وغير النشطة',
     ],
 
     'status' => [
@@ -134,6 +141,9 @@ return [
         'failed' => 'فشل',
         'cancelled' => 'ملغى',
         'refunded' => 'مسترد',
+        'open' => 'مفتوح',
+        'closed' => 'مغلق',
+        'completed' => 'مكتمل',
     ],
 
     'chart' => [

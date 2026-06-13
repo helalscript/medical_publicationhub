@@ -136,6 +136,77 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
     }
 
+    @media only screen and (min-width: 1200px) {
+        .sidebar-area {
+            top: 24px !important;
+            bottom: 24px !important;
+            left: 24px !important;
+            height: calc(100vh - 48px) !important;
+            border-radius: 40px !important;
+            border: 1px solid var(--sidebar-border) !important;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        [data-theme="dark"] .sidebar-area {
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.25) !important;
+            border-color: var(--sidebar-border) !important;
+        }
+
+        /* Adjust main content padding to account for sidebar floating spacing */
+        .main-content {
+            padding-left: 318px !important; /* 24px left margin + 270px sidebar width + 24px spacing */
+            padding-right: 24px !important;
+        }
+
+        /* Adjust header margin to align nicely with the layout */
+        .header-area {
+            margin-top: 24px !important;
+        }
+
+        /* When sidebar is collapsed/hidden */
+        [sidebar-data-theme=sidebar-hide] .sidebar-area {
+            width: 80px !important;
+            left: 24px !important;
+        }
+
+        [sidebar-data-theme=sidebar-hide] .sidebar-area:hover {
+            width: 270px !important;
+        }
+
+        [sidebar-data-theme=sidebar-hide] .main-content {
+            padding-left: 128px !important; /* 24px left margin + 80px collapsed width + 24px spacing */
+        }
+
+        /* RTL support for desktop */
+        html[dir="rtl"] .sidebar-area {
+            left: auto !important;
+            right: 24px !important;
+            border-right: 1px solid var(--sidebar-border) !important;
+            border-left: 1px solid var(--sidebar-border) !important;
+        }
+
+        html[dir="rtl"] .main-content {
+            padding-left: 24px !important;
+            padding-right: 318px !important;
+        }
+
+        html[dir="rtl"] [sidebar-data-theme=sidebar-hide] .sidebar-area {
+            right: 24px !important;
+            left: auto !important;
+        }
+
+        html[dir="rtl"] [sidebar-data-theme=sidebar-hide] .sidebar-area:hover {
+            width: 270px !important;
+            right: 24px !important;
+            left: auto !important;
+        }
+
+        html[dir="rtl"] [sidebar-data-theme=sidebar-hide] .main-content {
+            padding-left: 24px !important;
+            padding-right: 128px !important;
+        }
+    }
+
     .sidebar-area .sidebar-brand.logo {
         flex-shrink: 0;
         min-height: 80px;
@@ -234,15 +305,23 @@
         transform: scale(1.05);
     }
 
-    /* Active Dashboard Menu Item Pill Style (teal background) */
+    /* Active Dashboard Menu Item Pill Style (teal gradient background) */
     .menu-vertical .menu-item > .menu-link.active:not(.menu-toggle) {
-        background: var(--sidebar-active-bg) !important;
+        background: linear-gradient(135deg, #0cbab8 0%, #0db8b6 100%) !important;
         color: var(--sidebar-active-text) !important;
-        box-shadow: 0 4px 12px rgba(12, 186, 184, 0.3) !important;
+        box-shadow: 0 8px 16px rgba(12, 186, 184, 0.25) !important;
+        border-radius: 50px !important; /* Perfectly rounded pill like the design image */
     }
 
     .menu-vertical .menu-item > .menu-link.active:not(.menu-toggle) .menu-icon {
         color: var(--sidebar-active-text) !important;
+    }
+
+    /* Settings divider styling and spacing */
+    .menu-item-settings {
+        border-top: 1px solid var(--sidebar-border) !important;
+        margin-top: 15px !important;
+        padding-top: 15px !important;
     }
 
     /* Dropdown Toggle items */

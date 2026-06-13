@@ -452,7 +452,7 @@
         {{-- Header Title Row --}}
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <h4 class="mb-0 fw-bold fs-20">{{ __('admin.dash.title') }} Overview</h4>
+                <h4 class="mb-0 fw-bold fs-20">{{ __('admin.dash.title') }} - {{ __('admin.dash.overview_title') }}</h4>
                 <p class="text-muted small mb-0">{{ __('admin.dash.overview') }}</p>
             </div>
         </div>
@@ -461,9 +461,9 @@
         <div class="premium-welcome-banner">
             <div class="row align-items-center g-4">
                 <div class="col-xl-7 col-lg-6">
-                    <span class="banner-subtitle-badge">+ WELCOME BACK</span>
+                    <span class="banner-subtitle-badge">+ {{ __('admin.dash.welcome_back_badge') }}</span>
                     <h2>{{ __('admin.dash.welcome', ['name' => $userName]) }}!</h2>
-                    <p>Overview of mentors, researchers, opportunities and chats.</p>
+                    <p>{{ __('admin.dash.overview_desc') }}</p>
                     <div class="banner-actions">
                         <a href="{{ route('admin.opportunities.index') }}" class="btn-banner-primary">{{ __('admin.dash.view_reports') }}</a>
                         <a href="javascript:void(0);" class="btn-banner-secondary">{{ __('admin.dash.export_data') }}</a>
@@ -509,9 +509,9 @@
                 <div>
                     <div id="sparkline_users" class="stat-card-sparkline"></div>
                     <div class="stat-card-pills">
-                        <span class="stat-card-pill-item cyan">Mentor: {{ $uMentors }}</span>
-                        <span class="stat-card-pill-item cyan">Researcher: {{ $uResearchers }}</span>
-                        <span class="stat-card-pill-item cyan">Coordinator: {{ $uCoordinators }}</span>
+                        <span class="stat-card-pill-item cyan">{{ __('admin.menu.mentor') }}: {{ $uMentors }}</span>
+                        <span class="stat-card-pill-item cyan">{{ __('admin.menu.researcher') }}: {{ $uResearchers }}</span>
+                        <span class="stat-card-pill-item cyan">{{ __('admin.menu.coordinator') }}: {{ $uCoordinators }}</span>
                     </div>
                 </div>
             </div>
@@ -531,8 +531,8 @@
                 <div>
                     <div id="sparkline_courses" class="stat-card-sparkline"></div>
                     <div class="stat-card-pills">
-                        <span class="stat-card-pill-item green">Active: {{ $cActive }}</span>
-                        <span class="stat-card-pill-item green">Draft: {{ $cInactive }}</span>
+                        <span class="stat-card-pill-item green">{{ __('admin.status.active') }}: {{ $cActive }}</span>
+                        <span class="stat-card-pill-item green">{{ __('admin.status.inactive') }}: {{ $cInactive }}</span>
                     </div>
                 </div>
             </div>
@@ -552,8 +552,8 @@
                 <div>
                     <div id="sparkline_opportunities" class="stat-card-sparkline"></div>
                     <div class="stat-card-pills">
-                        <span class="stat-card-pill-item purple">Open: {{ $oActive }}</span>
-                        <span class="stat-card-pill-item purple">Closed: {{ $oInactive }}</span>
+                        <span class="stat-card-pill-item purple">{{ __('admin.status.open') }}: {{ $oActive }}</span>
+                        <span class="stat-card-pill-item purple">{{ __('admin.status.closed') }}: {{ $oInactive }}</span>
                     </div>
                 </div>
             </div>
@@ -573,8 +573,8 @@
                 <div>
                     <div id="sparkline_content" class="stat-card-sparkline"></div>
                     <div class="stat-card-pills">
-                        <span class="stat-card-pill-item orange">Services: {{ $srvCount }}</span>
-                        <span class="stat-card-pill-item orange">Publications: {{ $pubCount }}</span>
+                        <span class="stat-card-pill-item orange">{{ __('admin.menu.services') }}: {{ $srvCount }}</span>
+                        <span class="stat-card-pill-item orange">{{ __('admin.menu.publications') }}: {{ $pubCount }}</span>
                     </div>
                 </div>
             </div>
@@ -594,8 +594,8 @@
                 <div>
                     <div id="sparkline_payments" class="stat-card-sparkline"></div>
                     <div class="stat-card-pills">
-                        <span class="stat-card-pill-item grey">Completed: {{ $payCompleted }}</span>
-                        <span class="stat-card-pill-item grey">Pending: {{ $payPending }}</span>
+                        <span class="stat-card-pill-item grey">{{ __('admin.status.completed') }}: {{ $payCompleted }}</span>
+                        <span class="stat-card-pill-item grey">{{ __('admin.status.pending') }}: {{ $payPending }}</span>
                     </div>
                 </div>
             </div>
@@ -609,7 +609,7 @@
                     <div class="panel-premium-header">
                         <div>
                             <h5>{{ __('admin.dash.chat_overview') }}</h5>
-                            <p>{{ $chatsTotal }} Total Chats</p>
+                            <p>{{ __('admin.dash.total_chats_count', ['count' => $chatsTotal]) }}</p>
                         </div>
                     </div>
                     <div class="panel-premium-body">
@@ -618,8 +618,8 @@
                             <span class="badge-excellent">{{ __('admin.dash.excellent') }}</span>
                         </div>
                         <div class="chat-donut-footer">
-                            <span><span class="chat-indicator-dot active"></span>Active: {{ $chatsActive }}</span>
-                            <span><span class="chat-indicator-dot inactive"></span>Inactive: {{ $chatsInactive }}</span>
+                            <span><span class="chat-indicator-dot active"></span>{{ __('admin.status.active') }}: {{ $chatsActive }}</span>
+                            <span><span class="chat-indicator-dot inactive"></span>{{ __('admin.status.inactive') }}: {{ $chatsInactive }}</span>
                         </div>
                     </div>
                 </div>
@@ -631,7 +631,7 @@
                     <div class="panel-premium-header">
                         <div>
                             <h5>{{ __('admin.dash.messages') }}</h5>
-                            <p>Last 7 days</p>
+                            <p>{{ __('admin.dash.last_7_days') }}</p>
                         </div>
                         <span class="fw-bold fs-18 color-primary">{{ $msg7Total }}</span>
                     </div>
@@ -652,45 +652,25 @@
                     </div>
                     <div class="panel-premium-body justify-content-start">
                         <div class="quick-links-vertical">
-                            @can('admin.opportunities.index')
-                                <a href="{{ route('admin.opportunities.index') }}" class="quick-link-premium-item">
+                            @php
+                                $dotColors = [
+                                    'work' => 'cyan',
+                                    'school' => 'green',
+                                    'forum' => 'purple',
+                                    'assignment' => 'cyan',
+                                    'handshake' => 'orange',
+                                    'local_offer' => 'purple'
+                                ];
+                            @endphp
+                            @foreach($quickLinks as $link)
+                                <a href="{{ $link['route'] }}" class="quick-link-premium-item">
                                     <span class="quick-link-premium-title">
-                                        <span class="quick-link-premium-dot cyan"></span>
-                                        View Opportunities
+                                        <span class="quick-link-premium-dot {{ $dotColors[$link['icon']] ?? 'grey' }}"></span>
+                                        {{ $link['label'] }}
                                     </span>
                                     <span class="material-symbols-outlined quick-link-premium-arrow">arrow_forward</span>
                                 </a>
-                            @endcan
-
-                            @can('admin.courses.index')
-                                <a href="{{ route('admin.courses.index') }}" class="quick-link-premium-item">
-                                    <span class="quick-link-premium-title">
-                                        <span class="quick-link-premium-dot green"></span>
-                                        View Courses
-                                    </span>
-                                    <span class="material-symbols-outlined quick-link-premium-arrow">arrow_forward</span>
-                                </a>
-                            @endcan
-
-                            @can('admin.opportunity_chats.index')
-                                <a href="{{ route('admin.opportunity_chats.index') }}" class="quick-link-premium-item">
-                                    <span class="quick-link-premium-title">
-                                        <span class="quick-link-premium-dot purple"></span>
-                                        View Opportunity Chats
-                                    </span>
-                                    <span class="material-symbols-outlined quick-link-premium-arrow">arrow_forward</span>
-                                </a>
-                            @endcan
-
-                            @can('admin.partnership_requests.index')
-                                <a href="{{ route('admin.partnership_requests.index') }}" class="quick-link-premium-item">
-                                    <span class="quick-link-premium-title">
-                                        <span class="quick-link-premium-dot orange"></span>
-                                        Partnership Requests
-                                    </span>
-                                    <span class="material-symbols-outlined quick-link-premium-arrow">arrow_forward</span>
-                                </a>
-                            @endcan
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -705,7 +685,7 @@
                     <div class="panel-premium-header">
                         <div>
                             <h5>{{ __('admin.dash.courses_overview') }}</h5>
-                            <p>Active vs Inactive courses</p>
+                            <p>{{ __('admin.dash.active_vs_inactive_courses') }}</p>
                         </div>
                     </div>
                     <div class="panel-premium-body pt-2">
@@ -720,7 +700,7 @@
                     <div class="panel-premium-header">
                         <div>
                             <h5>{{ __('admin.dash.opportunities_overview') }}</h5>
-                            <p>Active vs Inactive opportunities</p>
+                            <p>{{ __('admin.dash.active_vs_inactive_opportunities') }}</p>
                         </div>
                     </div>
                     <div class="panel-premium-body pt-2">
@@ -822,7 +802,7 @@
                         type: 'donut',
                         height: 220
                     },
-                    labels: ['Active', 'Inactive'],
+                    labels: ['{{ __('admin.status.active') }}', '{{ __('admin.status.inactive') }}'],
                     series: [{{ $chatsActive }}, {{ $chatsInactive }}],
                     colors: ['#0cbab8', isDark ? '#1e294b' : '#e2e8f0'],
                     legend: { show: false },
@@ -861,7 +841,7 @@
                         toolbar: { show: false }
                     },
                     colors: ['#0cbab8'],
-                    series: [{ name: 'Messages', data: msg7.series }],
+                    series: [{ name: '{{ __('admin.dash.messages') }}', data: msg7.series }],
                     xaxis: {
                         categories: msg7.labels,
                         labels: { style: { colors: chartFg } },
@@ -893,11 +873,11 @@
                     },
                     colors: ['#0cbab8', '#e2e8f0'],
                     series: [{
-                        name: 'Courses',
+                        name: '{{ __('admin.dash.courses') }}',
                         data: [{{ $cActive }}, {{ $cInactive }}]
                     }],
                     xaxis: {
-                        categories: ['Active', 'Inactive'],
+                        categories: ['{{ __('admin.status.active') }}', '{{ __('admin.status.inactive') }}'],
                         labels: { style: { colors: chartFg } },
                         axisBorder: { show: false }
                     },
@@ -928,11 +908,11 @@
                     },
                     colors: ['#8b5cf6', '#e2e8f0'],
                     series: [{
-                        name: 'Opportunities',
+                        name: '{{ __('admin.dash.opportunities_label') }}',
                         data: [{{ $oActive }}, {{ $oInactive }}]
                     }],
                     xaxis: {
-                        categories: ['Active', 'Inactive'],
+                        categories: ['{{ __('admin.status.open') }}', '{{ __('admin.status.closed') }}'],
                         labels: { style: { colors: chartFg } },
                         axisBorder: { show: false }
                     },
@@ -969,7 +949,7 @@
                         gradient: { opacityFrom: 0.35, opacityTo: 0.05 }
                     },
                     series: [{
-                        name: 'Payments Count',
+                        name: '{{ __('admin.dash.payments') }}',
                         data: payStatus.series
                     }],
                     xaxis: {

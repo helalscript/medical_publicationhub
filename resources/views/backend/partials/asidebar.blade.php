@@ -14,12 +14,12 @@
                  alt="{{ $systemSetting->system_name ?? 'Logo' }}"
                  class="sidebar-brand-logo">
         </a>
-        <button type="button"
+        <!-- <button type="button"
             class="sidebar-burger-menu bg-transparent p-0 border-0 position-absolute top-50 end-0 translate-middle-y"
             id="sidebar-burger-menu"
             aria-label="Close menu">
             <i data-feather="x"></i>
-        </button>
+        </button> -->
     </div>
 
     <aside id="layout-menu" class="layout-menu menu-vertical menu active" data-simplebar>
@@ -385,47 +385,7 @@
                 </li>
             @endif
 
-            <!-- Settings Menu Item -->
-            @php
-                $canSettingsMenu =
-                    auth()->user()?->can('profile_settings.index') ||
-                    auth()->user()?->can('profile_settings.password_change') ||
-                    auth()->user()?->can('system_settings.index');
-            @endphp
-            @if($canSettingsMenu)
-                <li class="menu-item {{ request()->routeIs('profile_settings.*', 'system_settings.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-link menu-toggle">
-                        <span class="material-symbols-outlined menu-icon">settings</span>
-                        <span class="title">{{ __('admin.menu.settings') }}</span>
-                    </a>
-                    <ul class="menu-sub">
-                        @can('profile_settings.index')
-                            <li class="menu-item ">
-                                <a href="{{ route('profile_settings.index') }}"
-                                    class="menu-link {{ request()->routeIs('profile_settings.index') ? 'active' : '' }} ">
-                                    {{ __('admin.menu.profile_settings') }}
-                                </a>
-                            </li>
-                        @endcan
-                        @can('profile_settings.password_change')
-                            <li class="menu-item">
-                                <a href="{{ route('profile_settings.password_change') }}"
-                                    class="menu-link {{ request()->routeIs('profile_settings.password_change') ? 'active' : '' }}">
-                                    {{ __('admin.menu.change_password') }}
-                                </a>
-                            </li>
-                        @endcan
-                        @can('system_settings.index')
-                            <li class="menu-item">
-                                <a href="{{ route('system_settings.index') }}"
-                                    class="menu-link {{ request()->routeIs('system_settings.*') ? 'active' : '' }}">
-                                    {{ __('admin.menu.system_config') }}
-                                </a>
-                            </li>
-                        @endcan
-                    </ul>
-                </li>
-            @endif
+
             <!-- dynamic page Menu Item -->
             @php
                 $canDynamicPageMenu =
@@ -872,6 +832,48 @@
                     </li>
                 </ul>
             </li> --}}
+
+            <!-- Settings Menu Item -->
+            @php
+                $canSettingsMenu =
+                    auth()->user()?->can('profile_settings.index') ||
+                    auth()->user()?->can('profile_settings.password_change') ||
+                    auth()->user()?->can('system_settings.index');
+            @endphp
+            @if($canSettingsMenu)
+                <li class="menu-item menu-item-settings {{ request()->routeIs('profile_settings.*', 'system_settings.*') ? 'open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <span class="material-symbols-outlined menu-icon">settings</span>
+                        <span class="title">{{ __('admin.menu.settings') }}</span>
+                    </a>
+                    <ul class="menu-sub">
+                        @can('profile_settings.index')
+                            <li class="menu-item ">
+                                <a href="{{ route('profile_settings.index') }}"
+                                    class="menu-link {{ request()->routeIs('profile_settings.index') ? 'active' : '' }} ">
+                                    {{ __('admin.menu.profile_settings') }}
+                                </a>
+                            </li>
+                        @endcan
+                        @can('profile_settings.password_change')
+                            <li class="menu-item">
+                                <a href="{{ route('profile_settings.password_change') }}"
+                                    class="menu-link {{ request()->routeIs('profile_settings.password_change') ? 'active' : '' }}">
+                                    {{ __('admin.menu.change_password') }}
+                                </a>
+                            </li>
+                        @endcan
+                        @can('system_settings.index')
+                            <li class="menu-item">
+                                <a href="{{ route('system_settings.index') }}"
+                                    class="menu-link {{ request()->routeIs('system_settings.*') ? 'active' : '' }}">
+                                    {{ __('admin.menu.system_config') }}
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endif
 
             <!-- Logout Menu Item -->
             <li class="menu-item">

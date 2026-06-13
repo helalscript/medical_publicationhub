@@ -122,6 +122,13 @@ return [
         'opportunities_overview' => 'Opportunities Overview',
         'payments_overview' => 'Payments Overview',
         'transaction_analytics' => 'Transaction analytics',
+        'welcome_back_badge' => 'WELCOME BACK',
+        'overview_desc' => 'Overview of mentors, researchers, opportunities and chats.',
+        'overview_title' => 'Overview',
+        'total_chats_count' => ':count Total Chats',
+        'last_7_days' => 'Last 7 days',
+        'active_vs_inactive_courses' => 'Active vs Inactive courses',
+        'active_vs_inactive_opportunities' => 'Active vs Inactive opportunities',
     ],
 
     'status' => [
@@ -134,6 +141,9 @@ return [
         'failed' => 'Failed',
         'cancelled' => 'Cancelled',
         'refunded' => 'Refunded',
+        'open' => 'Open',
+        'closed' => 'Closed',
+        'completed' => 'Completed',
     ],
 
     'chart' => [
