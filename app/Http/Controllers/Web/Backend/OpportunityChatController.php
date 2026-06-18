@@ -59,9 +59,15 @@ class OpportunityChatController extends Controller
                 ->make(true);
         }
 
-        $stats = $this->buildIndexStats();
+        $firstChat = $this->opportunityChatsQuery()->latest('id')->first();
+        if ($firstChat) {
+            return redirect()->route('admin.opportunity_chats.show', $firstChat->id);
+        }
 
-        return view('backend.layouts.opportunity_chats.index', compact('stats'));
+        $stats = $this->buildIndexStats();
+        $chats = collect();
+
+        return view('backend.layouts.opportunity_chats.index', compact('stats', 'chats'));
     }
 
     public function show(Request $request, string $id)
@@ -75,9 +81,15 @@ class OpportunityChatController extends Controller
             return response()->json($messagesQuery->paginate(10));
         }
 
-        $messages = $messagesQuery->paginate(10);
+        $messages = $messagesQuery->paginate(20);
 
-        return view('backend.layouts.opportunity_chats.show', compact('chat', 'messages'));
+        $chats = $this->opportunityChatsQuery()
+            ->with(['chatable', 'users.user', 'last_message.user'])
+            ->withCount(['users', 'messages'])
+            ->latest('id')
+            ->get();
+
+        return view('backend.layouts.opportunity_chats.show', compact('chat', 'messages', 'chats'));
     }
 
     public function sendMessage(Request $request, string $id)

@@ -1,21 +1,22 @@
 <!-- All CSS files -->
 <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/sidebar-menu.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/simplebar.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/apexcharts.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/prism.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/rangeslider.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/sweetalert.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/quill.snow.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/google-icon.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/remixicon.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/swiper-bundle.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/fullcalendar.main.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/jsvectormap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/lightpick.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/admin/assets/css/style.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/simplebar.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/apexcharts.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/prism.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/rangeslider.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/sweetalert.min.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/quill.snow.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/google-icon.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/remixicon.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/swiper-bundle.min.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/fullcalendar.main.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/jsvectormap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/lightpick.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/admin/assets/css/style.css') }}">
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 
-    
+
 <link href="{{ asset('vendor/flasher/flasher.min.css') }}" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.min.css" rel="stylesheet">
 <style>
@@ -28,6 +29,7 @@
     /* Premium Theme CSS Variables */
     :root {
         --dash-bg: #f8fafc;
+        --dash-bg-gradient: linear-gradient(-30deg, #d4ebf1ff 0%, #f8fafc 100%);
         --dash-surface: #ffffff;
         --dash-border: #e2e8f0;
         --dash-text: #0f172a;
@@ -48,6 +50,7 @@
 
     [data-theme="dark"] {
         --dash-bg: #080d19;
+        --dash-bg-gradient: linear-gradient(135deg, #090e1a 0%, #0f172a 100%);
         --dash-surface: #0f172a;
         --dash-border: #1e293b;
         --dash-text: #f1f5f9;
@@ -66,15 +69,17 @@
 
     /* Base Body & Layout Customization */
     body {
-        background-color: var(--dash-bg) !important;
-        color: var(--dash-text) !important;
+        background: var(--dash-bg-gradient) !important;
+        background-attachment: fixed !important;
+        background-size: cover !important;
+        color: var(--dash-text);
         font-family: 'Inter', 'Segoe UI', system-ui, sans-serif !important;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition: background 0.3s ease, color 0.3s ease;
     }
 
     /* Main Content Area adjustments */
     .main-content {
-        background-color: var(--dash-bg) !important;
+        background: transparent !important;
         transition: all 0.3s ease;
         padding-top: 1.5rem !important;
         padding-bottom: 1.5rem !important;
@@ -154,7 +159,8 @@
 
         /* Adjust main content padding to account for sidebar floating spacing */
         .main-content {
-            padding-left: 318px !important; /* 24px left margin + 270px sidebar width + 24px spacing */
+            padding-left: 318px !important;
+            /* 24px left margin + 270px sidebar width + 24px spacing */
             padding-right: 24px !important;
         }
 
@@ -174,7 +180,8 @@
         }
 
         [sidebar-data-theme=sidebar-hide] .main-content {
-            padding-left: 128px !important; /* 24px left margin + 80px collapsed width + 24px spacing */
+            padding-left: 128px !important;
+            /* 24px left margin + 80px collapsed width + 24px spacing */
         }
 
         /* RTL support for desktop */
@@ -230,8 +237,36 @@
         display: block;
         max-height: 40px;
         width: auto;
-        max-width: 170px;
+        max-width: 40px;
         object-fit: contain;
+    }
+
+    .sidebar-brand-text {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--dash-text);
+        white-space: nowrap;
+        opacity: 1;
+        transition: opacity 0.2s ease;
+    }
+
+    /* Collapsed sidebar brand text and link alignments */
+    @media only screen and (min-width: 1200px) {
+        [sidebar-data-theme=sidebar-hide] .sidebar-area .sidebar-brand-text {
+            display: none !important;
+        }
+
+        [sidebar-data-theme=sidebar-hide] .sidebar-area:hover .sidebar-brand-text {
+            display: inline-block !important;
+        }
+
+        [sidebar-data-theme=sidebar-hide] .sidebar-area .sidebar-brand-link {
+            justify-content: center !important;
+        }
+
+        [sidebar-data-theme=sidebar-hide] .sidebar-area:hover .sidebar-brand-link {
+            justify-content: flex-start !important;
+        }
     }
 
     .sidebar-user {
@@ -306,14 +341,15 @@
     }
 
     /* Active Dashboard Menu Item Pill Style (teal gradient background) */
-    .menu-vertical .menu-item > .menu-link.active:not(.menu-toggle) {
+    .menu-vertical .menu-item>.menu-link.active:not(.menu-toggle) {
         background: linear-gradient(135deg, #0cbab8 0%, #0db8b6 100%) !important;
         color: var(--sidebar-active-text) !important;
         box-shadow: 0 8px 16px rgba(12, 186, 184, 0.25) !important;
-        border-radius: 50px !important; /* Perfectly rounded pill like the design image */
+        border-radius: 50px !important;
+        /* Perfectly rounded pill like the design image */
     }
 
-    .menu-vertical .menu-item > .menu-link.active:not(.menu-toggle) .menu-icon {
+    .menu-vertical .menu-item>.menu-link.active:not(.menu-toggle) .menu-icon {
         color: var(--sidebar-active-text) !important;
     }
 
@@ -325,12 +361,12 @@
     }
 
     /* Dropdown Toggle items */
-    .menu-vertical .menu-item.open > .menu-link.menu-toggle {
+    .menu-vertical .menu-item.open>.menu-link.menu-toggle {
         background: rgba(12, 186, 184, 0.04) !important;
         color: var(--dash-text) !important;
     }
 
-    .menu-vertical .menu-item.open > .menu-link.menu-toggle .menu-icon {
+    .menu-vertical .menu-item.open>.menu-link.menu-toggle .menu-icon {
         color: var(--dash-primary) !important;
     }
 
@@ -341,8 +377,13 @@
     }
 
     .menu-vertical .menu-sub .menu-item .menu-link {
-        padding: 8px 16px;
+        padding: 8px 16px 8px 35px !important;
         font-size: 0.8125rem;
+    }
+
+    html[dir="rtl"] .menu-vertical .menu-sub .menu-item .menu-link,
+    html.rtl .menu-vertical .menu-sub .menu-item .menu-link {
+        padding: 8px 35px 8px 16px !important;
     }
 
     .menu-vertical .menu-sub .menu-link.active {
@@ -366,37 +407,39 @@
     }
 
     /* Collapsed Sidebar overrides */
-    [sidebar-data-theme=sidebar-hide] .sidebar-area {
-        width: 80px !important;
-    }
+    @media only screen and (min-width: 1200px) {
+        [sidebar-data-theme=sidebar-hide] .sidebar-area {
+            width: 80px !important;
+        }
 
-    [sidebar-data-theme=sidebar-hide] .sidebar-area .sidebar-brand.logo {
-        min-height: 60px;
-        height: 60px;
-        padding: 10px 14px;
-    }
+        [sidebar-data-theme=sidebar-hide] .sidebar-area .sidebar-brand.logo {
+            min-height: 60px;
+            height: 60px;
+            padding: 10px 14px;
+        }
 
-    [sidebar-data-theme=sidebar-hide] .sidebar-brand-logo {
-        max-height: 28px;
-    }
+        [sidebar-data-theme=sidebar-hide] .sidebar-brand-logo {
+            max-height: 28px;
+        }
 
-    [sidebar-data-theme=sidebar-hide] .sidebar-area .sidebar-user {
-        padding: 12px;
-        text-align: center;
-    }
+        [sidebar-data-theme=sidebar-hide] .sidebar-area .sidebar-user {
+            padding: 12px;
+            text-align: center;
+        }
 
-    [sidebar-data-theme=sidebar-hide] .sidebar-area .sidebar-user .admin-info {
-        display: none;
-    }
+        [sidebar-data-theme=sidebar-hide] .sidebar-area .sidebar-user .admin-info {
+            display: none;
+        }
 
-    [sidebar-data-theme=sidebar-hide] .sidebar-user-avatar {
-        width: 36px;
-        height: 36px;
-        margin: 0 auto;
-    }
+        [sidebar-data-theme=sidebar-hide] .sidebar-user-avatar {
+            width: 36px;
+            height: 36px;
+            margin: 0 auto;
+        }
 
-    [sidebar-data-theme=sidebar-hide] .menu-vertical .menu-title {
-        display: none;
+        [sidebar-data-theme=sidebar-hide] .menu-vertical .menu-title {
+            display: none;
+        }
     }
 
     /* Arabic / RTL overrides */
@@ -426,12 +469,43 @@
         transform: rotate(180deg);
     }
 
-    html[dir="rtl"] .menu-vertical .menu-item.open > .menu-link.menu-toggle::after {
+    html[dir="rtl"] .menu-vertical .menu-item.open>.menu-link.menu-toggle::after {
         transform: rotate(90deg);
     }
 
     html[dir="rtl"] .dash-hero-pills {
         justify-content: flex-start;
+    }
+
+    /* Mobile sidebar close button z-index, visibility and color */
+    @media only screen and (max-width: 1199px) {
+        .sidebar-area .sidebar-burger-menu {
+            color: #475569 !important;
+            display: block !important;
+            z-index: 9999 !important;
+            opacity: 1 !important;
+        }
+
+        .sidebar-area .sidebar-burger-menu svg {
+            stroke: #475569 !important;
+            width: 24px !important;
+            height: 24px !important;
+        }
+
+        [data-theme="dark"] .sidebar-area .sidebar-burger-menu {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .sidebar-area .sidebar-burger-menu svg {
+            stroke: #ffffff !important;
+        }
+    }
+
+    /* Hide sidebar close button on desktop screens */
+    @media only screen and (min-width: 1200px) {
+        .sidebar-area .sidebar-burger-menu {
+            display: none !important;
+        }
     }
 </style>
 

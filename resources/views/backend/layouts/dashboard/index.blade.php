@@ -66,7 +66,7 @@
             background: linear-gradient(135deg, #13213c 0%, #1e293b 100%);
             border-radius: 24px;
             padding: 2.25rem 2.5rem;
-            color: #ffffff;
+            color: #ffffff !important;
             position: relative;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(19, 33, 60, 0.15);
@@ -101,7 +101,7 @@
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #0cbab8;
+            color: #0cbab8 !important;
             margin-bottom: 0.75rem;
         }
 
@@ -110,6 +110,7 @@
             font-weight: 700;
             margin: 0 0 0.5rem 0;
             letter-spacing: -0.02em;
+            color: #ffffff !important;
         }
 
         .premium-welcome-banner p {
@@ -118,6 +119,7 @@
             font-size: 0.95rem;
             max-width: 550px;
             line-height: 1.5;
+            color: rgba(255, 255, 255, 0.8) !important;
         }
 
         .banner-actions {
@@ -178,7 +180,7 @@
 
         .banner-stat-label {
             font-size: 0.6875rem;
-            color: rgba(255, 255, 255, 0.45);
+            color: rgba(255, 255, 255, 0.45) !important;
             text-transform: uppercase;
             font-weight: 600;
             letter-spacing: 0.05em;
@@ -188,12 +190,13 @@
         .banner-stat-val {
             font-size: 0.95rem;
             font-weight: 600;
-            color: #ffffff;
+            color: #ffffff !important;
         }
 
-        .banner-stat-val.status-online { color: #22c55e; }
-        .banner-stat-val.color-purple { color: #a78bfa; }
-        .banner-stat-val.color-yellow { color: #fcd34d; }
+        .banner-stat-val.status-online { color: #22c55e !important; }
+        .banner-stat-val.color-purple { color: #a78bfa !important; }
+        .banner-stat-val.color-yellow { color: #fcd34d !important; }
+        .banner-stat-val.color-cyan { color: #0cbab8 !important; }
 
         /* Row of 5 Cards Styling */
         .stats-cards-grid {
@@ -473,7 +476,7 @@
                     <div class="banner-stats-grid">
                         <div class="banner-stat-box">
                             <div class="banner-stat-label">{{ __('admin.dash.last_updated') }}</div>
-                            <div class="banner-stat-val color-purple">{{ __('admin.dash.just_now') }}</div>
+                            <div class="banner-stat-val color-cyan">{{ __('admin.dash.just_now') }}</div>
                         </div>
                         <div class="banner-stat-box">
                             <div class="banner-stat-label">{{ __('admin.dash.platform_status') }}</div>
@@ -481,7 +484,7 @@
                         </div>
                         <div class="banner-stat-box">
                             <div class="banner-stat-label">{{ __('admin.dash.active_sessions') }}</div>
-                            <div class="banner-stat-val">3</div>
+                            <div class="banner-stat-val color-purple">3</div>
                         </div>
                         <div class="banner-stat-box">
                             <div class="banner-stat-label">{{ __('admin.dash.system_health') }}</div>
