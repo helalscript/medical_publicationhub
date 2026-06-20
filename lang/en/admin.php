@@ -122,6 +122,13 @@ return [
         'opportunities_overview' => 'Opportunities Overview',
         'payments_overview' => 'Payments Overview',
         'transaction_analytics' => 'Transaction analytics',
+        'welcome_back_badge' => 'WELCOME BACK',
+        'overview_desc' => 'Overview of mentors, researchers, opportunities and chats.',
+        'overview_title' => 'Overview',
+        'total_chats_count' => ':count Total Chats',
+        'last_7_days' => 'Last 7 days',
+        'active_vs_inactive_courses' => 'Active vs Inactive courses',
+        'active_vs_inactive_opportunities' => 'Active vs Inactive opportunities',
     ],
 
     'status' => [
@@ -134,6 +141,9 @@ return [
         'failed' => 'Failed',
         'cancelled' => 'Cancelled',
         'refunded' => 'Refunded',
+        'open' => 'Open',
+        'closed' => 'Closed',
+        'completed' => 'Completed',
     ],
 
     'chart' => [
@@ -141,5 +151,21 @@ return [
         'courses' => 'Courses',
         'opportunities' => 'Opportunities',
         'messages' => 'Messages',
+    ],
+    'chat' => [
+        'conversation' => 'Conversation',
+        'search_placeholder' => 'Search messages',
+        'back_dashboard' => 'Back to Dashboard',
+        'all' => 'All',
+        'private' => 'Private',
+        'groups' => 'Groups',
+        'type_message' => 'Type a message...',
+        'members' => ':count members',
+        'yesterday' => 'Yesterday',
+        'scroll_more' => 'Scroll up to load more',
+        'no_conversations' => 'No conversations yet',
+        'dashboard_overview' => 'Opportunity Chats',
+        'overview_desc' => 'Manage active chat rooms, participants, and communications for research opportunities',
+        'title' => 'Chats',
     ],
 ];
