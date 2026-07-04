@@ -48,4 +48,9 @@ return [
         'key' => env('BREVO_API_KEY'),
         'dsn' => 'brevo+api://'.env('BREVO_API_KEY').'@default',
     ],
+    'moyasar' => [
+        'key' => env('MOYASAR_PUBLISHABLE_KEY'),
+        'secret' => env('MOYASAR_SECRET_KEY'),
+        'webhook_secret' => env('MOYASAR_WEBHOOK_SECRET'),
+    ],
 ];

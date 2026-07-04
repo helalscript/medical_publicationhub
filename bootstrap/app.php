@@ -44,18 +44,18 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->is('api/*')) {
-                if ($e instanceof ValidationException) {
+                if ($e instanceof \Illuminate\Validation\ValidationException) {
                     return Helper::jsonErrorResponse($e->getMessage(), 422, $e->errors());
                 }
 
-                if ($e instanceof ModelNotFoundException) {
+                if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
                     return Helper::jsonErrorResponse($e->getMessage(), 404);
                 }
 
-                if ($e instanceof AuthenticationException) {
+                if ($e instanceof \Illuminate\Auth\AuthenticationException) {
                     return Helper::jsonErrorResponse($e->getMessage(), 401);
                 }
-                if ($e instanceof AuthorizationException) {
+                if ($e instanceof \Illuminate\Auth\Access\AuthorizationException) {
                     return Helper::jsonErrorResponse($e->getMessage(), 403);
                 }
                 // Dynamically determine the status code if available

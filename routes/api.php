@@ -16,6 +16,7 @@ use App\Http\Controllers\API\V1\CMS\ResearchPageController as APIResearchPageCon
 use App\Http\Controllers\API\V1\CMS\ServicePageController as APIServicePageController;
 use App\Http\Controllers\API\V1\CourseController as CourseApiController;
 use App\Http\Controllers\API\V1\CoursePurchaseController as CoursePurchaseApiController;
+use App\Http\Controllers\API\V1\PaymentController as PaymentApiController;
 use App\Http\Controllers\API\V1\DashboardController;
 use App\Http\Controllers\API\V1\FavouriteController as FavouriteApiController;
 use App\Http\Controllers\API\V1\Mentor\DashboardController as MentorDashboardApiController;
@@ -75,6 +76,13 @@ Route::group(['middleware' => ['auth:api', 'check_is_user']], function ($router)
     // My courses
     Route::get('/my-courses', [MyCourseApiController::class, 'index']);
     Route::post('/courses/{courseId}/buy', [CoursePurchaseApiController::class, 'buy']);
+
+    // Payments (Moyasar)
+    Route::post('/payments', [PaymentApiController::class, 'create']);
+    Route::post('/payments/pay', [PaymentApiController::class, 'pay']);
+    Route::get('/payments/{paymentId}', [PaymentApiController::class, 'fetch']);
+    Route::get('/payments', [PaymentApiController::class, 'list']);
+    Route::post('/payments/{paymentId}/verify', [PaymentApiController::class, 'verify']);
 });
 
 // Mentor — research ideas (JWT + mentor role)
@@ -160,6 +168,7 @@ Route::get('/social-links', [HomePageController::class, 'getSocialLinks']);
 
 // without auth
 Route::post('/contact-support-message/sent', [UserContactSupportController::class, 'store']);
+Route::post('/payments/webhook/moyasar', [PaymentApiController::class, 'webhook']);
 
 // --------- cms part --------------
 // Route::get('/social-link', [HomePageController::class, 'getSocialLinks']);
