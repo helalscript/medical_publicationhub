@@ -92,8 +92,8 @@ class MoyasarPaymentService
                     'ip' => $sdkPayment->ip,
                     'created_at' => $sdkPayment->createdAt,
                     'updated_at' => $sdkPayment->updatedAt,
-                    'source' => $sdkPayment->source,
-                    'metadata' => $sdkPayment->metadata,
+                    'source' => is_array($sdkPayment->source) ? $sdkPayment->source : json_decode(json_encode($sdkPayment->source), true),
+                    'metadata' => is_array($sdkPayment->metadata) ? $sdkPayment->metadata : json_decode(json_encode($sdkPayment->metadata), true),
                 ];
             }
         } catch (Exception $sdkEx) {

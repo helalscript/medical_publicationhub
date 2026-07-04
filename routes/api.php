@@ -35,6 +35,9 @@ use App\Http\Controllers\API\V1\User\Faqs\UserFaqController;
 use App\Http\Controllers\API\V1\User\NewsletterController;
 use App\Http\Controllers\API\V1\User\NotificationController;
 use App\Http\Controllers\API\V1\User\UserContactSupportController;
+use App\Http\Controllers\API\V1\Coordinator\OpportunityController as CoordinatorOpportunityController;
+use App\Http\Controllers\API\V1\Coordinator\OpportunityApplicationController as CoordinatorOpportunityApplicationController;
+use App\Http\Controllers\API\V1\Coordinator\ChatController as CoordinatorChatController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'guest:api'], function ($router) {
@@ -124,6 +127,23 @@ Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_r
     Route::get('/chats', [ResearcherChatApiController::class, 'index']);
     Route::get('/chats/{id}', [ResearcherChatApiController::class, 'show']);
     Route::post('/chats/{id}/messages', [ResearcherChatApiController::class, 'sendMessage']);
+});
+
+// Coordinator routes
+Route::group(['prefix' => 'coordinator', 'middleware' => ['auth:api', 'check_is_coordinator']], function ($router) {
+    // Opportunities
+    Route::get('/opportunities', [CoordinatorOpportunityController::class, 'index']);
+    Route::get('/opportunities/{id}', [CoordinatorOpportunityController::class, 'show']);
+
+    // Applications
+    Route::get('/opportunity-applications', [CoordinatorOpportunityApplicationController::class, 'index']);
+    Route::get('/opportunity-applications/{id}', [CoordinatorOpportunityApplicationController::class, 'show']);
+    Route::put('/opportunity-applications/{id}/status', [CoordinatorOpportunityApplicationController::class, 'updateStatus']);
+
+    // Chats
+    Route::get('/chats', [CoordinatorChatController::class, 'index']);
+    Route::get('/chats/{id}', [CoordinatorChatController::class, 'show']);
+    Route::post('/chats/{id}/messages', [CoordinatorChatController::class, 'sendMessage']);
 });
 
 // opportunities (public)
