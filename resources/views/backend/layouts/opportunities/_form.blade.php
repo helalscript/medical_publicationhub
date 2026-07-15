@@ -35,6 +35,9 @@
     $opUniversityHospitalIds = isset($op) ? ($op->university_hospital_ids ?? []) : [];
     $opPlaceIds = isset($op) ? ($op->place_ids ?? []) : [];
     $opExperienceLevelIds = isset($op) ? ($op->experience_level_ids ?? []) : [];
+    $opIsVerified = isset($op) ? (int) ($op->is_verified ?? 0) : 0;
+    $opVerificationDeadline = (isset($op) && $op->verification_deadline) ? $op->verification_deadline->format('Y-m-d') : null;
+    $opCoordinatorId = isset($op) ? $op->coordinator_id : null;
 @endphp
 
 <div class="row">
@@ -127,6 +130,39 @@
         <select name="is_future" class="form-select">
             <option value="0" {{ old('is_future', $opIsFuture) == 0 ? 'selected' : '' }}>No</option>
             <option value="1" {{ old('is_future', $opIsFuture) == 1 ? 'selected' : '' }}>Yes</option>
+        </select>
+        <small class="text-muted">Optional</small>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-lg-12 mb-2">
+        <h6 class="mb-0">Verification & Assignment</h6>
+        <small class="text-muted">Fields to verify the opportunity and assign a coordinator.</small>
+    </div>
+    <div class="col-md-3 mb-3">
+        <label class="label">Verified</label>
+        <select name="is_verified" class="form-select">
+            <option value="0" {{ old('is_verified', $opIsVerified) == 0 ? 'selected' : '' }}>No</option>
+            <option value="1" {{ old('is_verified', $opIsVerified) == 1 ? 'selected' : '' }}>Yes</option>
+        </select>
+        <small class="text-muted">Must have price > 0 to verify.</small>
+    </div>
+    <div class="col-md-3 mb-3">
+        <label class="label">Verification Deadline</label>
+        <input type="date" name="verification_deadline" class="form-control"
+               value="{{ old('verification_deadline', $opVerificationDeadline) }}">
+        <small class="text-muted">Required if Verified is Yes.</small>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label class="label">Coordinator</label>
+        <select name="coordinator_id" class="form-select js-select2" data-placeholder="Select coordinator...">
+            <option value="">None</option>
+            @foreach (($coordinators ?? collect()) as $c)
+                <option value="{{ $c->id }}" {{ (string)old('coordinator_id', $opCoordinatorId) === (string)$c->id ? 'selected' : '' }}>
+                    #{{ $c->id }} - {{ $c->name }} ({{ $c->email }})
+                </option>
+            @endforeach
         </select>
         <small class="text-muted">Optional</small>
     </div>

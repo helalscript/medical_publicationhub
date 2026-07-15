@@ -34,6 +34,9 @@ class Opportunity extends Model
         'experience_level_ids',
         'is_future',
         'status',
+        'is_verified',
+        'verification_deadline',
+        'coordinator_id',
     ];
 
     protected function casts(): array
@@ -54,6 +57,8 @@ class Opportunity extends Model
             'experience_level_ids' => 'array',
             'is_future' => 'boolean',
             'price' => 'decimal:2',
+            'is_verified' => 'boolean',
+            'verification_deadline' => 'date',
         ];
     }
 
@@ -105,5 +110,10 @@ class Opportunity extends Model
     public function favourites(): MorphMany
     {
         return $this->morphMany(Favourite::class, 'favouriteable');
+    }
+
+    public function coordinator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'coordinator_id');
     }
 }

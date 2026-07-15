@@ -38,6 +38,15 @@ use App\Http\Controllers\API\V1\User\UserContactSupportController;
 use App\Http\Controllers\API\V1\Coordinator\OpportunityController as CoordinatorOpportunityController;
 use App\Http\Controllers\API\V1\Coordinator\OpportunityApplicationController as CoordinatorOpportunityApplicationController;
 use App\Http\Controllers\API\V1\Coordinator\ChatController as CoordinatorChatController;
+use App\Http\Controllers\API\V1\Coordinator\PublicationController as CoordinatorPublicationController;
+use App\Http\Controllers\API\V1\N8N\N8NController;
+use App\Http\Controllers\API\V1\Researcher\TaskAssignmentController as ResearcherTaskAssignmentController;
+use App\Http\Controllers\API\V1\Researcher\SubmissionController as ResearcherSubmissionController;
+use App\Http\Controllers\API\V1\Mentor\RubricController as MentorRubricController;
+use App\Http\Controllers\API\V1\Mentor\TaskController as MentorTaskController;
+use App\Http\Controllers\API\V1\Mentor\SubmissionReviewController as MentorSubmissionReviewController;
+use App\Http\Controllers\API\V1\Coordinator\RubricController as CoordinatorRubricController;
+use App\Http\Controllers\API\V1\Coordinator\SystemTaskController as CoordinatorSystemTaskController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'guest:api'], function ($router) {
@@ -103,6 +112,17 @@ Route::group(['prefix' => 'mentor', 'middleware' => ['auth:api', 'check_is_mento
     Route::get('/chats', [MentorChatApiController::class, 'index']);
     Route::get('/chats/{id}', [MentorChatApiController::class, 'show']);
     Route::post('/chats/{id}/messages', [MentorChatApiController::class, 'sendMessage']);
+
+    // Rubrics
+    Route::apiResource('rubrics', MentorRubricController::class);
+
+    // Tasks & Submissions
+    Route::apiResource('tasks', MentorTaskController::class);
+    Route::get('/submissions', [MentorSubmissionReviewController::class, 'index']);
+    Route::get('/submissions/{id}/feedback', [MentorSubmissionReviewController::class, 'showFeedback']);
+    Route::patch('/feedback/{id}/approve', [MentorSubmissionReviewController::class, 'approve']);
+    Route::patch('/feedback/{id}/reject', [MentorSubmissionReviewController::class, 'reject']);
+    Route::get('/analytics/group/{id}', [MentorSubmissionReviewController::class, 'analytics']);
 });
 
 // Opportunities & applications (JWT user) and Researcher chats
@@ -127,6 +147,11 @@ Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_r
     Route::get('/chats', [ResearcherChatApiController::class, 'index']);
     Route::get('/chats/{id}', [ResearcherChatApiController::class, 'show']);
     Route::post('/chats/{id}/messages', [ResearcherChatApiController::class, 'sendMessage']);
+
+    // Tasks & Submissions
+    Route::get('/tasks', [ResearcherTaskAssignmentController::class, 'index']);
+    Route::post('/submissions', [ResearcherSubmissionController::class, 'store']);
+    Route::get('/submissions/{id}/feedback', [ResearcherSubmissionController::class, 'feedback']);
 });
 
 // Coordinator routes
@@ -138,12 +163,27 @@ Route::group(['prefix' => 'coordinator', 'middleware' => ['auth:api', 'check_is_
     // Applications
     Route::get('/opportunity-applications', [CoordinatorOpportunityApplicationController::class, 'index']);
     Route::get('/opportunity-applications/{id}', [CoordinatorOpportunityApplicationController::class, 'show']);
-    Route::put('/opportunity-applications/{id}/status', [CoordinatorOpportunityApplicationController::class, 'updateStatus']);
+    // Route::put('/opportunity-applications/status/{id}', [CoordinatorOpportunityApplicationController::class, 'updateStatus']);
 
     // Chats
     Route::get('/chats', [CoordinatorChatController::class, 'index']);
     Route::get('/chats/{id}', [CoordinatorChatController::class, 'show']);
     Route::post('/chats/{id}/messages', [CoordinatorChatController::class, 'sendMessage']);
+
+    // Publications
+    Route::get('/publications', [CoordinatorPublicationController::class, 'index']);
+    Route::get('/publications/{id}', [CoordinatorPublicationController::class, 'show']);
+
+    // System Rubrics
+    Route::apiResource('rubrics', CoordinatorRubricController::class);
+
+    // System Tasks & Analytics
+    Route::get('/dashboard/overview', [CoordinatorSystemTaskController::class, 'overview']);
+    Route::get('/groups', [CoordinatorSystemTaskController::class, 'groups']);
+    Route::get('/tasks', [CoordinatorSystemTaskController::class, 'tasks']);
+    Route::get('/analytics/group/{id}', [CoordinatorSystemTaskController::class, 'groupAnalytics']);
+    Route::get('/analytics/export', [CoordinatorSystemTaskController::class, 'exportAnalytics']);
+    Route::put('/settings/n8n', [CoordinatorSystemTaskController::class, 'updateN8NSettings']);
 });
 
 // opportunities (public)
@@ -262,4 +302,15 @@ Route::group(['prefix' => 'cms/aboutus-page'], function () {
     Route::put('/mission-items/{id}', [APIAboutusPageController::class, 'updateMissionItem']);
     Route::delete('/mission-items/{id}', [APIAboutusPageController::class, 'deleteMissionItem']);
     Route::get('/full-page', [APIAboutusPageController::class, 'getAboutUsPage']);
+});
+
+// --------- N8N Webhooks --------------
+Route::group(['prefix' => 'n8n', 'middleware' => 'api'], function () {
+    Route::get('/tasks/{id}', [N8NController::class, 'getTask']);
+    Route::get('/tasks/{id}/rubric', [N8NController::class, 'getRubric']);
+    Route::get('/groups/{id}/researchers', [N8NController::class, 'getResearchers']);
+    Route::get('/videos/{id}', [N8NController::class, 'getVideo']);
+    Route::post('/task-assignments', [N8NController::class, 'recordAssignment']);
+    Route::get('/submissions/{id}', [N8NController::class, 'getSubmission']);
+    Route::post('/ai-feedback', [N8NController::class, 'saveFeedback']);
 });
