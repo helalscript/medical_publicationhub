@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Mentor;
 use App\Models\Opportunity;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -80,8 +81,9 @@ class OpportunityController extends Controller
             ->select('mentors.*')
             ->get();
         $categories = $this->categoryLists();
+        $coordinators = User::where('role', 'coordinator')->get();
 
-        return view('backend.layouts.opportunities.create', compact('mentors', 'categories'));
+        return view('backend.layouts.opportunities.create', compact('mentors', 'categories', 'coordinators'));
     }
 
     public function store(Request $request)
@@ -144,8 +146,9 @@ class OpportunityController extends Controller
             ->select('mentors.*')
             ->get();
         $categories = $this->categoryLists();
+        $coordinators = User::where('role', 'coordinator')->get();
 
-        return view('backend.layouts.opportunities.edit', compact('data', 'mentors', 'categories'));
+        return view('backend.layouts.opportunities.edit', compact('data', 'mentors', 'categories', 'coordinators'));
     }
 
     public function update(Request $request, string $id)
@@ -208,6 +211,9 @@ class OpportunityController extends Controller
             'end_date' => 'nullable|date',
             'status' => 'nullable|in:active,inactive',
             'is_future' => 'nullable|boolean',
+            'is_verified' => 'nullable|boolean',
+            'verification_deadline' => 'nullable|date|required_if:is_verified,1',
+            'coordinator_id' => 'nullable|exists:users,id',
 
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'integer|exists:categories,id',
@@ -237,7 +243,14 @@ class OpportunityController extends Controller
         }
 
         $validated['is_future'] = (bool) ($request->input('is_future', false));
+        $validated['is_verified'] = (bool) ($request->input('is_verified', false));
         $validated['status'] = $validated['status'] ?? 'active';
+
+        if ($validated['is_verified']) {
+            if (empty($validated['price']) || $validated['price'] <= 0) {
+                abort(422, 'Price must be greater than 0 when the opportunity is verified.');
+            }
+        }
 
         return $validated;
     }

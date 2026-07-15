@@ -17,8 +17,12 @@ class OpportunityApplicationController extends Controller
     {
         try {
             $perPage = (int) ($request->input('per_page', 15));
-            $query = OpportunityApplication::with(['opportunity:id,title', 'user:id,name,email,avatar'])->latest('id');
-            
+            $query = OpportunityApplication::with(['opportunity:id,title', 'user:id,name,email,avatar'])
+                // ->whereHas('opportunity', function ($q) use ($request) {
+                //     $q->where('coordinator_id', $request->user()->id);
+                // })
+                ->latest('id');
+
             if ($request->has('status')) {
                 $query->where('status', $request->input('status'));
             }
@@ -38,7 +42,11 @@ class OpportunityApplicationController extends Controller
     public function show(string $id): JsonResponse
     {
         try {
-            $data = OpportunityApplication::with(['opportunity', 'user:id,name,email,avatar'])->findOrFail($id);
+            $data = OpportunityApplication::with(['opportunity', 'user:id,name,email,avatar'])
+                // ->whereHas('opportunity', function ($q) {
+                //     $q->where('coordinator_id', request()->user()->id);
+                // })
+                ->findOrFail($id);
             return Helper::jsonResponse(true, 'Application retrieved successfully.', 200, $data);
         } catch (Exception $e) {
             Log::error('API\\V1\\Coordinator\\OpportunityApplicationController::show ' . $e->getMessage());
@@ -46,35 +54,39 @@ class OpportunityApplicationController extends Controller
         }
     }
 
-    public function updateStatus(Request $request, string $id): JsonResponse
-    {
-        $validated = $request->validate([
-            'status' => ['required', 'string', Rule::in(['pending', 'under_review', 'accepted', 'rejected'])],
-        ]);
+    // public function updateStatus(Request $request, string $id): JsonResponse
+    // {
+    //     $validated = $request->validate([
+    //         'status' => ['required', 'string', Rule::in(['pending', 'under_review', 'accepted', 'rejected'])],
+    //     ]);
+      
+    //     try {
+    //         $app = OpportunityApplication::findOrFail($id);
+    //         // $app = OpportunityApplication::whereHas('opportunity', function ($q) use ($request) {
+    //         //     $q->where('coordinator_id', $request->user()->id);
+    //         // })->findOrFail($id);
 
-        try {
-            $app = OpportunityApplication::findOrFail($id);
-            $app->status = $validated['status'];
-            $app->save();
+    //         $app->status = $validated['status'];
+    //         $app->save();
 
-            // If accepted, add applicant to the opportunity group chat
-            if ($validated['status'] === 'accepted') {
-                $op = $app->opportunity;
-                if ($op && $op->chat) {
-                    \App\Models\ChatUser::firstOrCreate([
-                        'chat_id' => $op->chat->id,
-                        'user_id' => $app->user_id,
-                    ], [
-                        'role' => 'researcher',
-                        'status' => 'active',
-                    ]);
-                }
-            }
+    //         // If accepted, add applicant to the opportunity group chat
+    //         if ($validated['status'] === 'accepted') {
+    //             $op = $app->opportunity;
+    //             if ($op && $op->chat) {
+    //                 \App\Models\ChatUser::firstOrCreate([
+    //                     'chat_id' => $op->chat->id,
+    //                     'user_id' => $app->user_id,
+    //                 ], [
+    //                     'role' => 'researcher',
+    //                     'status' => 'active',
+    //                 ]);
+    //             }
+    //         }
 
-            return Helper::jsonResponse(true, 'Application status updated successfully.', 200, $app);
-        } catch (Exception $e) {
-            Log::error('API\\V1\\Coordinator\\OpportunityApplicationController::updateStatus ' . $e->getMessage());
-            return Helper::jsonErrorResponse('Failed to update application status.', 500);
-        }
-    }
+    //         return Helper::jsonResponse(true, 'Application status updated successfully.', 200, $app);
+    //     } catch (Exception $e) {
+    //         Log::error('API\\V1\\Coordinator\\OpportunityApplicationController::updateStatus ' . $e->getMessage());
+    //         return Helper::jsonErrorResponse('Failed to update application status.', 500);
+    //     }
+    // }
 }

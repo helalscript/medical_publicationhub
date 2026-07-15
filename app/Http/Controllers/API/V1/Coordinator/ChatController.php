@@ -25,6 +25,9 @@ class ChatController extends Controller
             $data = Chat::query()
                 ->select('id', 'chatable_type', 'chatable_id', 'type', 'status', 'created_at')
                 ->where('chatable_type', \App\Models\Opportunity::class)
+                ->whereHasMorph('chatable', [\App\Models\Opportunity::class], function ($query) use ($request) {
+                    $query->where('coordinator_id', $request->user()->id);
+                })
                 ->with([
                     'chatable' => function ($query) {
                         $query->select('id', 'title', 'thumbnail');
@@ -53,7 +56,9 @@ class ChatController extends Controller
                 'users.user' => function ($query) {
                     $query->select('id', 'name', 'avatar');
                 }
-            ])->findOrFail($id);
+            ])->whereHasMorph('chatable', [\App\Models\Opportunity::class], function ($query) use ($request) {
+                $query->where('coordinator_id', $request->user()->id);
+            })->findOrFail($id);
 
             // Fetch messages
             $messages = Message::with('user')->where('chat_id', $chat->id)->latest('id')->paginate($per_page);
@@ -76,7 +81,9 @@ class ChatController extends Controller
         ]);
 
         try {
-            $chat = Chat::findOrFail($id);
+            $chat = Chat::whereHasMorph('chatable', [\App\Models\Opportunity::class], function ($query) use ($request) {
+                $query->where('coordinator_id', $request->user()->id);
+            })->findOrFail($id);
             if ($chat->status !== 'active') {
                 throw new RuntimeException('Chat is inactive.');
             }
