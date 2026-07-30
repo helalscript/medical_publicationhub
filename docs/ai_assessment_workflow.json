@@ -1,0 +1,93 @@
+{
+  "name": "Laravel AI Assessment Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-assessment-trigger",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook (Receive Submission)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [ 250, 300 ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.LARAVEL_URL}}/api/n8n/submissions/{{$json[\"body\"][\"submission_id\"]}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/json" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "Fetch Submission Details",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [ 450, 300 ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4",
+        "messages": {
+          "messageValues": [
+            {
+              "content": "=You are an expert mentor. Grade the following submission based on this rubric: {{$json[\"data\"][\"rubric\"]}}. \n\nSubmission Content:\n{{$json[\"data\"][\"content_text\"]}}\n\nOutput STRICT JSON matching this schema:\n{\n  \"overall_score\": 85,\n  \"general_feedback\": \"...\",\n  \"flagged_issues\": [\"...\"],\n  \"edited_excerpt\": \"...\",\n  \"rubric_scores\": [{ \"name\": \"...\", \"score\": 8, \"max\": 10 }]\n}",
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "OpenAI Assessment",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [ 650, 300 ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.LARAVEL_URL}}/api/n8n/ai-feedback",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "submission_id", "value": "={{$node[\"Webhook (Receive Submission)\"].json[\"body\"][\"submission_id\"]}}" },
+            { "name": "overall_score", "value": "={{$json[\"message\"][\"content\"][\"overall_score\"]}}" },
+            { "name": "rubric_scores", "value": "={{$json[\"message\"][\"content\"][\"rubric_scores\"]}}" },
+            { "name": "general_feedback", "value": "={{$json[\"message\"][\"content\"][\"general_feedback\"]}}" },
+            { "name": "flagged_issues", "value": "={{$json[\"message\"][\"content\"][\"flagged_issues\"]}}" },
+            { "name": "edited_excerpt", "value": "={{$json[\"message\"][\"content\"][\"edited_excerpt\"]}}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4",
+      "name": "Send Feedback back to Laravel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [ 850, 300 ]
+    }
+  ],
+  "connections": {
+    "Webhook (Receive Submission)": {
+      "main": [
+        [ { "node": "Fetch Submission Details", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Fetch Submission Details": {
+      "main": [
+        [ { "node": "OpenAI Assessment", "type": "main", "index": 0 } ]
+      ]
+    },
+    "OpenAI Assessment": {
+      "main": [
+        [ { "node": "Send Feedback back to Laravel", "type": "main", "index": 0 } ]
+      ]
+    }
+  }
+}

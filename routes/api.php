@@ -29,6 +29,7 @@ use App\Http\Controllers\API\V1\PartnershipRequestController as PartnershipReque
 use App\Http\Controllers\API\V1\PublicationController as PublicationApiController;
 use App\Http\Controllers\API\V1\Researcher\ChatController as ResearcherChatApiController;
 use App\Http\Controllers\API\V1\Researcher\DashboardController as ResearcherDashboardApiController;
+use App\Http\Controllers\API\V1\Researcher\OpportunityEnrollmentController as ResearcherOpportunityEnrollmentController;
 use App\Http\Controllers\API\V1\OfferController as OfferApiController;
 use App\Http\Controllers\API\V1\ServiceController as ServiceApiController;
 use App\Http\Controllers\API\V1\User\Faqs\UserFaqController;
@@ -95,6 +96,7 @@ Route::group(['middleware' => ['auth:api', 'check_is_user']], function ($router)
     Route::get('/payments/{paymentId}', [PaymentApiController::class, 'fetch']);
     Route::get('/payments', [PaymentApiController::class, 'list']);
     Route::post('/payments/{paymentId}/verify', [PaymentApiController::class, 'verify']);
+    Route::get('/payments/{paymentId}/invoice', [PaymentApiController::class, 'getInvoice']);
 });
 
 // Mentor — research ideas (JWT + mentor role)
@@ -118,6 +120,7 @@ Route::group(['prefix' => 'mentor', 'middleware' => ['auth:api', 'check_is_mento
 
     // Tasks & Submissions
     Route::apiResource('tasks', MentorTaskController::class);
+    Route::post('/tasks/{id}/assign', [MentorTaskController::class, 'assignResearchers']);
     Route::get('/submissions', [MentorSubmissionReviewController::class, 'index']);
     Route::get('/submissions/{id}/feedback', [MentorSubmissionReviewController::class, 'showFeedback']);
     Route::patch('/feedback/{id}/approve', [MentorSubmissionReviewController::class, 'approve']);
@@ -152,6 +155,10 @@ Route::group(['prefix' => 'researcher', 'middleware' => ['auth:api', 'check_is_r
     Route::get('/tasks', [ResearcherTaskAssignmentController::class, 'index']);
     Route::post('/submissions', [ResearcherSubmissionController::class, 'store']);
     Route::get('/submissions/{id}/feedback', [ResearcherSubmissionController::class, 'feedback']);
+
+    // Opportunity Direct Enrollment (pay to join chat group)
+    Route::post('/opportunities/{id}/enroll', [ResearcherOpportunityEnrollmentController::class, 'enroll']);
+    Route::get('/opportunities/{id}/enrollment-status', [ResearcherOpportunityEnrollmentController::class, 'status']);
 });
 
 // Coordinator routes

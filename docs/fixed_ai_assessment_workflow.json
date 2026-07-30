@@ -1,0 +1,163 @@
+{
+  "name": "Laravel AI Assessment Flow v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-assessment-trigger",
+        "options": {}
+      },
+      "id": "d9ec7c85-41cd-44dd-9eb1-5ecd25b2ee6a",
+      "name": "Webhook (Receive Submission)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [-64, 160],
+      "webhookId": "cb1e15b0-1e0a-4629-a74c-3f3a46f02298"
+    },
+    {
+      "parameters": {
+        "url": "=https://ca2e-103-43-151-193.ngrok-free.app/api/n8n/submissions/{{$json[\"body\"][\"submission_id\"]}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7778ccb5-d158-4d1e-aa10-d9f8198ff1df",
+      "name": "Fetch Submission Details",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [200, 160]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert academic mentor. Your task is to evaluate a student's research submission based on the provided rubric criteria.\n\n---\nRUBRIC CRITERIA:\n{{JSON.stringify($node[\"Fetch Submission Details\"].json[\"data\"][\"rubric\"][\"criteria\"])}}\n\n---\nSUBMISSION CONTENT:\n{{$node[\"Fetch Submission Details\"].json[\"data\"][\"content_text\"]}}\n\n---\nINSTRUCTIONS:\n1. Evaluate EACH rubric criterion individually\n2. Assign a score from 0 to the max_score for each criterion\n3. Calculate the total overall_score as a number between 0 and 100\n4. Write detailed general_feedback (minimum 3 sentences)\n5. List specific flagged_issues as an array of strings (can be empty array)\n6. Provide a short edited_excerpt (improved version of a key section)\n\nYou MUST respond with ONLY a valid JSON object. No explanation, no markdown code blocks, no extra text. Only pure JSON:\n{\n  \"overall_score\": <number between 0-100>,\n  \"general_feedback\": \"<detailed multi-sentence feedback>\",\n  \"flagged_issues\": [\"<issue 1>\", \"<issue 2>\"],\n  \"edited_excerpt\": \"<improved excerpt from the submission>\",\n  \"rubric_scores\": [\n    {\n      \"criterion\": \"<exact criterion name from rubric>\",\n      \"score\": <number>,\n      \"max_score\": <number>,\n      \"comment\": \"<specific comment for this criterion>\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "cf8d57a9-d76e-4d6f-9ac6-440d5f3ca721",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [460, 160]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o"
+        },
+        "options": {
+          "temperature": 0.2,
+          "maxTokens": 2000
+        }
+      },
+      "id": "d3722d83-f921-4913-bd2e-261d91fed12a",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [460, 360],
+      "credentials": {
+        "openAiApi": {
+          "id": "AzEv1r6yWn4ACSrF",
+          "name": "OpenAI account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://ca2e-103-43-151-193.ngrok-free.app/api/n8n/ai-feedback",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "submission_id",
+              "value": "={{$node[\"Webhook (Receive Submission)\"].json[\"body\"][\"submission_id\"]}}"
+            },
+            {
+              "name": "text",
+              "value": "={{$node[\"AI Agent\"].json[\"output\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6ce1d312-7540-4387-b55e-f59a599de962",
+      "name": "Send Feedback back to Laravel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [720, 160]
+    }
+  ],
+  "connections": {
+    "Webhook (Receive Submission)": {
+      "main": [
+        [
+          {
+            "node": "Fetch Submission Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Submission Details": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Feedback back to Laravel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f09f80ae50f33d9b67a1c6b4ef0f180a1c8e8290ed5aaeb90c28569fcfe58e2e"
+  }
+}

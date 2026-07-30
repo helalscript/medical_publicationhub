@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Opportunity;
 use App\Models\Service;
 use App\Models\Payment;
 use App\Services\API\V1\Payment\MoyasarPaymentService;
@@ -27,7 +28,7 @@ class PaymentController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'payable_type' => ['required', 'string', 'in:course,Course,App\\Models\\Course,service,Service,App\\Models\\Service'],
+            'payable_type' => ['required', 'string', 'in:course,Course,App\\Models\\Course,service,Service,App\\Models\\Service,opportunity,Opportunity,App\\Models\\Opportunity'],
             'payable_id' => ['required', 'integer'],
             'amount' => ['required', 'numeric', 'min:1'],
             'currency' => ['required', 'string', 'size:3'],
@@ -46,6 +47,8 @@ class PaymentController extends Controller
                 $payableType = Course::class;
             } elseif (in_array(strtolower($payableType), ['service', 'app\\models\\service'])) {
                 $payableType = Service::class;
+            } elseif (in_array(strtolower($payableType), ['opportunity', 'app\\models\\opportunity'])) {
+                $payableType = Opportunity::class;
             }
 
             // Confirm that the payable model exists
@@ -59,6 +62,10 @@ class PaymentController extends Controller
             } elseif ($payableType === Service::class) {
                 if ((float) $payable->starting_price != (float) $request->input('amount')) {
                     return Helper::jsonErrorResponse('Invalid payment amount for the selected service.', 422);
+                }
+            } elseif ($payableType === Opportunity::class) {
+                if ((float) $payable->price != (float) $request->input('amount')) {
+                    return Helper::jsonErrorResponse('Invalid payment amount for the selected opportunity.', 422);
                 }
             }
 
@@ -204,7 +211,7 @@ class PaymentController extends Controller
         try {
             $user = auth('api')->user();
             $payments = Payment::where('user_id', $user->id)
-                ->with('payable')
+                ->with(['payable', 'invoice'])
                 ->latest()
                 ->paginate($request->input('per_page', 15));
 
@@ -268,6 +275,67 @@ class PaymentController extends Controller
         } catch (Exception $e) {
             Log::error('Moyasar webhook handling exception: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get invoice details for a payment.
+     */
+    public function getInvoice(string $paymentId)
+    {
+        try {
+            $user = auth('api')->user();
+
+            $payment = Payment::where(function($query) use ($paymentId) {
+                    $query->where('payment_gateway_id', $paymentId)
+                          ->orWhere('pay_id', $paymentId)
+                          ->orWhere('id', $paymentId);
+                })
+                ->where('user_id', $user->id)
+                ->firstOrFail();
+
+            if ($payment->status !== 'paid') {
+                return Helper::jsonErrorResponse('Invoice is only available for completed (paid) payments.', 400);
+            }
+
+            // Get or generate invoice record
+            $invoice = $payment->invoice;
+            if (!$invoice) {
+                // Generate invoice on-the-fly if missing
+                $dateStr = \Carbon\Carbon::now()->format('Ymd');
+                $lastInvoice = \App\Models\Invoice::where('invoice_number', 'like', "INV-{$dateStr}-%")
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                $nextSeq = 1;
+                if ($lastInvoice) {
+                    $parts = explode('-', $lastInvoice->invoice_number);
+                    $lastSeq = (int) end($parts);
+                    $nextSeq = $lastSeq + 1;
+                }
+
+                $invoiceNumber = 'INV-' . $dateStr . '-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
+
+                $invoice = \App\Models\Invoice::create([
+                    'payment_id' => $payment->id,
+                    'invoice_number' => $invoiceNumber,
+                    'amount' => $payment->amount,
+                ]);
+            }
+
+            $payable = $payment->payable;
+
+            return Helper::jsonResponse(true, 'Invoice retrieved successfully.', 200, [
+                'invoice_number' => $invoice->invoice_number,
+                'amount'         => (float) $invoice->amount,
+                'date'           => $invoice->created_at->toIso8601String(),
+                'payable_type'   => $payment->payable_type ? class_basename($payment->payable_type) : 'Service',
+                'payable_title'  => $payable?->title ?? $payable?->name ?? 'Service Access',
+                'status'         => 'paid',
+            ]);
+        } catch (Exception $e) {
+            Log::error('PaymentController::getInvoice error: ' . $e->getMessage());
+            return Helper::jsonErrorResponse('Failed to retrieve invoice: ' . $e->getMessage(), 500);
         }
     }
 }

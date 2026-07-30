@@ -20,6 +20,8 @@ class Opportunity extends Model
         'slug',
         'overview',
         'price',
+        'total_seats',
+        'available_seats',
         'thumbnail',
         'desciptions',
         'dead_line',
@@ -59,7 +61,21 @@ class Opportunity extends Model
             'price' => 'decimal:2',
             'is_verified' => 'boolean',
             'verification_deadline' => 'date',
+            'total_seats' => 'integer',
+            'available_seats' => 'integer',
         ];
+    }
+
+    /**
+     * Check if this opportunity has available seats.
+     * Returns true if unlimited (total_seats = null) or has remaining seats.
+     */
+    public function hasSeat(): bool
+    {
+        if ($this->total_seats === null) {
+            return true; // unlimited
+        }
+        return $this->available_seats > 0;
     }
 
     private function toPublicUrl(?string $value): ?string

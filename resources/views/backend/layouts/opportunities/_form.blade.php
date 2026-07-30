@@ -19,6 +19,8 @@
     $opTitle = isset($op) ? $op->title : null;
     $opOverview = isset($op) ? $op->overview : null;
     $opPrice = isset($op) ? $op->price : null;
+    $opTotalSeats = isset($op) ? $op->total_seats : null;
+    $opAvailableSeats = isset($op) ? $op->available_seats : null;
     $opStatus = isset($op) ? ($op->status ?? 'active') : 'active';
     $opMentorId = isset($op) ? $op->mentor_id : null;
     $opThumbnail = isset($op) ? $op->thumbnail : null;
@@ -59,13 +61,29 @@
                   required>{{ old('overview', $opOverview) }}</textarea>
         <small class="text-muted">Required</small>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-md-2 mb-3">
         <label class="label">Price <span class="text-danger">*</span></label>
         <input type="number" step="0.01" name="price" class="form-control"
                placeholder="e.g. 199.00"
                value="{{ old('price', $opPrice) }}" required>
-        <small class="text-muted">Required</small>
+        <small class="text-muted">Required (0 = free)</small>
     </div>
+    <div class="col-md-2 mb-3">
+        <label class="label">Total Seats</label>
+        <input type="number" min="1" name="total_seats" class="form-control"
+               placeholder="e.g. 20"
+               value="{{ old('total_seats', $opTotalSeats) }}">
+        <small class="text-muted">Leave blank = unlimited</small>
+    </div>
+    @if(isset($op) && $opTotalSeats !== null)
+    <div class="col-md-2 mb-3">
+        <label class="label">Available Seats</label>
+        <input type="number" min="0" name="available_seats" class="form-control"
+               placeholder=""
+               value="{{ old('available_seats', $opAvailableSeats) }}">
+        <small class="text-muted">Remaining seats</small>
+    </div>
+    @endif
     <div class="col-md-2 mb-3">
         <label class="label">Status</label>
         <select name="status" class="form-select">

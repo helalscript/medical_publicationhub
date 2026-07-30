@@ -96,6 +96,11 @@ class OpportunityController extends Controller
                 $validated['thumbnail'] = Helper::fileUpload($request->file('thumbnail'), 'opportunities/thumbnail', time().'_'.getFileName($request->file('thumbnail')));
             }
 
+            // Auto-sync available_seats = total_seats on creation
+            if (isset($validated['total_seats']) && $validated['total_seats'] !== null) {
+                $validated['available_seats'] = $validated['total_seats'];
+            }
+
             Opportunity::create($validated);
 
             return redirect()->route('admin.opportunities.index')->with('success', 'Opportunity created successfully.');
@@ -167,6 +172,20 @@ class OpportunityController extends Controller
                 unset($validated['thumbnail']);
             }
 
+            // Sync available_seats if total_seats changes
+            if (array_key_exists('total_seats', $validated)) {
+                $newTotal = $validated['total_seats'];
+                if ($newTotal === null) {
+                    // Unlimited — clear available_seats
+                    $validated['available_seats'] = null;
+                } elseif (!array_key_exists('available_seats', $validated) || $validated['available_seats'] === null) {
+                    // Admin didn't provide available_seats explicitly: calculate based on change
+                    $oldTotal = $opportunity->total_seats ?? $newTotal;
+                    $enrolled = $oldTotal - ($opportunity->available_seats ?? $oldTotal);
+                    $validated['available_seats'] = max(0, $newTotal - $enrolled);
+                }
+            }
+
             $opportunity->update($validated);
 
             return redirect()->route('admin.opportunities.index')->with('success', 'Opportunity updated successfully.');
@@ -204,6 +223,8 @@ class OpportunityController extends Controller
             'title' => 'required|string|max:255',
             'overview' => 'required|string|max:10000',
             'price' => 'required|numeric|min:0',
+            'total_seats' => 'nullable|integer|min:1',
+            'available_seats' => 'nullable|integer|min:0',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp',
             'dead_line' => 'required|date',
             'durations' => 'required|string|max:255',
@@ -245,6 +266,9 @@ class OpportunityController extends Controller
         $validated['is_future'] = (bool) ($request->input('is_future', false));
         $validated['is_verified'] = (bool) ($request->input('is_verified', false));
         $validated['status'] = $validated['status'] ?? 'active';
+
+        // total_seats null means unlimited
+        $validated['total_seats'] = isset($validated['total_seats']) ? (int) $validated['total_seats'] : null;
 
         if ($validated['is_verified']) {
             if (empty($validated['price']) || $validated['price'] <= 0) {

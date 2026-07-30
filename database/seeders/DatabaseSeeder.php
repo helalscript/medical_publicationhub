@@ -56,6 +56,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PublicationSeeder::class);
         $this->call(PartnershipRequestSeeder::class);
         $this->call(AccessControlSeeder::class);
+        $this->call(RubricSeeder::class);
         $this->call(MentorResearcherDemoSeeder::class);
         $this->call(CourseSeeder::class);
         $this->call(ModuleSeeder::class);

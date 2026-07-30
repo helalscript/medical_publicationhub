@@ -1,0 +1,1360 @@
+{
+  "info": {
+    "_postman_id": "ibraheemaltamim-api-collection",
+    "name": "Ibraheemaltamim API Collection",
+    "description": "Complete API collection for all roles: Public, User, Researcher, Mentor, Coordinator, N8N.\n\nBase URL: {{base_url}}\n\nRoles:\n- Public: No auth required\n- User (check_is_user): Regular user\n- Researcher (check_is_researcher): Research role\n- Mentor (check_is_mentor): Mentor role\n- Coordinator (check_is_coordinator): Coordinator role\n- N8N: Internal webhook (no auth)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://ca2e-103-43-151-193.ngrok-free.app/api", "type": "string" },
+    { "key": "user_token", "value": "", "type": "string" },
+    { "key": "researcher_token", "value": "", "type": "string" },
+    { "key": "mentor_token", "value": "", "type": "string" },
+    { "key": "coordinator_token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"user@test.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role\": \"user\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/register", "host": ["{{base_url}}"], "path": ["register"] }
+          }
+        },
+        {
+          "name": "Verify Email (OTP)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@test.com\",\n  \"otp\": \"123456\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/verify-email", "host": ["{{base_url}}"], "path": ["verify-email"] }
+          }
+        },
+        {
+          "name": "Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@test.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/resend-otp", "host": ["{{base_url}}"], "path": ["resend-otp"] }
+          }
+        },
+        {
+          "name": "Login (User)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('user_token', json.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@test.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }
+          }
+        },
+        {
+          "name": "Login (Researcher)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('researcher_token', json.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"researcher@test.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }
+          }
+        },
+        {
+          "name": "Login (Mentor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('mentor_token', json.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mentor@test.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }
+          }
+        },
+        {
+          "name": "Login (Coordinator)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('coordinator_token', json.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"coordinator@test.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@test.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/forget-password", "host": ["{{base_url}}"], "path": ["forget-password"] }
+          }
+        },
+        {
+          "name": "Verify OTP (Reset Password)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@test.com\",\n  \"otp\": \"123456\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/verify-otp", "host": ["{{base_url}}"], "path": ["verify-otp"] }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@test.com\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/reset-password", "host": ["{{base_url}}"], "path": ["reset-password"] }
+          }
+        },
+        {
+          "name": "Social Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"google\",\n  \"token\": \"GOOGLE_TOKEN_HERE\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/social-login", "host": ["{{base_url}}"], "path": ["social-login"] }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/refresh-token", "host": ["{{base_url}}"], "path": ["refresh-token"] }
+          }
+        },
+        {
+          "name": "Get Me (Profile)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/me", "host": ["{{base_url}}"], "path": ["me"] }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"+966500000000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/update-profile", "host": ["{{base_url}}"], "path": ["update-profile"] }
+          }
+        },
+        {
+          "name": "Update Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"password123\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/update-password", "host": ["{{base_url}}"], "path": ["update-password"] }
+          }
+        },
+        {
+          "name": "Delete Profile",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/delete-profile", "host": ["{{base_url}}"], "path": ["delete-profile"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/logout", "host": ["{{base_url}}"], "path": ["logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 User Role",
+      "item": [
+        {
+          "name": "Dashboard Home Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/dashboard-data/home", "host": ["{{base_url}}"], "path": ["dashboard-data", "home"] }
+          }
+        },
+        {
+          "name": "My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/my-notifications", "host": ["{{base_url}}"], "path": ["my-notifications"] }
+          }
+        },
+        {
+          "name": "Mark Notifications as Read",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/my-notifications/mark-as-read", "host": ["{{base_url}}"], "path": ["my-notifications", "mark-as-read"] }
+          }
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/my-notifications-delete/1", "host": ["{{base_url}}"], "path": ["my-notifications-delete", "1"] }
+          }
+        },
+        {
+          "name": "Delete All Notifications",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/my-notifications-delete-all", "host": ["{{base_url}}"], "path": ["my-notifications-delete-all"] }
+          }
+        },
+        {
+          "name": "My Courses",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/my-courses", "host": ["{{base_url}}"], "path": ["my-courses"] }
+          }
+        },
+        {
+          "name": "Buy Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/1/buy", "host": ["{{base_url}}"], "path": ["courses", "1", "buy"] }
+          }
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100,\n  \"currency\": \"SAR\",\n  \"description\": \"Course payment\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/payments", "host": ["{{base_url}}"], "path": ["payments"] }
+          }
+        },
+        {
+          "name": "List Payments",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{user_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/payments", "host": ["{{base_url}}"], "path": ["payments"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔬 Researcher Role",
+      "item": [
+        {
+          "name": "Dashboard Overview",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/dashboard/overview", "host": ["{{base_url}}"], "path": ["researcher", "dashboard", "overview"] }
+          }
+        },
+        {
+          "name": "List Opportunity Applications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/opportunity-applications", "host": ["{{base_url}}"], "path": ["researcher", "opportunity-applications"] }
+          }
+        },
+        {
+          "name": "Apply for Opportunity",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"opportunity_id\": 1,\n  \"cover_letter\": \"I am interested in this research opportunity.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/researcher/opportunity-applications", "host": ["{{base_url}}"], "path": ["researcher", "opportunity-applications"] }
+          }
+        },
+        {
+          "name": "Show Application",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/opportunity-applications/1", "host": ["{{base_url}}"], "path": ["researcher", "opportunity-applications", "1"] }
+          }
+        },
+        {
+          "name": "Update Application",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cover_letter\": \"Updated cover letter.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/researcher/opportunity-applications/1", "host": ["{{base_url}}"], "path": ["researcher", "opportunity-applications", "1"] }
+          }
+        },
+        {
+          "name": "Delete Application",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/opportunity-applications/1", "host": ["{{base_url}}"], "path": ["researcher", "opportunity-applications", "1"] }
+          }
+        },
+        {
+          "name": "My Favourites",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/favourites", "host": ["{{base_url}}"], "path": ["researcher", "favourites"] }
+          }
+        },
+        {
+          "name": "Add Favourite",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"opportunity_id\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/researcher/favourites", "host": ["{{base_url}}"], "path": ["researcher", "favourites"] }
+          }
+        },
+        {
+          "name": "Remove Favourite",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/favourites/1", "host": ["{{base_url}}"], "path": ["researcher", "favourites", "1"] }
+          }
+        },
+        {
+          "name": "My Chats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/chats", "host": ["{{base_url}}"], "path": ["researcher", "chats"] }
+          }
+        },
+        {
+          "name": "Show Chat",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/chats/1", "host": ["{{base_url}}"], "path": ["researcher", "chats", "1"] }
+          }
+        },
+        {
+          "name": "Send Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hello from researcher\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/researcher/chats/1/messages", "host": ["{{base_url}}"], "path": ["researcher", "chats", "1", "messages"] }
+          }
+        },
+        {
+          "name": "My Assigned Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/tasks", "host": ["{{base_url}}"], "path": ["researcher", "tasks"] }
+          }
+        },
+        {
+          "name": "Submit Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task_id\": 1,\n  \"content_text\": \"My research submission content here...\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/researcher/submissions", "host": ["{{base_url}}"], "path": ["researcher", "submissions"] }
+          }
+        },
+        {
+          "name": "Get Submission Feedback",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{researcher_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/researcher/submissions/1/feedback", "host": ["{{base_url}}"], "path": ["researcher", "submissions", "1", "feedback"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧑‍🏫 Mentor Role",
+      "item": [
+        {
+          "name": "Dashboard Overview",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/dashboard/overview", "host": ["{{base_url}}"], "path": ["mentor", "dashboard", "overview"] }
+          }
+        },
+        {
+          "name": "List Research Ideas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/research-ideas", "host": ["{{base_url}}"], "path": ["mentor", "research-ideas"] }
+          }
+        },
+        {
+          "name": "Create Research Idea",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"AI in Healthcare\",\n  \"description\": \"Research idea about AI applications in healthcare.\",\n  \"field\": \"Technology\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/mentor/research-ideas", "host": ["{{base_url}}"], "path": ["mentor", "research-ideas"] }
+          }
+        },
+        {
+          "name": "Show Research Idea",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/research-ideas/1", "host": ["{{base_url}}"], "path": ["mentor", "research-ideas", "1"] }
+          }
+        },
+        {
+          "name": "Update Research Idea",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Research Title\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/mentor/research-ideas/1", "host": ["{{base_url}}"], "path": ["mentor", "research-ideas", "1"] }
+          }
+        },
+        {
+          "name": "Submit Submission Proof",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "proof_file", "type": "file", "src": "" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/mentor/research-ideas/1/submission-proof", "host": ["{{base_url}}"], "path": ["mentor", "research-ideas", "1", "submission-proof"] }
+          }
+        },
+        {
+          "name": "My Chats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/chats", "host": ["{{base_url}}"], "path": ["mentor", "chats"] }
+          }
+        },
+        {
+          "name": "Show Chat",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/chats/1", "host": ["{{base_url}}"], "path": ["mentor", "chats", "1"] }
+          }
+        },
+        {
+          "name": "Send Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hello from mentor\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/mentor/chats/1/messages", "host": ["{{base_url}}"], "path": ["mentor", "chats", "1", "messages"] }
+          }
+        },
+        {
+          "name": "List Rubrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/rubrics", "host": ["{{base_url}}"], "path": ["mentor", "rubrics"] }
+          }
+        },
+        {
+          "name": "Create Rubric",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Research Quality Rubric\",\n  \"description\": \"Rubric for evaluating research quality\",\n  \"criteria\": [\n    { \"name\": \"Clarity\", \"max_score\": 25, \"description\": \"Clarity of writing\" },\n    { \"name\": \"Methodology\", \"max_score\": 25, \"description\": \"Research methodology\" },\n    { \"name\": \"Analysis\", \"max_score\": 25, \"description\": \"Data analysis\" },\n    { \"name\": \"Conclusion\", \"max_score\": 25, \"description\": \"Conclusions drawn\" }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/mentor/rubrics", "host": ["{{base_url}}"], "path": ["mentor", "rubrics"] }
+          }
+        },
+        {
+          "name": "Show Rubric",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/rubrics/1", "host": ["{{base_url}}"], "path": ["mentor", "rubrics", "1"] }
+          }
+        },
+        {
+          "name": "Update Rubric",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Rubric Title\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/mentor/rubrics/1", "host": ["{{base_url}}"], "path": ["mentor", "rubrics", "1"] }
+          }
+        },
+        {
+          "name": "Delete Rubric",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/rubrics/1", "host": ["{{base_url}}"], "path": ["mentor", "rubrics", "1"] }
+          }
+        },
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/tasks", "host": ["{{base_url}}"], "path": ["mentor", "tasks"] }
+          }
+        },
+        {
+          "name": "Create Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Research Methodology Task\",\n  \"description\": \"Write a research methodology section.\",\n  \"rubric_id\": 1,\n  \"deadline\": \"2026-08-31\",\n  \"video_url\": null\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/mentor/tasks", "host": ["{{base_url}}"], "path": ["mentor", "tasks"] }
+          }
+        },
+        {
+          "name": "Show Task",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/tasks/1", "host": ["{{base_url}}"], "path": ["mentor", "tasks", "1"] }
+          }
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Task Title\",\n  \"deadline\": \"2026-09-30\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/mentor/tasks/1", "host": ["{{base_url}}"], "path": ["mentor", "tasks", "1"] }
+          }
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/tasks/1", "host": ["{{base_url}}"], "path": ["mentor", "tasks", "1"] }
+          }
+        },
+        {
+          "name": "List Submissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/submissions", "host": ["{{base_url}}"], "path": ["mentor", "submissions"] }
+          }
+        },
+        {
+          "name": "Show Submission Feedback",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/submissions/1/feedback", "host": ["{{base_url}}"], "path": ["mentor", "submissions", "1", "feedback"] }
+          }
+        },
+        {
+          "name": "Approve Feedback",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/feedback/1/approve", "host": ["{{base_url}}"], "path": ["mentor", "feedback", "1", "approve"] }
+          }
+        },
+        {
+          "name": "Reject Feedback",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/feedback/1/reject", "host": ["{{base_url}}"], "path": ["mentor", "feedback", "1", "reject"] }
+          }
+        },
+        {
+          "name": "Group Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{mentor_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/mentor/analytics/group/1", "host": ["{{base_url}}"], "path": ["mentor", "analytics", "group", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🗂️ Coordinator Role",
+      "item": [
+        {
+          "name": "Dashboard Overview",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/dashboard/overview", "host": ["{{base_url}}"], "path": ["coordinator", "dashboard", "overview"] }
+          }
+        },
+        {
+          "name": "List Opportunities",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/opportunities", "host": ["{{base_url}}"], "path": ["coordinator", "opportunities"] }
+          }
+        },
+        {
+          "name": "Show Opportunity",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/opportunities/1", "host": ["{{base_url}}"], "path": ["coordinator", "opportunities", "1"] }
+          }
+        },
+        {
+          "name": "List Applications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/opportunity-applications", "host": ["{{base_url}}"], "path": ["coordinator", "opportunity-applications"] }
+          }
+        },
+        {
+          "name": "Show Application",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/opportunity-applications/1", "host": ["{{base_url}}"], "path": ["coordinator", "opportunity-applications", "1"] }
+          }
+        },
+        {
+          "name": "My Chats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/chats", "host": ["{{base_url}}"], "path": ["coordinator", "chats"] }
+          }
+        },
+        {
+          "name": "Show Chat",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/chats/1", "host": ["{{base_url}}"], "path": ["coordinator", "chats", "1"] }
+          }
+        },
+        {
+          "name": "Send Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Hello from coordinator\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/coordinator/chats/1/messages", "host": ["{{base_url}}"], "path": ["coordinator", "chats", "1", "messages"] }
+          }
+        },
+        {
+          "name": "List Publications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/publications", "host": ["{{base_url}}"], "path": ["coordinator", "publications"] }
+          }
+        },
+        {
+          "name": "Show Publication",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/publications/1", "host": ["{{base_url}}"], "path": ["coordinator", "publications", "1"] }
+          }
+        },
+        {
+          "name": "List Rubrics (System)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/rubrics", "host": ["{{base_url}}"], "path": ["coordinator", "rubrics"] }
+          }
+        },
+        {
+          "name": "Create Rubric (System)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"System-wide Rubric\",\n  \"description\": \"Global evaluation rubric\",\n  \"is_global\": true,\n  \"criteria\": [\n    { \"name\": \"Quality\", \"max_score\": 50, \"description\": \"Overall quality\" },\n    { \"name\": \"Impact\", \"max_score\": 50, \"description\": \"Research impact\" }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/coordinator/rubrics", "host": ["{{base_url}}"], "path": ["coordinator", "rubrics"] }
+          }
+        },
+        {
+          "name": "List Groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/groups", "host": ["{{base_url}}"], "path": ["coordinator", "groups"] }
+          }
+        },
+        {
+          "name": "List Tasks (System)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/tasks", "host": ["{{base_url}}"], "path": ["coordinator", "tasks"] }
+          }
+        },
+        {
+          "name": "Group Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/analytics/group/1", "host": ["{{base_url}}"], "path": ["coordinator", "analytics", "group", "1"] }
+          }
+        },
+        {
+          "name": "Export Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/coordinator/analytics/export", "host": ["{{base_url}}"], "path": ["coordinator", "analytics", "export"] }
+          }
+        },
+        {
+          "name": "Update N8N Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{coordinator_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"n8n_webhook_url\": \"https://svasyndicate.app.n8n.cloud/webhook/ai-assessment-trigger\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/coordinator/settings/n8n", "host": ["{{base_url}}"], "path": ["coordinator", "settings", "n8n"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🌐 Public Routes",
+      "item": [
+        {
+          "name": "List Opportunities",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/opportunities", "host": ["{{base_url}}"], "path": ["opportunities"] }
+          }
+        },
+        {
+          "name": "Show Opportunity",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/opportunities/1", "host": ["{{base_url}}"], "path": ["opportunities", "1"] }
+          }
+        },
+        {
+          "name": "Opportunity Mentors",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/opportunities/mentors/1", "host": ["{{base_url}}"], "path": ["opportunities", "mentors", "1"] }
+          }
+        },
+        {
+          "name": "Filter Opportunities",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"field\": \"Technology\",\n  \"location\": \"Saudi Arabia\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/opportunities/fillter-list", "host": ["{{base_url}}"], "path": ["opportunities", "fillter-list"] }
+          }
+        },
+        {
+          "name": "List Courses",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/courses", "host": ["{{base_url}}"], "path": ["courses"] }
+          }
+        },
+        {
+          "name": "Show Course",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/courses/1", "host": ["{{base_url}}"], "path": ["courses", "1"] }
+          }
+        },
+        {
+          "name": "List Publications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/publications", "host": ["{{base_url}}"], "path": ["publications"] }
+          }
+        },
+        {
+          "name": "List Services",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/services", "host": ["{{base_url}}"], "path": ["services"] }
+          }
+        },
+        {
+          "name": "List Offers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/offers", "host": ["{{base_url}}"], "path": ["offers"] }
+          }
+        },
+        {
+          "name": "List FAQs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/faqs", "host": ["{{base_url}}"], "path": ["faqs"] }
+          }
+        },
+        {
+          "name": "FAQ Categories",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/faqs-categories", "host": ["{{base_url}}"], "path": ["faqs-categories"] }
+          }
+        },
+        {
+          "name": "Partnership Request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Partner\",\n  \"email\": \"partner@test.com\",\n  \"organization\": \"Test Org\",\n  \"message\": \"We want to partner.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/partnership-requests", "host": ["{{base_url}}"], "path": ["partnership-requests"] }
+          }
+        },
+        {
+          "name": "Subscribe Newsletter",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"subscriber@test.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/newsletter/subscribe", "host": ["{{base_url}}"], "path": ["newsletter", "subscribe"] }
+          }
+        },
+        {
+          "name": "Contact Support",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"user@test.com\",\n  \"message\": \"I need help.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/contact-support-message/sent", "host": ["{{base_url}}"], "path": ["contact-support-message", "sent"] }
+          }
+        },
+        {
+          "name": "Get Social Links",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/social-links", "host": ["{{base_url}}"], "path": ["social-links"] }
+          }
+        },
+        {
+          "name": "System Info",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/system-info", "host": ["{{base_url}}"], "path": ["system-info"] }
+          }
+        },
+        {
+          "name": "Calendly Schedule Link",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/calendly/schedule-link", "host": ["{{base_url}}"], "path": ["calendly", "schedule-link"] }
+          }
+        },
+        {
+          "name": "CMS - Home Hero Section",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/cms/home-page/hero-section", "host": ["{{base_url}}"], "path": ["cms", "home-page", "hero-section"] }
+          }
+        },
+        {
+          "name": "CMS - Home Counter Section",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/cms/home-page/counter-section", "host": ["{{base_url}}"], "path": ["cms", "home-page", "counter-section"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🤖 N8N Internal Webhooks",
+      "item": [
+        {
+          "name": "Get Task",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/n8n/tasks/1", "host": ["{{base_url}}"], "path": ["n8n", "tasks", "1"] }
+          }
+        },
+        {
+          "name": "Get Task Rubric",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/n8n/tasks/1/rubric", "host": ["{{base_url}}"], "path": ["n8n", "tasks", "1", "rubric"] }
+          }
+        },
+        {
+          "name": "Get Group Researchers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/n8n/groups/1/researchers", "host": ["{{base_url}}"], "path": ["n8n", "groups", "1", "researchers"] }
+          }
+        },
+        {
+          "name": "Get Submission",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/n8n/submissions/3", "host": ["{{base_url}}"], "path": ["n8n", "submissions", "3"] }
+          }
+        },
+        {
+          "name": "Save AI Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"submission_id\": 3,\n  \"text\": \"{\\\"overall_score\\\": 75, \\\"general_feedback\\\": \\\"Good work.\\\", \\\"flagged_issues\\\": [], \\\"edited_excerpt\\\": \\\"Improved.\\\", \\\"rubric_scores\\\": [{\\\"criterion\\\": \\\"Clarity\\\", \\\"score\\\": 20, \\\"max_score\\\": 25, \\\"comment\\\": \\\"Clear.\\\"}]}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/n8n/ai-feedback", "host": ["{{base_url}}"], "path": ["n8n", "ai-feedback"] }
+          }
+        },
+        {
+          "name": "Record Task Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task_id\": 1,\n  \"researcher_id\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{base_url}}/n8n/task-assignments", "host": ["{{base_url}}"], "path": ["n8n", "task-assignments"] }
+          }
+        }
+      ]
+    }
+  ]
+}
