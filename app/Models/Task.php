@@ -25,8 +25,28 @@ class Task extends Model
     public function getDocumentPathAttribute($value)
     {
         if (empty($value)) return $value;
-        if (filter_var($value, FILTER_VALIDATE_URL)) return $value;
-        if (str_starts_with($value, 'storage/')) return asset($value);
+        
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            if (str_contains($value, 'storage/uploads/')) {
+                return str_replace('storage/uploads/', 'uploads/', $value);
+            }
+            return $value;
+        }
+
+        $value = ltrim($value, '/');
+        
+        if (str_starts_with($value, 'storage/uploads/')) {
+            $value = str_replace('storage/uploads/', 'uploads/', $value);
+        }
+
+        if (str_starts_with($value, 'uploads/')) {
+            return asset($value);
+        }
+        
+        if (str_starts_with($value, 'storage/')) {
+            return asset($value);
+        }
+        
         return asset('storage/' . $value);
     }
 
@@ -49,4 +69,5 @@ class Task extends Model
     {
         return $this->hasMany(TaskAssignment::class);
     }
+
 }

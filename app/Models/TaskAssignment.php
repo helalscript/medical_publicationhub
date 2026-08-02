@@ -13,7 +13,7 @@ class TaskAssignment extends Model
         'is_notified',
     ];
 
-    protected $appends = ['title', 'deadline', 'description', 'video_url'];
+    protected $appends = ['title', 'deadline', 'description', 'video_url', 'document_path', 'document_name'];
 
     protected $casts = [
         'is_notified' => 'boolean',
@@ -37,6 +37,16 @@ class TaskAssignment extends Model
     public function getVideoUrlAttribute()
     {
         return $this->task?->video_url;
+    }
+
+    public function getDocumentPathAttribute()
+    {
+        return $this->task?->document_path;
+    }
+
+    public function getDocumentNameAttribute()
+    {
+        return $this->task?->document_name;
     }
 
     public function task()
