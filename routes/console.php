@@ -5,6 +5,10 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\Message;
 use App\Events\MessageSent;
+use App\Jobs\GenerateAndSendInvoicesJob;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::job(new GenerateAndSendInvoicesJob)->everyFifteenMinutes();
 
 // Artisan::command('inspire', function () {
 //     $this->comment(Inspiring::quote());

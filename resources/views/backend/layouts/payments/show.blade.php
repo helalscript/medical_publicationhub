@@ -47,6 +47,19 @@
                     </div>
                 </div>
 
+                @if($data->status === 'paid')
+                    <hr class="my-4">
+                    <div>
+                        <h6 class="mb-3 text-muted">Invoice Actions</h6>
+                        <a href="{{ route('admin.payments.invoice.view', $data->id) }}" target="_blank" class="btn btn-primary me-2">
+                            View Invoice
+                        </a>
+                        <a href="{{ route('admin.payments.invoice.download', $data->id) }}" target="_blank" class="btn btn-outline-primary">
+                            Print / Download PDF
+                        </a>
+                    </div>
+                @endif
+
                 <hr class="my-4">
 
                 @can('admin.payments.status')

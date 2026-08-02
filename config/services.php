@@ -53,4 +53,7 @@ return [
         'secret' => env('MOYASAR_SECRET_KEY'),
         'webhook_secret' => env('MOYASAR_WEBHOOK_SECRET'),
     ],
+    'n8n' => [
+        'ai_assessment_webhook' => env('N8N_AI_ASSESSMENT_WEBHOOK_URL'),
+    ],
 ];

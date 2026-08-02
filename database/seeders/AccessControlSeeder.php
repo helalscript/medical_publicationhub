@@ -110,6 +110,9 @@ class AccessControlSeeder extends Seeder
         $crud('Courses', 'admin.courses', true);
         $add('Courses', 'admin.courses.status');
 
+        // ===================== Rubrics =====================
+        $crud('Rubrics', 'admin.rubrics', true);
+
         // Modules (show = detail + media preview)
         $crud('Modules', 'admin.modules', false);
         $add('Modules', 'admin.modules.show');
@@ -349,6 +352,8 @@ class AccessControlSeeder extends Seeder
             'admin.dashboard',
             'admin.courses.index',
             'admin.courses.show',
+            'admin.rubrics.index',
+            'admin.rubrics.show',
             'admin.modules.index',
             'admin.modules.show',
             'admin.lessons.index',

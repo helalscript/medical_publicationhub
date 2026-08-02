@@ -25,6 +25,6 @@ class Submission extends Model
 
     public function aiFeedback()
     {
-        return $this->hasOne(AiFeedback::class);
+        return $this->hasOne(AiFeedback::class, 'submission_id');
     }
 }

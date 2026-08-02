@@ -36,4 +36,9 @@ class Payment extends Model
     {
         return $this->morphTo();
     }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
 }

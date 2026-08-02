@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AiFeedback extends Model
 {
+    protected $table = 'ai_feedback';
+
     protected $fillable = [
         'submission_id',
         'overall_score',

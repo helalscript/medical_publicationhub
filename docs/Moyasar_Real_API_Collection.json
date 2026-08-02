@@ -1,0 +1,627 @@
+{
+  "info": {
+    "_postman_id": "moyasar-publication-hub-real",
+    "name": "Moyasar Payment — Real API Test",
+    "description": "⚠️ এই collection দিয়ে REAL data database-এ যাবে।\n\n📋 Setup Steps:\n1. base_url → আপনার server URL দিন (যেমন http://localhost:8000)\n2. প্রথমে 'Login' request run করুন → token auto-save হবে\n3. course_id ও service_id → আপনার database-এর actual ID দিন\n4. amount → EXACT price দিন যা database-এ আছে\n\n🔑 Test Keys already set from .env",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string",
+      "description": "আপনার Laravel server URL"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string",
+      "description": "Login করলে auto-fill হবে"
+    },
+    {
+      "key": "publishable_key",
+      "value": "pk_test_vMEfjWUg8Di4gzkJyhNnyS9otGQWQqnXGVSeZPhM",
+      "type": "string"
+    },
+    {
+      "key": "secret_key",
+      "value": "sk_test_NiXgjLtPu7ufb1Bvc46QwXkSGA4wJA3Kxb2BsWGj",
+      "type": "string"
+    },
+    {
+      "key": "webhook_secret",
+      "value": "",
+      "type": "string",
+      "description": ".env এর MOYASAR_WEBHOOK_SECRET"
+    },
+    {
+      "key": "course_id",
+      "value": "1",
+      "type": "string",
+      "description": "Database-এর actual course ID"
+    },
+    {
+      "key": "course_price",
+      "value": "150.00",
+      "type": "string",
+      "description": "Database-এর actual course price (EXACT match করতে হবে)"
+    },
+    {
+      "key": "service_id",
+      "value": "1",
+      "type": "string",
+      "description": "Database-এর actual service ID"
+    },
+    {
+      "key": "service_price",
+      "value": "200.00",
+      "type": "string",
+      "description": "Database-এর actual service starting_price (EXACT match করতে হবে)"
+    },
+    {
+      "key": "payment_gateway_id",
+      "value": "",
+      "type": "string",
+      "description": "Create Payment করলে auto-fill হবে"
+    },
+    {
+      "key": "webhook_signature",
+      "value": "",
+      "type": "string",
+      "description": "Pre-request script এ auto-generate হবে"
+    }
+  ],
+  "item": [
+    {
+      "name": "STEP 1 — 🔐 Login (Token নিন)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "",
+              "// Try different token field names",
+              "var token = null;",
+              "if (json.token) token = json.token;",
+              "else if (json.data && json.data.token) token = json.data.token;",
+              "else if (json.access_token) token = json.access_token;",
+              "",
+              "if (token) {",
+              "    pm.collectionVariables.set('auth_token', token);",
+              "    pm.test('✅ Login সফল — Token saved!', function () {",
+              "        pm.expect(token).to.be.a('string');",
+              "    });",
+              "    console.log('Token saved:', token.substring(0, 30) + '...');",
+              "} else {",
+              "    pm.test('❌ Token পাওয়া যায়নি — response দেখুন', function () {",
+              "        pm.expect(json).to.have.property('token');",
+              "    });",
+              "    console.log('Full response:', JSON.stringify(json));",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"your_email@example.com\",\n  \"password\": \"your_password\"\n}",
+          "options": {
+            "raw": { "language": "json" }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "login"]
+        },
+        "description": "⚠️ email ও password পরিবর্তন করুন আপনার actual credentials দিয়ে।\nSuccess হলে auth_token automatically save হবে।\n\nUser role হতে হবে: researcher বা user (researcher preferred)"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 2 — 📋 আমার Payments দেখুন (DB check)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✅ Status 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('✅ status: true আছে', function () {",
+              "    var json = pm.response.json();",
+              "    pm.expect(json.status).to.be.true;",
+              "});",
+              "var json = pm.response.json();",
+              "var total = (json.data && json.data.total) ? json.data.total : 'unknown';",
+              "console.log('Total payments in DB:', total);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payments?per_page=10",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments"],
+          "query": [
+            { "key": "per_page", "value": "10", "description": "প্রতি page-এ কতটা দেখাবে" }
+          ]
+        },
+        "description": "আপনার সব payments database থেকে দেখাবে।\nAuth: Bearer Token (Step 1 থেকে auto-fill)"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 3A — 💳 Course Payment তৈরি করুন (Real DB Insert)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// course_price variable থেকে নিচ্ছে",
+              "// আগে database থেকে exact price দেখে নিন",
+              "console.log('Course ID:', pm.collectionVariables.get('course_id'));",
+              "console.log('Amount:', pm.collectionVariables.get('course_price'));"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✅ Status 201 — Payment Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "",
+              "pm.test('✅ status: true আছে', function () {",
+              "    pm.expect(json.status).to.be.true;",
+              "});",
+              "",
+              "if (json.data && json.data.payment && json.data.payment.payment_gateway_id) {",
+              "    var payId = json.data.payment.payment_gateway_id;",
+              "    pm.collectionVariables.set('payment_gateway_id', payId);",
+              "    pm.test('✅ Payment Gateway ID saved: ' + payId, function () {",
+              "        pm.expect(payId).to.be.a('string');",
+              "    });",
+              "    console.log('✅ payment_gateway_id saved:', payId);",
+              "} else if (json.data && json.data.moyasar_payment && json.data.moyasar_payment.id) {",
+              "    var payId = json.data.moyasar_payment.id;",
+              "    pm.collectionVariables.set('payment_gateway_id', payId);",
+              "    console.log('✅ payment_gateway_id (from moyasar) saved:', payId);",
+              "}",
+              "",
+              "// Check 3DS redirect",
+              "if (json.data && json.data.moyasar_payment && json.data.moyasar_payment.source) {",
+              "    var txUrl = json.data.moyasar_payment.source.transaction_url;",
+              "    if (txUrl) {",
+              "        console.log('🔗 3DS URL (browser-এ open করুন):', txUrl);",
+              "    }",
+              "}",
+              "",
+              "console.log('Full Response:', JSON.stringify(json, null, 2));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payable_type\": \"course\",\n  \"payable_id\": {{course_id}},\n  \"amount\": {{course_price}},\n  \"currency\": \"SAR\",\n  \"description\": \"Course Purchase — Test from Postman\",\n  \"callback_url\": \"https://publicationhub.co/payment/callback\",\n  \"source\": {\n    \"type\": \"creditcard\",\n    \"name\": \"John Doe\",\n    \"number\": \"4111111111111111\",\n    \"cvc\": \"123\",\n    \"month\": \"12\",\n    \"year\": \"2026\"\n  }\n}",
+          "options": {
+            "raw": { "language": "json" }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/payments",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments"]
+        },
+        "description": "⚠️ IMPORTANT:\n• course_id = database-এর actual active course ID\n• amount = EXACT database price (controller price check করে)\n\n✅ Success হলে:\n• payments table-এ row insert হবে (status: pending)\n• payment_gateway_id auto-save হবে\n• Moyasar 3DS URL পাবেন (console-এ দেখুন)\n\n💳 Test Card:\n• Number: 4111111111111111\n• CVV: 123\n• Expiry: 12/2026"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 3B — 🛎️ Service Payment তৈরি করুন (Real DB Insert)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✅ Status 201 — Payment Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('✅ status: true আছে', function () {",
+              "    pm.expect(json.status).to.be.true;",
+              "});",
+              "",
+              "if (json.data && json.data.payment && json.data.payment.payment_gateway_id) {",
+              "    var payId = json.data.payment.payment_gateway_id;",
+              "    pm.collectionVariables.set('payment_gateway_id', payId);",
+              "    console.log('✅ payment_gateway_id saved:', payId);",
+              "}",
+              "",
+              "console.log('Full Response:', JSON.stringify(json, null, 2));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payable_type\": \"service\",\n  \"payable_id\": {{service_id}},\n  \"amount\": {{service_price}},\n  \"currency\": \"SAR\",\n  \"description\": \"Service Purchase — Test from Postman\",\n  \"callback_url\": \"https://publicationhub.co/payment/callback\",\n  \"source\": {\n    \"type\": \"creditcard\",\n    \"name\": \"John Doe\",\n    \"number\": \"4111111111111111\",\n    \"cvc\": \"123\",\n    \"month\": \"12\",\n    \"year\": \"2026\"\n  }\n}",
+          "options": {
+            "raw": { "language": "json" }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/payments",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments"]
+        },
+        "description": "⚠️ IMPORTANT:\n• service_id = database-এর actual active service ID\n• amount = EXACT database starting_price\n\n✅ Success হলে payments table-এ row insert হবে"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 4 — 🔍 Single Payment Details দেখুন",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✅ Status 200', function () { pm.response.to.have.status(200); });",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('✅ local_payment আছে', function () {",
+              "    pm.expect(json.data).to.have.property('local_payment');",
+              "});",
+              "pm.test('✅ moyasar_payment আছে', function () {",
+              "    pm.expect(json.data).to.have.property('moyasar_payment');",
+              "});",
+              "",
+              "if (json.data && json.data.moyasar_payment) {",
+              "    console.log('Moyasar Status:', json.data.moyasar_payment.status);",
+              "    console.log('Local DB Status:', json.data.local_payment ? json.data.local_payment.status : 'N/A');",
+              "}",
+              "",
+              "console.log('Full Response:', JSON.stringify(json, null, 2));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payments/{{payment_gateway_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments", "{{payment_gateway_id}}"]
+        },
+        "description": "Step 3 থেকে payment_gateway_id auto-fill হয়।\nDB + Moyasar দুটো থেকেই data দেখাবে।\nMoyasar status: initiated / paid / failed"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 5 — ✅ Payment Manually Verify করুন (DB Update)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✅ Status 200', function () { pm.response.to.have.status(200); });",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('✅ status: true আছে', function () {",
+              "    pm.expect(json.status).to.be.true;",
+              "});",
+              "",
+              "if (json.data && json.data.payment) {",
+              "    console.log('Payment Status after verify:', json.data.payment.status);",
+              "    if (json.data.payment.status === 'paid') {",
+              "        console.log('✅ Payment PAID! Course/Service access granted in DB.');",
+              "    } else {",
+              "        console.log('⚠️ Payment status:', json.data.payment.status, '— Moyasar এ এখনো paid হয়নি।');",
+              "    }",
+              "}",
+              "",
+              "console.log('Full Response:', JSON.stringify(json, null, 2));"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": { "language": "json" }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/payments/{{payment_gateway_id}}/verify",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments", "{{payment_gateway_id}}", "verify"]
+        },
+        "description": "Moyasar থেকে payment status check করে DB update করে।\n\n✅ Moyasar-এ paid হলে:\n• payments table → status: paid হবে\n• user_course_access বা service access create হবে\n\n⚠️ Test mode-এ Moyasar সব payment 'initiated' রাখে।\n   Step 6 (Webhook) দিয়ে force paid করতে পারবেন।"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 6 — 🔔 Webhook Simulate (Force Paid → DB Update)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Exact payload build করতে হবে — JSON.stringify এর order matter করে",
+              "var paymentId = pm.collectionVariables.get('payment_gateway_id');",
+              "var secret = pm.collectionVariables.get('webhook_secret');",
+              "",
+              "if (!paymentId || paymentId === '') {",
+              "    console.error('❌ payment_gateway_id empty! Step 3 আগে run করুন।');",
+              "}",
+              "",
+              "if (!secret || secret === '') {",
+              "    console.warn('⚠️ webhook_secret empty! .env এর MOYASAR_WEBHOOK_SECRET দিন।');",
+              "}",
+              "",
+              "var payload = JSON.stringify({",
+              "    id: 'evt_postman_' + Date.now(),",
+              "    type: 'payment.paid',",
+              "    data: {",
+              "        id: paymentId,",
+              "        status: 'paid',",
+              "        amount: 15000,",
+              "        currency: 'SAR'",
+              "    }",
+              "});",
+              "",
+              "pm.collectionVariables.set('_webhook_payload_temp', payload);",
+              "",
+              "// HMAC-SHA256 signature generate",
+              "var signature = CryptoJS.HmacSHA256(payload, secret).toString(CryptoJS.enc.Hex);",
+              "pm.collectionVariables.set('webhook_signature', signature);",
+              "",
+              "console.log('Payment ID:', paymentId);",
+              "console.log('Payload:', payload);",
+              "console.log('Signature:', signature);"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✅ Webhook received (200)', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('✅ status: success আছে', function () {",
+              "    pm.expect(json.status).to.equal('success');",
+              "});",
+              "",
+              "console.log('Webhook Response:', JSON.stringify(json, null, 2));",
+              "console.log('✅ DB-তে payment status paid হওয়া উচিত। Step 4 দিয়ে verify করুন।');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json" },
+          {
+            "key": "x-moyasar-signature",
+            "value": "{{webhook_signature}}",
+            "description": "Pre-request script এ auto-generate হয়"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": \"evt_postman_test_001\",\n  \"type\": \"payment.paid\",\n  \"data\": {\n    \"id\": \"{{payment_gateway_id}}\",\n    \"status\": \"paid\",\n    \"amount\": 15000,\n    \"currency\": \"SAR\"\n  }\n}",
+          "options": {
+            "raw": { "language": "json" }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/payments/webhook/moyasar",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments", "webhook", "moyasar"]
+        },
+        "description": "⚠️ IMPORTANT — এই request-এ No Auth লাগে (Moyasar directly call করে).\n\n🔑 Pre-request script automatically করে:\n  • HMAC-SHA256 signature generate\n  • x-moyasar-signature header set\n\n✅ Success হলে DB-তে:\n  • payments.status → 'paid'\n  • user_course_access তৈরি হবে (course হলে)\n\n⚠️ webhook_secret collection variable-এ .env এর MOYASAR_WEBHOOK_SECRET দিতে হবে।\n   খালি থাকলে signature mismatch হবে।"
+      },
+      "response": []
+    },
+    {
+      "name": "STEP 7 — 🔍 DB Check — Payment List (After Verify)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✅ Status 200', function () { pm.response.to.have.status(200); });",
+              "var json = pm.response.json();",
+              "if (json.data && json.data.data) {",
+              "    json.data.data.forEach(function(p) {",
+              "        console.log('Payment:', p.payment_gateway_id, '| Status:', p.status, '| Amount:', p.amount);",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payments?per_page=20",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments"],
+          "query": [
+            { "key": "per_page", "value": "20" }
+          ]
+        },
+        "description": "Webhook / Verify এর পরে DB-তে status change হয়েছে কিনা দেখুন।\nConsole-এ সব payment-এর status দেখা যাবে।"
+      },
+      "response": []
+    },
+    {
+      "name": "— — — EXTRA — — —",
+      "item": [
+        {
+          "name": "❌ Validation Error Test (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('✅ 422 Validation Error', function () { pm.response.to.have.status(422); });",
+                  "var json = pm.response.json();",
+                  "console.log('Validation errors:', JSON.stringify(json.errors, null, 2));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments"]
+            },
+            "description": "Empty body পাঠাচ্ছি — validation error আসা উচিত।"
+          }
+        },
+        {
+          "name": "❌ Unauthorized Test (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('✅ 401 Unauthorized', function () { pm.response.to.have.status(401); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payable_type\": \"course\",\n  \"payable_id\": 1,\n  \"amount\": 100,\n  \"currency\": \"SAR\",\n  \"description\": \"Test\",\n  \"callback_url\": \"https://example.com\",\n  \"source\": { \"type\": \"creditcard\" }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments"]
+            },
+            "description": "Token ছাড়া request — 401 আসা উচিত।"
+          }
+        },
+        {
+          "name": "❌ Wrong Amount Test (422 — Price Mismatch)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('✅ 422 Price Mismatch Error', function () { pm.response.to.have.status(422); });",
+                  "var json = pm.response.json();",
+                  "console.log('Error:', json.message || json.error);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{auth_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payable_type\": \"course\",\n  \"payable_id\": {{course_id}},\n  \"amount\": 0.01,\n  \"currency\": \"SAR\",\n  \"description\": \"Tampered price test\",\n  \"callback_url\": \"https://publicationhub.co/callback\",\n  \"source\": {\n    \"type\": \"creditcard\",\n    \"name\": \"John Doe\",\n    \"number\": \"4111111111111111\",\n    \"cvc\": \"123\",\n    \"month\": \"12\",\n    \"year\": \"2026\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments"]
+            },
+            "description": "Amount: 0.01 দিচ্ছি — controller price mismatch detect করে 422 দেবে।\nএটা security check test।"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -79,4 +79,81 @@ class PaymentController extends Controller
             return redirect()->back()->with('error', 'Payment status update failed.');
         }
     }
+
+    public function viewInvoice(int $id)
+    {
+        $payment = Payment::with(['user', 'payable', 'invoice'])->findOrFail($id);
+        
+        // If there's no invoice record but payment is paid, we generate it on-the-fly (fallback)
+        if ($payment->status === 'paid' && !$payment->invoice) {
+            $dateStr = \Carbon\Carbon::now()->format('Ymd');
+            $lastInvoice = \App\Models\Invoice::where('invoice_number', 'like', "INV-{$dateStr}-%")
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $nextSeq = 1;
+            if ($lastInvoice) {
+                $parts = explode('-', $lastInvoice->invoice_number);
+                $lastSeq = (int) end($parts);
+                $nextSeq = $lastSeq + 1;
+            }
+
+            $invoiceNumber = 'INV-' . $dateStr . '-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
+
+            $invoice = \App\Models\Invoice::create([
+                'payment_id' => $payment->id,
+                'invoice_number' => $invoiceNumber,
+                'amount' => $payment->amount,
+            ]);
+            $payment->setRelation('invoice', $invoice);
+        }
+
+        $invoice = $payment->invoice;
+        if (!$invoice) {
+            return redirect()->back()->with('error', 'No invoice available for unpaid/pending payments.');
+        }
+
+        return view('backend.layouts.payments.invoice', compact('payment', 'invoice'));
+    }
+
+    public function downloadInvoice(int $id)
+    {
+        $payment = Payment::with(['user', 'payable', 'invoice'])->findOrFail($id);
+        
+        // If there's no invoice record but payment is paid, generate it
+        if ($payment->status === 'paid' && !$payment->invoice) {
+            $dateStr = \Carbon\Carbon::now()->format('Ymd');
+            $lastInvoice = \App\Models\Invoice::where('invoice_number', 'like', "INV-{$dateStr}-%")
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $nextSeq = 1;
+            if ($lastInvoice) {
+                $parts = explode('-', $lastInvoice->invoice_number);
+                $lastSeq = (int) end($parts);
+                $nextSeq = $lastSeq + 1;
+            }
+
+            $invoiceNumber = 'INV-' . $dateStr . '-' . str_pad($nextSeq, 4, '0', STR_PAD_LEFT);
+
+            $invoice = \App\Models\Invoice::create([
+                'payment_id' => $payment->id,
+                'invoice_number' => $invoiceNumber,
+                'amount' => $payment->amount,
+            ]);
+            $payment->setRelation('invoice', $invoice);
+        }
+
+        $invoice = $payment->invoice;
+        if (!$invoice) {
+            return redirect()->back()->with('error', 'No invoice available for unpaid/pending payments.');
+        }
+
+        // Return printable invoice view with auto-print query parameter
+        return view('backend.layouts.payments.invoice', [
+            'payment' => $payment,
+            'invoice' => $invoice,
+            'autoPrint' => true
+        ]);
+    }
 }

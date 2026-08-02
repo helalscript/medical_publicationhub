@@ -35,6 +35,7 @@ use App\Http\Controllers\Web\Backend\PaymentController;
 use App\Http\Controllers\Web\Backend\ProfileController;
 use App\Http\Controllers\Web\Backend\PublicationController;
 use App\Http\Controllers\Web\Backend\ResearchIdeaAdminController;
+use App\Http\Controllers\Web\Backend\RubricController;
 use App\Http\Controllers\Web\Backend\ServiceController;
 use App\Http\Controllers\Web\Backend\SystemSettingController;
 use App\Http\Controllers\Web\Backend\UserController;
@@ -77,6 +78,15 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::put('/dynamic-page/{dynamic_page}', [DynamicPageController::class, 'update'])->name('dynamic_page.update')->middleware('permission:dynamic_page.update');
     Route::delete('/dynamic-page/{dynamic_page}', [DynamicPageController::class, 'destroy'])->name('dynamic_page.destroy')->middleware('permission:dynamic_page.destroy');
     Route::post('/dynamic-page/status/{id}', [DynamicPageController::class, 'status'])->name('dynamic_page.status')->middleware('permission:dynamic_page.status');
+
+    // Rubrics
+    Route::get('/rubrics', [RubricController::class, 'index'])->name('admin.rubrics.index')->middleware('permission:admin.rubrics.index');
+    Route::get('/rubrics/create', [RubricController::class, 'create'])->name('admin.rubrics.create')->middleware('permission:admin.rubrics.create');
+    Route::post('/rubrics', [RubricController::class, 'store'])->name('admin.rubrics.store')->middleware('permission:admin.rubrics.create');
+    Route::get('/rubrics/{id}', [RubricController::class, 'show'])->name('admin.rubrics.show')->middleware('permission:admin.rubrics.show');
+    Route::get('/rubrics/{id}/edit', [RubricController::class, 'edit'])->name('admin.rubrics.edit')->middleware('permission:admin.rubrics.edit');
+    Route::put('/rubrics/{id}', [RubricController::class, 'update'])->name('admin.rubrics.update')->middleware('permission:admin.rubrics.edit');
+    Route::delete('/rubrics/{id}', [RubricController::class, 'destroy'])->name('admin.rubrics.destroy')->middleware('permission:admin.rubrics.destroy');
 
     // Route for UserController manage client
     Route::get('/users', [UserController::class, 'index'])->name('users.index')->middleware('permission:users.index');
@@ -218,6 +228,8 @@ Route::middleware(['auth:web', 'role_check', 'sync_spatie_role'])->prefix('admin
     Route::get('/payments', [PaymentController::class, 'index'])->name('admin.payments.index')->middleware('permission:admin.payments.index');
     Route::get('/payments/{id}', [PaymentController::class, 'show'])->name('admin.payments.show')->middleware('permission:admin.payments.show');
     Route::post('/payments/{id}/status', [PaymentController::class, 'status'])->name('admin.payments.status')->middleware('permission:admin.payments.status');
+    Route::get('/payments/{id}/invoice', [PaymentController::class, 'viewInvoice'])->name('admin.payments.invoice.view')->middleware('permission:admin.payments.show');
+    Route::get('/payments/{id}/invoice/download', [PaymentController::class, 'downloadInvoice'])->name('admin.payments.invoice.download')->middleware('permission:admin.payments.show');
 
     // Publications
     Route::get('/apublications', [PublicationController::class, 'index'])->name('admin.publications.index')->middleware('permission:admin.publications.index');

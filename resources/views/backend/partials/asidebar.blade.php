@@ -30,6 +30,7 @@
                     auth()->user()?->can('admin.dashboard') ||
                     auth()->user()?->can('admin.research_ideas.index') ||
                     auth()->user()?->can('admin.publications.index') ||
+                    auth()->user()?->can('admin.rubrics.index') ||
                     auth()->user()?->can('admin.partnership_requests.index') ||
                     auth()->user()?->can('admin.services.index') ||
                     auth()->user()?->can('admin.offers.index') ||
@@ -75,6 +76,16 @@
                         class="menu-link {{ request()->routeIs('admin.publications.*') ? 'active' : '' }}">
                         <span class="material-symbols-outlined menu-icon">library_books</span>
                         <span class="title">{{ __('admin.menu.publications') }}</span>
+                    </a>
+                </li>
+            @endcan
+
+            @can('admin.rubrics.index')
+                <li class="menu-item">
+                    <a href="{{ route('admin.rubrics.index') }}"
+                        class="menu-link {{ request()->routeIs('admin.rubrics.*') ? 'active' : '' }}">
+                        <span class="material-symbols-outlined menu-icon">assignment</span>
+                        <span class="title">Rubrics</span>
                     </a>
                 </li>
             @endcan
@@ -164,11 +175,10 @@
                     auth()->user()?->can('admin.courses.index') ||
                     auth()->user()?->can('admin.modules.index') ||
                     auth()->user()?->can('admin.lessons.index') ||
-                    auth()->user()?->can('admin.course_access.index') ||
-                    auth()->user()?->can('admin.payments.index');
+                    auth()->user()?->can('admin.course_access.index');
             @endphp
             @if($canCoursesMenu)
-                <li class="menu-item {{ request()->routeIs('admin.courses.*', 'admin.modules.*', 'admin.lessons.*', 'admin.course_access.*', 'admin.payments.*') ? 'open' : '' }}">
+                <li class="menu-item {{ request()->routeIs('admin.courses.*', 'admin.modules.*', 'admin.lessons.*', 'admin.course_access.*') ? 'open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">school</span>
                         <span class="title">{{ __('admin.menu.courses') }}</span>
@@ -206,17 +216,19 @@
                                 </a>
                             </li>
                         @endcan
-                        @can('admin.payments.index')
-                            <li class="menu-item">
-                                <a href="{{ route('admin.payments.index') }}"
-                                   class="menu-link {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
-                                    {{ __('admin.menu.payments') }}
-                                </a>
-                            </li>
-                        @endcan
                     </ul>
                 </li>
             @endif
+
+            @can('admin.payments.index')
+                <li class="menu-item">
+                    <a href="{{ route('admin.payments.index') }}"
+                        class="menu-link {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
+                        <span class="material-symbols-outlined menu-icon">payments</span>
+                        <span class="title">{{ __('admin.menu.payments') }}</span>
+                    </a>
+                </li>
+            @endcan
 
             @php
                 $canAppsSection =
