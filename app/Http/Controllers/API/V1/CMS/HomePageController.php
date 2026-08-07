@@ -253,4 +253,74 @@ class HomePageController extends Controller
             return Helper::jsonErrorResponse('Something went wrong', 500);
         }
     }
+
+    // WhatsApp Review: content(title, sub_title, description), items(image only)
+    public function getWhatsappReviewSection(): JsonResponse
+    {
+        try {
+            $section = CMS::where('page', Page::HomePage)
+                ->where('section', Section::WhatsappReviewSection)
+                ->where('status', 'active')
+                ->select('id', 'title', 'sub_title', 'description')
+                ->first();
+
+            $items = CMS::where('page', Page::HomePage)
+                ->where('section', Section::WhatsappReviewSectionContent)
+                ->where('status', 'active')
+                ->select('id', 'image')
+                ->orderBy('id')
+                ->get();
+
+            $data = [
+                'content' => [
+                    'title'       => $section?->title ?? '',
+                    'sub_title'   => $section?->sub_title ?? '',
+                    'description' => $section?->description ?? '',
+                ],
+                'items' => $items,
+            ];
+            return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
+        } catch (Exception $e) {
+            Log::error("HomePageController::getWhatsappReviewSection" . $e->getMessage());
+            return Helper::jsonErrorResponse('Something went wrong', 500);
+        }
+    }
+
+    // Platform Impact: content(title, sub_title, description), items(title=number, sub_title=label, button_text=category)
+    public function getPlatformImpactSection(): JsonResponse
+    {
+        try {
+            $section = CMS::where('page', Page::HomePage)
+                ->where('section', Section::PlatformImpactSection)
+                ->where('status', 'active')
+                ->select('id', 'title', 'sub_title', 'description')
+                ->first();
+
+            $items = CMS::where('page', Page::HomePage)
+                ->where('section', Section::PlatformImpactSectionContent)
+                ->where('status', 'active')
+                ->select('id', 'title', 'sub_title', 'button_text')
+                ->orderBy('id')
+                ->get()
+                ->map(fn($item) => [
+                    'id'       => $item->id,
+                    'number'   => $item->title,
+                    'label'    => $item->sub_title,
+                    'category' => $item->button_text,
+                ]);
+
+            $data = [
+                'content' => [
+                    'title'       => $section?->title ?? '',
+                    'sub_title'   => $section?->sub_title ?? '',
+                    'description' => $section?->description ?? '',
+                ],
+                'items' => $items,
+            ];
+            return Helper::jsonResponse(true, 'Data fetched successfully', 200, $data);
+        } catch (Exception $e) {
+            Log::error("HomePageController::getPlatformImpactSection" . $e->getMessage());
+            return Helper::jsonErrorResponse('Something went wrong', 500);
+        }
+    }
 }

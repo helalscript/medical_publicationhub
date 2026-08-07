@@ -201,6 +201,14 @@ class AccessControlSeeder extends Seeder
         $add('CMS - Home Page (Review Section)', 'cms.home_page.review_section.status');
         $add('CMS - Home Page (Review Section)', 'cms.home_page.review_section.update_container');
 
+        $crud('CMS - Home Page (WhatsApp Review Section)', 'cms.home_page.whatsapp_review_section', true);
+        $add('CMS - Home Page (WhatsApp Review Section)', 'cms.home_page.whatsapp_review_section.status');
+        $add('CMS - Home Page (WhatsApp Review Section)', 'cms.home_page.whatsapp_review_section.update_container');
+
+        $crud('CMS - Home Page (Platform Impact Section)', 'cms.home_page.platform_impact_section', true);
+        $add('CMS - Home Page (Platform Impact Section)', 'cms.home_page.platform_impact_section.status');
+        $add('CMS - Home Page (Platform Impact Section)', 'cms.home_page.platform_impact_section.update_container');
+
         $add('CMS - Home Page', 'cms.home_page.meta_academy_section.create');
         $add('CMS - Home Page', 'cms.home_page.meta_academy_section.update');
         $add('CMS - Home Page', 'cms.home_page.research_journey_section.create');
