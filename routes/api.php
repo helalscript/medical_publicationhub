@@ -253,6 +253,8 @@ Route::group(['prefix' => 'cms/home-page'], function () {
     Route::get('/featured-research-opportunities-section', [HomePageController::class, 'getFeaturedResearchOpportunitiesSection']);
     Route::get('/meta-academy-section', [HomePageController::class, 'getMetaAcademySection']);
     Route::get('/review-section', [HomePageController::class, 'getReviewSection']);
+    Route::get('/whatsapp-review-section', [HomePageController::class, 'getWhatsappReviewSection']);
+    Route::get('/platform-impact-section', [HomePageController::class, 'getPlatformImpactSection']);
     Route::get('/research-journey-section', [HomePageController::class, 'getResearchJourneySection']);
     Route::get('/faq-section', [HomePageController::class, 'getFaqSection']);
 });

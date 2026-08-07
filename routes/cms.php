@@ -4,6 +4,8 @@ use App\Http\Controllers\Web\Backend\CMS\AboutusPageController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageCounterController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageReviewController;
+use App\Http\Controllers\Web\Backend\CMS\HomePageWhatsappReviewController;
+use App\Http\Controllers\Web\Backend\CMS\HomePagePlatformImpactController;
 use App\Http\Controllers\Web\Backend\CMS\HomePageWhyResearchersChooseController;
 use App\Http\Controllers\Web\Backend\CMS\FaqPageController;
 use App\Http\Controllers\Web\Backend\CMS\ResearchPageController;
@@ -36,6 +38,14 @@ Route::prefix('cms/home-page')->name('cms.home_page.')->group(function () {
     Route::resource('review-section', HomePageReviewController::class)->parameters(['review-section' => 'id'])->names('review_section')->middleware('permission:cms.home_page.review_section.index');
     Route::post('/review-section/status/{id}', [HomePageReviewController::class, 'status'])->name('review_section.status')->middleware('permission:cms.home_page.review_section.status');
     Route::post('/review-section/update-container', [HomePageReviewController::class, 'updateContainer'])->name('review_section.update_container')->middleware('permission:cms.home_page.review_section.update_container');
+
+    Route::resource('whatsapp-review-section', HomePageWhatsappReviewController::class)->parameters(['whatsapp-review-section' => 'id'])->names('whatsapp_review_section')->middleware('permission:cms.home_page.whatsapp_review_section.index');
+    Route::post('/whatsapp-review-section/status/{id}', [HomePageWhatsappReviewController::class, 'status'])->name('whatsapp_review_section.status')->middleware('permission:cms.home_page.whatsapp_review_section.status');
+    Route::post('/whatsapp-review-section/update-container', [HomePageWhatsappReviewController::class, 'updateContainer'])->name('whatsapp_review_section.update_container')->middleware('permission:cms.home_page.whatsapp_review_section.update_container');
+
+    Route::resource('platform-impact-section', HomePagePlatformImpactController::class)->parameters(['platform-impact-section' => 'id'])->names('platform_impact_section')->middleware('permission:cms.home_page.platform_impact_section.index');
+    Route::post('/platform-impact-section/status/{id}', [HomePagePlatformImpactController::class, 'status'])->name('platform_impact_section.status')->middleware('permission:cms.home_page.platform_impact_section.status');
+    Route::post('/platform-impact-section/update-container', [HomePagePlatformImpactController::class, 'updateContainer'])->name('platform_impact_section.update_container')->middleware('permission:cms.home_page.platform_impact_section.update_container');
 
     Route::get('/meta-academy-section', [HomePageController::class, 'getMetaAcademy'])->name('meta_academy_section.create')->middleware('permission:cms.home_page.meta_academy_section.create');
     Route::post('/meta-academy-section', [HomePageController::class, 'updateMetaAcademy'])->name('meta_academy_section.update')->middleware('permission:cms.home_page.meta_academy_section.update');

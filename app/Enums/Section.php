@@ -21,6 +21,10 @@ enum Section: string
     case HomeHowItWorksSectionContent = 'home_how_it_works_section_content';
     case ReviewSection = 'review_section';
     case ReviewSectionContent = 'review_section_content';
+    case WhatsappReviewSection = 'whatsapp_review_section';
+    case WhatsappReviewSectionContent = 'whatsapp_review_section_content';
+    case PlatformImpactSection = 'platform_impact_section';
+    case PlatformImpactSectionContent = 'platform_impact_section_content';
     case SpiritualJourneySection = 'spiritual_journey_section';
     case SocialLinkContainer = 'social_link_container';
 

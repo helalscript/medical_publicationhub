@@ -271,7 +271,7 @@ return $payment;
                 $opportunity = Opportunity::lockForUpdate()->findOrFail($opportunityId);
 
                 // Guard: check seats still available (race-condition safe)
-                if ($opportunity->total_seats !== null && $opportunity->available_seats <= 0) {
+                if (!$opportunity->hasSeat()) {
                     Log::warning("[OpportunityEnrollment] No seats left for opportunity {$opportunityId} — user {$userId} could not be enrolled after payment.");
                     return;
                 }

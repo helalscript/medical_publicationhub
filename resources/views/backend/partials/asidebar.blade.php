@@ -442,6 +442,8 @@
                     auth()->user()?->can('cms.home_page.research_journey_section.create') ||
                     auth()->user()?->can('cms.home_page.faq_section.create') ||
                     auth()->user()?->can('cms.home_page.review_section.index') ||
+                    auth()->user()?->can('cms.home_page.whatsapp_review_section.index') ||
+                    auth()->user()?->can('cms.home_page.platform_impact_section.index') ||
                     auth()->user()?->can('cms.faq_page.hero_section.create') ||
                     auth()->user()?->can('cms.aboutus_page.hero_section.create') ||
                     auth()->user()?->can('cms.aboutus_page.our_mission_section.create') ||
@@ -480,7 +482,9 @@
                     auth()->user()?->can('cms.home_page.meta_academy_section.create') ||
                     auth()->user()?->can('cms.home_page.research_journey_section.create') ||
                     auth()->user()?->can('cms.home_page.faq_section.create') ||
-                    auth()->user()?->can('cms.home_page.review_section.index');
+                    auth()->user()?->can('cms.home_page.review_section.index') ||
+                    auth()->user()?->can('cms.home_page.whatsapp_review_section.index') ||
+                    auth()->user()?->can('cms.home_page.platform_impact_section.index');
                     
             @endphp
             @if($canCmsHomePageMenu)
@@ -551,6 +555,22 @@
                                 <a href="{{ route('cms.home_page.review_section.index') }}"
                                     class="menu-link {{ request()->routeIs('cms.home_page.review_section.*') ? 'active' : '' }}">
                                     Review Section
+                                </a>
+                            </li>
+                        @endcan
+                        @can('cms.home_page.whatsapp_review_section.index')
+                            <li class="menu-item">
+                                <a href="{{ route('cms.home_page.whatsapp_review_section.index') }}"
+                                    class="menu-link {{ request()->routeIs('cms.home_page.whatsapp_review_section.*') ? 'active' : '' }}">
+                                    WhatsApp Review
+                                </a>
+                            </li>
+                        @endcan
+                        @can('cms.home_page.platform_impact_section.index')
+                            <li class="menu-item">
+                                <a href="{{ route('cms.home_page.platform_impact_section.index') }}"
+                                    class="menu-link {{ request()->routeIs('cms.home_page.platform_impact_section.*') ? 'active' : '' }}">
+                                    Platform Impact
                                 </a>
                             </li>
                         @endcan

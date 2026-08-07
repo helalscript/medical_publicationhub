@@ -101,7 +101,32 @@ class OpportunityController extends Controller
                 $validated['available_seats'] = $validated['total_seats'];
             }
 
-            Opportunity::create($validated);
+            $opportunity = Opportunity::create($validated);
+
+            // Automatically create group chat and assign mentor/coordinator
+            $chat = \App\Models\Chat::create([
+                'chatable_id' => $opportunity->id,
+                'chatable_type' => Opportunity::class,
+                'type' => 'group',
+                'status' => 'active',
+            ]);
+
+            // Add Mentor
+            $mentorUserId = $opportunity->mentor?->user_id;
+            if (! empty($mentorUserId)) {
+                \App\Models\ChatUser::firstOrCreate(
+                    ['chat_id' => $chat->id, 'user_id' => (int) $mentorUserId],
+                    ['role' => 'mentor', 'status' => 'active']
+                );
+            }
+
+            // Add Coordinator
+            if (! empty($opportunity->coordinator_id)) {
+                \App\Models\ChatUser::firstOrCreate(
+                    ['chat_id' => $chat->id, 'user_id' => (int) $opportunity->coordinator_id],
+                    ['role' => 'coordinator', 'status' => 'active']
+                );
+            }
 
             return redirect()->route('admin.opportunities.index')->with('success', 'Opportunity created successfully.');
         } catch (Exception $e) {
@@ -187,6 +212,34 @@ class OpportunityController extends Controller
             }
 
             $opportunity->update($validated);
+
+            // Sync mentor and coordinator to chat
+            $chat = $opportunity->chat;
+            if (!$chat) {
+                $chat = \App\Models\Chat::create([
+                    'chatable_id' => $opportunity->id,
+                    'chatable_type' => Opportunity::class,
+                    'type' => 'group',
+                    'status' => 'active',
+                ]);
+            }
+
+            // Sync Mentor
+            $mentorUserId = $opportunity->mentor?->user_id;
+            if (! empty($mentorUserId)) {
+                \App\Models\ChatUser::firstOrCreate(
+                    ['chat_id' => $chat->id, 'user_id' => (int) $mentorUserId],
+                    ['role' => 'mentor', 'status' => 'active']
+                );
+            }
+
+            // Sync Coordinator
+            if (! empty($opportunity->coordinator_id)) {
+                \App\Models\ChatUser::firstOrCreate(
+                    ['chat_id' => $chat->id, 'user_id' => (int) $opportunity->coordinator_id],
+                    ['role' => 'coordinator', 'status' => 'active']
+                );
+            }
 
             return redirect()->route('admin.opportunities.index')->with('success', 'Opportunity updated successfully.');
         } catch (Exception $e) {
