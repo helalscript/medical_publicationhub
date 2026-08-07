@@ -67,6 +67,21 @@ class Opportunity extends Model
     }
 
     /**
+     * Get the count of enrolled researchers (ignoring mentors, coordinators, admins).
+     */
+    public function getEnrolledResearchersCount(): int
+    {
+        $chat = $this->chat;
+        if (!$chat) {
+            return 0;
+        }
+
+        return $chat->users()
+            ->whereNotIn('role', ['mentor', 'coordinator', 'admin'])
+            ->count();
+    }
+
+    /**
      * Check if this opportunity has available seats.
      * Returns true if unlimited (total_seats = null) or has remaining seats.
      */
@@ -75,7 +90,9 @@ class Opportunity extends Model
         if ($this->total_seats === null) {
             return true; // unlimited
         }
-        return $this->available_seats > 0;
+        
+        $enrolledResearchers = $this->getEnrolledResearchersCount();
+        return ($this->total_seats - $enrolledResearchers) > 0;
     }
 
     private function toPublicUrl(?string $value): ?string

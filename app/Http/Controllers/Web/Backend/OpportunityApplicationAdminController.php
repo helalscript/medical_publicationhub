@@ -105,6 +105,11 @@ class OpportunityApplicationAdminController extends Controller
                         ['chat_id' => $chat->id, 'user_id' => (int) $app->user_id],
                         ['role' => 'researcher', 'status' => 'active']
                     );
+
+                    // Decrement available_seats atomically when application is accepted
+                    if ($op->total_seats !== null && $op->available_seats > 0) {
+                        $op->decrement('available_seats');
+                    }
                 }
             }
 

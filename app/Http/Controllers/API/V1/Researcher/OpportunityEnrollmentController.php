@@ -44,7 +44,7 @@ class OpportunityEnrollmentController extends Controller
         }
 
         // Check seat availability
-        if ($opportunity->total_seats !== null && $opportunity->available_seats <= 0) {
+        if (!$opportunity->hasSeat()) {
             return Helper::jsonErrorResponse('No seats available for this opportunity.', 422);
         }
 
