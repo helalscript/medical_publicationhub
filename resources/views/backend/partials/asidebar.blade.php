@@ -877,7 +877,7 @@
                 <li class="menu-item menu-item-settings {{ request()->routeIs('profile_settings.*', 'system_settings.*') ? 'open' : '' }}">
                     <a href="javascript:void(0);" class="menu-link menu-toggle">
                         <span class="material-symbols-outlined menu-icon">settings</span>
-                        <span class="title">{{ __('admin.menu.settings') }}</span>
+                        <span class="title">Settings</span>
                     </a>
                     <ul class="menu-sub">
                         @can('profile_settings.index')
