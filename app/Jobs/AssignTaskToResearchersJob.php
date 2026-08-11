@@ -42,7 +42,7 @@ class AssignTaskToResearchersJob implements ShouldQueue
             'researcher_ids' => $this->researcherIds,
         ]);
 
-        $task = Task::with('opportunity')->find($this->taskId);
+        $task = Task::with('opportunity.chat')->find($this->taskId);
         if (!$task) {
             Log::error('[AssignTaskToResearchersJob] Task not found', ['task_id' => $this->taskId]);
             return;
@@ -51,10 +51,14 @@ class AssignTaskToResearchersJob implements ShouldQueue
         $userIds = [];
 
         if ($this->assignType === 'all') {
-            $userIds = OpportunityApplication::where('opportunity_id', $this->opportunityId)
-                ->where('status', 'accept')
-                ->pluck('user_id')
-                ->toArray();
+            if ($task->opportunity && $task->opportunity->chat) {
+                $userIds = $task->opportunity->chat->users()
+                    ->whereNotIn('role', ['admin', 'mentor', 'coordinator'])
+                    ->pluck('user_id')
+                    ->toArray();
+            } else {
+                Log::warning('[AssignTaskToResearchersJob] Opportunity or Chat not found for task', ['task_id' => $this->taskId]);
+            }
         } else {
             $userIds = $this->researcherIds;
         }
